@@ -1,10 +1,6 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-
 import mjml2html from "mjml";
 
-export default function handler(req, res) {
-  const { json } = req.body;
-
+export default function getHtml(json) {
   try {
     const { html } = mjml2html(
       json || {
@@ -20,8 +16,8 @@ export default function handler(req, res) {
       },
       { validationLevel: "soft" }
     );
-    res.status(200).json(html);
+    return html;
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    return { error: error.message };
   }
 }
