@@ -7,7 +7,67 @@ import { Button } from 'flowbite-react'
 
 export default function Index() {
   const fetcher = useFetcher()
-  const [code, setCode] = useState('')
+  const [code, setCode] = useState(`{
+  "tagName": "mjml",
+  "attributes": {},
+  "children": [
+    {
+      "tagName": "mj-body",
+      "attributes": {},
+      "children": [
+        {
+          "tagName": "mj-section",
+          "attributes": {},
+          "children": [
+            {
+              "tagName": "mj-column",
+              "attributes": {},
+              "children": [
+                {
+                  "tagName": "mj-image",
+                  "attributes": {
+                    "width": "100px",
+                    "src": "/assets/img/logo-small.png"
+                  }
+                },
+                {
+                  "tagName": "mj-divider",
+                  "attributes": {
+                    "border-color": "#F46E43"
+                  }
+                },
+                {
+                  "tagName": "mj-button",
+                  "attributes": {
+                    "background-color": "#F46E43",
+                    "font-size": "16px",
+                    "font-weight": "bold",
+                    "align": "center",
+                    "padding": "10px",
+                    "color": "#ffffff",
+                    "border-radius": "3px",
+                    "href": "https://www.mjml.io/try-mjml/"
+                  },
+                  "content": "Press me"
+                },
+                {
+                  "tagName": "mj-text",
+                  "attributes": {
+                    "font-size": "20px",
+                    "color": "#F45E43",
+                    "font-family": "Helvetica"
+                  },
+                  "content": "Hello World"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+`)
 
   useEffect(() => {
     try {
@@ -27,11 +87,11 @@ export default function Index() {
   return (
     <div className="flex h-screen">
       <div className="grow">
-        <Button>Default</Button>
         <CodeMirror
           height="100%"
           style={{ height: '100%' }}
           extensions={[cmJson()]}
+          value={code}
           onChange={setCode}
         />
         {/* <fetcher.Form method="post" action="/?index">
