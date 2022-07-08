@@ -3,7 +3,6 @@ import CodeMirror from '@uiw/react-codemirror'
 import { useEffect, useState } from 'react'
 import { json as cmJson } from '@codemirror/lang-json'
 import getHtml from '../models/getHtml.server'
-import { Button } from 'flowbite-react'
 
 export default function Index() {
   const fetcher = useFetcher()
