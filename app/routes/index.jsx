@@ -1,7 +1,7 @@
 import { useFetcher } from '@remix-run/react'
 import lodashId from 'lodash-id'
 import { useEffect, useState } from 'react'
-import { MjButton } from '../components/BodyComponents'
+import { MjButton, MjWrapper } from '../components/BodyComponents'
 import getHtml from '../models/getHtml.server'
 import lodash from 'lodash'
 import { ClientOnly } from 'remix-utils'
@@ -30,6 +30,22 @@ export default function Index() {
       },
     ],
   })
+
+  const nestedElements = data.body
+    .filter((el) => el.parentId === '-1')
+    .map((el) => {
+      const getNestedElements = (list, parent) =>
+        list
+          .filter((li) => li.parentId === parent.id)
+          .map((li) => ({
+            ...li,
+            children: getNestedElements(list, li),
+          }))
+      return {
+        ...el,
+        children: getNestedElements(data.body, el),
+      }
+    })
 
   useEffect(() => {
     const newCode = {
@@ -64,27 +80,31 @@ export default function Index() {
         {
           tagName: 'mj-body',
           attributes: {},
-          children:
-            data.body.map((item, idx) => ({
-              tagName: 'mj-column',
-              attributes: {},
-              children: [
-                {
-                  tagName: item.tagName,
-                  attributes: {
-                    ...item.attributes.map((attr) => ({
-                      [attr.name]: attr.value || 0,
-                    })),
-                    'css-class': 'data-' + item.id,
-                  },
-                  content: 'Press me',
-                },
-              ],
-            })) || [],
+          children: data.body
+            .filter((el) => el.parentId === '-1')
+            .map((el) => {
+              const getNestedElements = (list, parent) =>
+                list
+                  .filter((li) => li.parentId === parent.id)
+                  .map((li) => ({
+                    tagName: li.tagName,
+                    attributes: {
+                      ...li.attributes.map((attr) => ({
+                        [attr.name]: attr.value || 0,
+                      })),
+                      'css-class': 'data-' + li.id,
+                    },
+                    // content: 'Press me',
+                    children: getNestedElements(list, li),
+                  }))
+              return {
+                ...el,
+                children: getNestedElements(data.body, el),
+              }
+            }),
         },
       ],
     }
-    console.log({ newCode })
     setCode(newCode)
   }, [data])
 
@@ -102,9 +122,16 @@ export default function Index() {
     }
   }, [code])
 
-  const handleAddBodyComponent = (element) => {
+  useEffect(() => {
     const tempData = { ...data }
-    lodash.insert(tempData.body, { ...element })
+    lodash.insert(tempData.body, { ...MjWrapper, parentId: '-1' })
+    setData(tempData)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleAddBodyComponent = (payload) => {
+    const tempData = { ...data }
+    lodash.insert(tempData.body, { ...payload })
     console.log({ tempData })
     setData(tempData)
   }
@@ -114,19 +141,24 @@ export default function Index() {
       <div className="h-full w-80 border-r bg-gray-100">
         <div className="flex w-full items-center border-b bg-white p-4">
           <div className="font-semibold">Components</div>
-          <button
+          {/* <button
             type="button"
             className="ml-auto rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300"
             onClick={() => handleAddBodyComponent(MjButton)}
           >
             Add Button
-          </button>
+          </button> */}
         </div>
-        <ul>
-          {data.body.map((el, idx) => (
-            <li key={idx}>{el.tagName}</li>
+        <div>
+          {nestedElements.map((el, idx) => (
+            <div key={idx} className="p-4">
+              <ComponentListItem
+                el={el}
+                handleOnClick={handleAddBodyComponent}
+              />
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
       <ClientOnly>
         {() => (
@@ -165,6 +197,45 @@ const Preview = ({ html, onElementClick }) => {
       ) : (
         <p>No data</p>
       )}
+    </div>
+  )
+}
+
+const ComponentListItem = ({ el, handleOnClick }) => {
+  return (
+    <div>
+      <p>{el.title}</p>
+      <div>
+        <ul>
+          {el.allowedChildren.map((child, cIdx) => (
+            <li key={cIdx}>
+              <button
+                type="button"
+                className="rounded-lg bg-blue-700 px-2 py-1 text-xs font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300"
+                onClick={() =>
+                  handleOnClick({
+                    ...child,
+                    parentId: el.id,
+                  })
+                }
+              >
+                Add {child.title}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+      {el.children.length > 0 ? (
+        <div className="border-l-2 pl-2">
+          {el.children.map((child, cIdx) => (
+            <ComponentListItem
+              key={cIdx}
+              el={child}
+              handleOnClick={handleOnClick}
+            />
+          ))}
+        </div>
+      ) : null}
     </div>
   )
 }

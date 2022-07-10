@@ -20,9 +20,11 @@ const BodyComponents = {
 }
 
 export const MjButton = {
+  title: 'Button',
   tagName: 'mj-button',
   description: 'Displays a customizable button.',
   isEndingTag: true,
+  allowedChildren: [],
   attributes: [
     {
       name: 'align',
@@ -238,4 +240,33 @@ export const MjButton = {
       defaultValue: null,
     },
   ],
+}
+
+export const MjColumn = {
+  title: 'Column',
+  tagName: 'mj-column',
+  attributes: [],
+  description: 'Displays a customizable column.',
+  isEndingTag: false,
+  allowedChildren: [
+    // MjText,
+    // MjImage,
+    MjButton,
+  ],
+}
+
+export const MjSection = {
+  title: 'Section',
+  tagName: 'mj-wrapper',
+  attributes: [],
+  isEndingTag: false,
+  allowedChildren: [MjColumn],
+}
+
+export const MjWrapper = {
+  title: 'Wrapper',
+  tagName: 'mj-wrapper',
+  attributes: [],
+  isEndingTag: false,
+  allowedChildren: [MjSection],
 }
