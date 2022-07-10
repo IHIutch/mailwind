@@ -25,221 +25,221 @@ export const MjButton = {
   description: 'Displays a customizable button.',
   isEndingTag: true,
   allowedChildren: [],
-  attributes: [
-    {
-      name: 'align',
+  attributes: {
+    align: {
+      label: 'align',
       type: 'string',
       description: 'horizontal alignment',
       defaultValue: 'center',
     },
-    {
-      name: 'background-color',
+    'background-color': {
+      label: 'background-color',
       unit: 'color',
       description: 'button background-color',
       defaultValue: '#414141',
     },
-    {
-      name: 'border',
+    border: {
+      label: 'border',
       type: 'number',
       unit: 'px',
       description: 'css border format',
       defaultValue: 'none',
     },
-    {
-      name: 'border-bottom',
+    'border-bottom': {
+      label: 'border-bottom',
       type: 'number',
       unit: 'px',
       description: 'css border format',
       defaultValue: null,
     },
-    {
-      name: 'border-left',
+    'border-left': {
+      label: 'border-left',
       type: 'number',
       unit: 'px',
       description: 'css border format',
       defaultValue: null,
     },
-    {
-      name: 'border-radius',
+    'border-radius': {
+      label: 'border-radius',
       type: 'number',
       unit: 'px',
       description: 'border radius',
       defaultValue: '3px',
     },
-    {
-      name: 'border-right',
+    'border-right': {
+      label: 'border-right',
       type: 'number',
       unit: 'px',
       description: 'css border format',
       defaultValue: null,
     },
-    {
-      name: 'border-top',
+    'border-top': {
+      label: 'border-top',
       type: 'number',
       unit: 'px',
       description: 'css border format',
       defaultValue: null,
     },
-    {
-      name: 'color',
+    color: {
+      label: 'color',
       unit: 'color',
       description: 'text color',
       defaultValue: '#ffffff',
     },
-    {
-      name: 'container-background-color',
+    'container-background-color': {
+      label: 'container-background-color',
       unit: 'color',
       description: 'button container background color',
       defaultValue: null,
     },
-    {
-      name: 'css-class',
+    'css-class': {
+      label: 'css-class',
       type: 'string',
       description: 'class name, added to the root HTML element created',
       defaultValue: null,
     },
-    {
-      name: 'font-family',
+    'font-family': {
+      label: 'font-family',
       type: 'string',
       description: 'font name',
       defaultValue: 'Ubuntu, Helvetica, Arial, sans-serif',
     },
-    {
-      name: 'font-size',
+    'font-size': {
+      label: 'font-size',
       unit: 'px',
       description: 'text size',
       defaultValue: '13px',
     },
-    {
-      name: 'font-style',
+    'font-style': {
+      label: 'font-style',
       type: 'string',
       description: 'normal/italic/oblique',
       defaultValue: null,
     },
-    {
-      name: 'font-weight',
+    'font-weight': {
+      label: 'font-weight',
       unit: 'string',
       description: 'text thickness',
       defaultValue: 'normal',
     },
-    {
-      name: 'height',
+    height: {
+      label: 'height',
       type: 'number/string',
       unit: 'px',
       description: 'button height',
       defaultValue: null,
     },
-    {
-      name: 'href',
+    href: {
+      label: 'href',
       unit: 'link',
       description: 'link to be triggered when the button is clicked',
       defaultValue: null,
     },
-    {
-      name: 'inner-padding',
+    'inner-padding': {
+      label: 'inner-padding',
       type: 'number',
       unit: 'px',
       description: 'inner button padding',
       defaultValue: '10px 25px',
     },
-    {
-      name: 'letter-spacing',
+    'letter-spacing': {
+      label: 'letter-spacing',
       type: 'number',
       unit: 'px/em',
       description: 'letter-spacing',
       defaultValue: null,
     },
-    {
-      name: 'line-height',
+    'line-height': {
+      label: 'line-height',
       unit: 'px/%',
       description: 'line-height on link',
       defaultValue: '120%',
     },
-    // {
-    //   name: 'padding',
+    // 'padding': {
+    // 'padding',
     //   type: 'number',
     //   unit: 'px',
     //   description: 'supports up to 4 parameters',
     //   defaultValue: '10px 25px',
     // },
-    {
-      name: 'padding-bottom',
+    'padding-bottom': {
+      label: 'padding-bottom',
       type: 'number',
       unit: 'px',
       description: 'bottom offset',
       defaultValue: 0,
     },
-    {
-      name: 'padding-left',
+    'padding-left': {
+      label: 'padding-left',
       type: 'number',
       unit: 'px',
       description: 'left offset',
       defaultValue: 0,
     },
-    {
-      name: 'padding-right',
+    'padding-right': {
+      label: 'padding-right',
       type: 'number',
       unit: 'px',
       description: 'right offset',
       defaultValue: 0,
     },
-    {
-      name: 'padding-top',
+    'padding-top': {
+      label: 'padding-top',
       type: 'number',
       unit: 'px',
       description: 'top offset',
       defaultValue: 0,
     },
-    {
-      name: 'rel',
+    rel: {
+      label: 'rel',
       type: 'string',
       description: 'specify the rel attribute for the button link',
       defaultValue: null,
     },
-    {
-      name: 'target',
+    target: {
+      label: 'target',
       type: 'string',
       description: 'specify the target attribute for the button link',
       defaultValue: '_blank',
     },
-    {
-      name: 'text-align',
+    'text-align': {
+      label: 'text-align',
       type: 'string',
       description: 'text-align button content',
       defaultValue: 'none',
     },
-    {
-      name: 'text-decoration',
+    'text-decoration': {
+      label: 'text-decoration',
       type: 'string',
       description: 'underline/overline/none',
       defaultValue: 'none',
     },
-    {
-      name: 'text-transform',
+    'text-transform': {
+      label: 'text-transform',
       type: 'string',
       description: 'capitalize/uppercase/lowercase',
       defaultValue: 'none',
     },
-    {
-      name: 'title',
+    title: {
+      label: 'title',
       type: 'string',
       description: 'tooltip & accessibility',
       defaultValue: null,
     },
-    {
-      name: 'vertical-align',
+    'vertical-align': {
+      label: 'vertical-align',
       type: 'string',
       description: 'vertical alignment',
       defaultValue: 'middle',
     },
-    {
-      name: 'width',
+    width: {
+      label: 'width',
       type: 'number/string',
       unit: 'px',
       description: 'button width',
       defaultValue: null,
     },
-  ],
+  },
 }
 
 export const MjColumn = {
@@ -257,8 +257,8 @@ export const MjColumn = {
 
 export const MjSection = {
   title: 'Section',
-  tagName: 'mj-wrapper',
-  attributes: [],
+  tagName: 'mj-section',
+  attributes: {},
   isEndingTag: false,
   allowedChildren: [MjColumn],
 }
@@ -266,7 +266,7 @@ export const MjSection = {
 export const MjWrapper = {
   title: 'Wrapper',
   tagName: 'mj-wrapper',
-  attributes: [],
+  attributes: {},
   isEndingTag: false,
   allowedChildren: [MjSection],
 }

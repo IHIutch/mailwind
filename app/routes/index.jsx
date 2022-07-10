@@ -1,7 +1,7 @@
 import { useFetcher } from '@remix-run/react'
 import lodashId from 'lodash-id'
 import { useEffect, useState } from 'react'
-import { MjButton, MjWrapper } from '../components/BodyComponents'
+import { MjWrapper } from '../components/BodyComponents'
 import getHtml from '../models/getHtml.server'
 import lodash from 'lodash'
 import { ClientOnly } from 'remix-utils'
@@ -89,12 +89,16 @@ export default function Index() {
                   .map((li) => ({
                     tagName: li.tagName,
                     attributes: {
-                      ...li.attributes.map((attr) => ({
-                        [attr.name]: attr.value || 0,
-                      })),
+                      ...Object.entries(li.attributes).reduce(
+                        (acc, [key, val]) => ({
+                          ...acc,
+                          [key]: val.value || val.defaultValue,
+                        }),
+                        {}
+                      ),
                       'css-class': 'data-' + li.id,
                     },
-                    // content: 'Press me',
+                    content: li.content || 'Press Me',
                     children: getNestedElements(list, li),
                   }))
               return {
@@ -111,6 +115,7 @@ export default function Index() {
   useEffect(() => {
     try {
       if (code) {
+        console.log({ code })
         fetcher.submit({ json: JSON.stringify(code) }, { method: 'post' })
       }
     } catch (error) {
@@ -120,6 +125,7 @@ export default function Index() {
         throw error
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [code])
 
   useEffect(() => {
@@ -132,14 +138,29 @@ export default function Index() {
   const handleAddBodyComponent = (payload) => {
     const tempData = { ...data }
     lodash.insert(tempData.body, { ...payload })
+    setData(tempData)
+  }
+
+  const handleEditBodyComponent = (id, payload) => {
+    const tempData = { ...data }
+    const found = tempData.body.find((el) => el.id === id)
+    lodash.updateById(tempData.body, id, {
+      ...found,
+      ...payload,
+    })
     console.log({ tempData })
     setData(tempData)
   }
 
+  const handleElementClick = (id) => {
+    const found = data.body.find((el) => el.id === id)
+    setActiveElement(found)
+  }
+
   return (
     <div className="flex h-screen">
-      <div className="h-full w-80 border-r bg-gray-100">
-        <div className="flex w-full items-center border-b bg-white p-4">
+      <div className="relative h-full w-80 border-r">
+        <div className="absolute inset-x-0 z-10 flex h-16 items-center border-b bg-white px-4">
           <div className="font-semibold">Components</div>
           {/* <button
             type="button"
@@ -149,7 +170,7 @@ export default function Index() {
             Add Button
           </button> */}
         </div>
-        <div>
+        <div className="absolute inset-x-0 h-full overflow-auto bg-gray-100 pt-16">
           {nestedElements.map((el, idx) => (
             <div key={idx} className="p-4">
               <ComponentListItem
@@ -162,14 +183,70 @@ export default function Index() {
       </div>
       <ClientOnly>
         {() => (
-          <Preview html={fetcher.data} onElementClick={setActiveElement} />
+          <Preview html={fetcher.data} onElementClick={handleElementClick} />
         )}
       </ClientOnly>
-      <div className="h-full w-80 border-r bg-gray-100">
-        <div className="flex w-full items-center border-b bg-white p-4">
+      <div className="relative h-full w-80 border-l bg-gray-100">
+        <div className="absolute inset-x-0 z-10 flex h-16 items-center border-b bg-white px-4">
           <div className="font-semibold">Attributes</div>
         </div>
-        <div>{activeElement}</div>
+        {activeElement ? (
+          <div className="absolute inset-x-0 h-full overflow-auto bg-gray-100 pt-16">
+            <div className="p-4">
+              <div>
+                <h3 className="mb-1 text-lg font-semibold">
+                  {activeElement.title}
+                </h3>
+                <p className="my-0 text-sm text-gray-600">
+                  {activeElement.description}
+                </p>
+              </div>
+              <div className="mt-4">
+                {/* <AttributeList
+                  attributes={activeElement.attributes}
+                  handleOnChange={(key, value) => {
+                    const tempData = { ...data }
+                    const found = tempData.body.find(
+                      (el) => el.id === activeElement.id
+                    )
+                    found.attributes[key] = value
+                    setData(tempData)
+                  }}
+                /> */}
+                {Object.entries(activeElement.attributes).map(([key, val]) => (
+                  <div key={key} className="mb-2">
+                    <div className="">
+                      <label className="text-sm font-semibold">{key}</label>
+                    </div>
+                    <div className="">
+                      <input
+                        type="text"
+                        onChange={(e) =>
+                          handleEditBodyComponent(activeElement.id, {
+                            attributes: {
+                              ...activeElement.attributes,
+                              [key]: { ...val, value: e.target.value },
+                            },
+                          })
+                        }
+                        defaultValue={val.value || val.defaultValue}
+                        onBlur={(e) =>
+                          !e.target.value &&
+                          handleEditBodyComponent(activeElement.id, {
+                            attributes: {
+                              ...activeElement.attributes,
+                              [key]: { ...val, value: val.defaultValue },
+                            },
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   )
@@ -179,13 +256,16 @@ const Preview = ({ html, onElementClick }) => {
   const elements = document.querySelectorAll('[data-id]')
 
   elements.forEach((el) => {
-    el.addEventListener('click', () => {
+    el.addEventListener('click', (e) => {
+      e.stopPropagation()
       onElementClick(el.dataset.id)
     })
-    el.addEventListener('mouseover', () => {
+    el.addEventListener('mouseover', (e) => {
+      e.stopPropagation()
       el.classList.add('ring-2')
     })
-    el.addEventListener('mouseout', () => {
+    el.addEventListener('mouseout', (e) => {
+      e.stopPropagation()
       el.classList.remove('ring-2')
     })
   })
