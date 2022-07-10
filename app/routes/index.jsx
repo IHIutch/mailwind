@@ -1,78 +1,97 @@
 import { useFetcher } from '@remix-run/react'
-import CodeMirror from '@uiw/react-codemirror'
+import lodashId from 'lodash-id'
 import { useEffect, useState } from 'react'
-import { json as cmJson } from '@codemirror/lang-json'
+import { MjButton } from '../components/BodyComponents'
 import getHtml from '../models/getHtml.server'
+import lodash from 'lodash'
+import { ClientOnly } from 'remix-utils'
+
+lodash.mixin(lodashId)
 
 export default function Index() {
   const fetcher = useFetcher()
-  const [code, setCode] = useState(`{
-  "tagName": "mjml",
-  "attributes": {},
-  "children": [
-    {
-      "tagName": "mj-body",
-      "attributes": {},
-      "children": [
+  const [data, setData] = useState({
+    head: [],
+    body: [],
+  })
+  const [activeElement, setActiveElement] = useState(null)
+  const [code, setCode] = useState({
+    tagName: 'mjml',
+    attributes: {},
+    children: [
+      {
+        tagName: 'mj-head',
+        children: [],
+      },
+      {
+        tagName: 'mj-body',
+        attributes: {},
+        children: [],
+      },
+    ],
+  })
+
+  useEffect(() => {
+    const newCode = {
+      tagName: 'mjml',
+      attributes: {},
+      children: [
         {
-          "tagName": "mj-section",
-          "attributes": {},
-          "children": [
+          tagName: 'mj-head',
+          children: [
             {
-              "tagName": "mj-column",
-              "attributes": {},
-              "children": [
-                {
-                  "tagName": "mj-image",
-                  "attributes": {
-                    "width": "100px",
-                    "src": "/assets/img/logo-small.png"
-                  }
-                },
-                {
-                  "tagName": "mj-divider",
-                  "attributes": {
-                    "border-color": "#F46E43"
-                  }
-                },
-                {
-                  "tagName": "mj-button",
-                  "attributes": {
-                    "background-color": "#F46E43",
-                    "font-size": "16px",
-                    "font-weight": "bold",
-                    "align": "center",
-                    "padding": "10px",
-                    "color": "#ffffff",
-                    "border-radius": "3px",
-                    "href": "https://www.mjml.io/try-mjml/"
+              tagName: 'mj-html-attributes',
+              attributes: {},
+              children:
+                data.body.map((item) => ({
+                  tagName: 'mj-selector',
+                  attributes: {
+                    path: '.data-' + item.id,
                   },
-                  "content": "Press me"
-                },
+                  children: [
+                    {
+                      tagName: 'mj-html-attribute',
+                      attributes: {
+                        name: 'data-id',
+                      },
+                      content: item.id,
+                    },
+                  ],
+                })) || [],
+            },
+          ],
+        },
+        {
+          tagName: 'mj-body',
+          attributes: {},
+          children:
+            data.body.map((item, idx) => ({
+              tagName: 'mj-column',
+              attributes: {},
+              children: [
                 {
-                  "tagName": "mj-text",
-                  "attributes": {
-                    "font-size": "20px",
-                    "color": "#F45E43",
-                    "font-family": "Helvetica"
+                  tagName: item.tagName,
+                  attributes: {
+                    ...item.attributes.map((attr) => ({
+                      [attr.name]: attr.value || 0,
+                    })),
+                    'css-class': 'data-' + item.id,
                   },
-                  "content": "Hello World"
-                }
-              ]
-            }
-          ]
-        }
-      ]
+                  content: 'Press me',
+                },
+              ],
+            })) || [],
+        },
+      ],
     }
-  ]
-}
-`)
+    console.log({ newCode })
+    setCode(newCode)
+  }, [data])
 
   useEffect(() => {
     try {
       if (code) {
-        const obj = JSON.parse(code)
-        fetcher.submit({ json: JSON.stringify(obj) }, { method: 'post' })
+        fetcher.submit({ json: JSON.stringify(code) }, { method: 'post' })
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -83,35 +102,69 @@ export default function Index() {
     }
   }, [code])
 
+  const handleAddBodyComponent = (element) => {
+    const tempData = { ...data }
+    lodash.insert(tempData.body, { ...element })
+    console.log({ tempData })
+    setData(tempData)
+  }
+
   return (
     <div className="flex h-screen">
-      <div className="grow">
-        <CodeMirror
-          height="100%"
-          style={{ height: '100%' }}
-          extensions={[cmJson()]}
-          value={code}
-          onChange={setCode}
-        />
-        {/* <fetcher.Form method="post" action="/?index">
-          <input type="hidden" name="json" value={JSON.stringify(json)} />
+      <div className="h-full w-80 border-r bg-gray-100">
+        <div className="flex w-full items-center border-b bg-white p-4">
+          <div className="font-semibold">Components</div>
           <button
-            // type="submit"
-            onClick={() => {
-              fetcher.submit(null, { method: "post" });
-            }}
+            type="button"
+            className="ml-auto rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300"
+            onClick={() => handleAddBodyComponent(MjButton)}
           >
-            Submit
+            Add Button
           </button>
-        </fetcher.Form> */}
+        </div>
+        <ul>
+          {data.body.map((el, idx) => (
+            <li key={idx}>{el.tagName}</li>
+          ))}
+        </ul>
       </div>
-      <div className="h-full grow">
-        {fetcher.data ? (
-          <div dangerouslySetInnerHTML={{ __html: fetcher.data }} />
-        ) : (
-          <p>No data</p>
+      <ClientOnly>
+        {() => (
+          <Preview html={fetcher.data} onElementClick={setActiveElement} />
         )}
+      </ClientOnly>
+      <div className="h-full w-80 border-r bg-gray-100">
+        <div className="flex w-full items-center border-b bg-white p-4">
+          <div className="font-semibold">Attributes</div>
+        </div>
+        <div>{activeElement}</div>
       </div>
+    </div>
+  )
+}
+
+const Preview = ({ html, onElementClick }) => {
+  const elements = document.querySelectorAll('[data-id]')
+
+  elements.forEach((el) => {
+    el.addEventListener('click', () => {
+      onElementClick(el.dataset.id)
+    })
+    el.addEventListener('mouseover', () => {
+      el.classList.add('ring-2')
+    })
+    el.addEventListener('mouseout', () => {
+      el.classList.remove('ring-2')
+    })
+  })
+
+  return (
+    <div className="h-full grow">
+      {html ? (
+        <div dangerouslySetInnerHTML={{ __html: html }} />
+      ) : (
+        <p>No data</p>
+      )}
     </div>
   )
 }

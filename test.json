@@ -3,6 +3,26 @@
   "attributes": {},
   "children": [
     {
+      "tagName": "mj-head",
+      "children": [
+        {
+          "tagName": "mj-selector",
+          "attributes": {
+            "path": ".testing"
+          },
+          "children": [
+            {
+              "tagName": "mj-html-attribute",
+              "attributes": {
+                "name": "data-id"
+              },
+              "content": "42"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "tagName": "mj-body",
       "attributes": {},
       "children": [
@@ -26,6 +46,21 @@
                   "attributes": {
                     "border-color": "#F46E43"
                   }
+                },
+                {
+                  "tagName": "mj-button",
+                  "attributes": {
+                    "background-color": "#F46E43",
+                    "font-size": "16px",
+                    "font-weight": "bold",
+                    "align": "center",
+                    "padding": "10px",
+                    "color": "#ffffff",
+                    "border-radius": "3px",
+                    "href": "https://www.mjml.io/try-mjml/",
+                    "css-class": "testing"
+                  },
+                  "content": "Press me"
                 },
                 {
                   "tagName": "mj-text",
