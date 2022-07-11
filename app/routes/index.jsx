@@ -197,52 +197,13 @@ export default function Index() {
                 <h3 className="mb-1 text-lg font-semibold">
                   {activeElement.title}
                 </h3>
-                <p className="my-0 text-sm text-gray-600">{activeElement.id}</p>
               </div>
               <div className="mt-4">
-                {/* <AttributeList
+                <AttributeList
+                  activeId={activeElement.id}
                   attributes={activeElement.attributes}
-                  handleOnChange={(key, value) => {
-                    const tempData = { ...data }
-                    const found = tempData.body.find(
-                      (el) => el.id === activeElement.id
-                    )
-                    found.attributes[key] = value
-                    setData(tempData)
-                  }}
-                /> */}
-                {Object.entries(activeElement.attributes).map(
-                  ([key, val], idx) => (
-                    <div key={idx} className="mb-2">
-                      <div className="">
-                        <label className="text-sm font-semibold">{key}</label>
-                      </div>
-                      <div className="">
-                        <input
-                          type="text"
-                          onChange={(e) =>
-                            handleEditBodyComponent(activeElement.id, {
-                              attributes: {
-                                ...activeElement.attributes,
-                                [key]: { ...val, value: e.target.value },
-                              },
-                            })
-                          }
-                          defaultValue={val.value || val.defaultValue}
-                          onBlur={(e) =>
-                            !e.target.value &&
-                            handleEditBodyComponent(activeElement.id, {
-                              attributes: {
-                                ...activeElement.attributes,
-                                [key]: { ...val, value: val.defaultValue },
-                              },
-                            })
-                          }
-                        />
-                      </div>
-                    </div>
-                  )
-                )}
+                  handleUpdate={handleEditBodyComponent}
+                />
               </div>
             </div>
           </div>
@@ -285,6 +246,43 @@ const Preview = ({ html, onElementClick }) => {
     />
   ) : (
     <p>No data</p>
+  )
+}
+
+const AttributeList = ({ activeId, attributes, handleUpdate }) => {
+  return (
+    <div>
+      {Object.entries(attributes).map(([key, val], idx) => (
+        <div key={`${activeId}-${idx}`} className="mb-2">
+          <div className="block">
+            <label className="text-sm font-semibold">{key}</label>
+          </div>
+          <div className="block">
+            <input
+              type="text"
+              onChange={(e) =>
+                handleUpdate(activeId, {
+                  attributes: {
+                    ...attributes,
+                    [key]: { ...val, value: e.target.value },
+                  },
+                })
+              }
+              defaultValue={val.value || val.defaultValue}
+              onBlur={(e) =>
+                !e.target.value &&
+                handleUpdate(activeId, {
+                  attributes: {
+                    ...attributes,
+                    [key]: { ...val, value: val.defaultValue },
+                  },
+                })
+              }
+            />
+          </div>
+        </div>
+      ))}
+    </div>
   )
 }
 
