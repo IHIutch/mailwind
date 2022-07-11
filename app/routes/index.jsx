@@ -115,7 +115,6 @@ export default function Index() {
   useEffect(() => {
     try {
       if (code) {
-        console.log({ code })
         fetcher.submit({ json: JSON.stringify(code) }, { method: 'post' })
       }
     } catch (error) {
@@ -148,7 +147,6 @@ export default function Index() {
       ...found,
       ...payload,
     })
-    console.log({ tempData })
     setData(tempData)
   }
 
@@ -159,7 +157,7 @@ export default function Index() {
 
   return (
     <div className="flex h-screen">
-      <div className="relative h-full w-80 border-r">
+      <div className="relative h-full w-[300px] border-r">
         <div className="absolute inset-x-0 z-10 flex h-16 items-center border-b bg-white px-4">
           <div className="font-semibold">Components</div>
           {/* <button
@@ -181,12 +179,14 @@ export default function Index() {
           ))}
         </div>
       </div>
-      <ClientOnly>
-        {() => (
-          <Preview html={fetcher.data} onElementClick={handleElementClick} />
-        )}
-      </ClientOnly>
-      <div className="relative h-full w-80 border-l bg-gray-100">
+      <div className="h-full w-full">
+        <ClientOnly>
+          {() => (
+            <Preview html={fetcher.data} onElementClick={handleElementClick} />
+          )}
+        </ClientOnly>
+      </div>
+      <div className="relative h-full w-[300px] border-l bg-gray-100">
         <div className="absolute inset-x-0 z-10 flex h-16 items-center border-b bg-white px-4">
           <div className="font-semibold">Attributes</div>
         </div>
@@ -197,9 +197,7 @@ export default function Index() {
                 <h3 className="mb-1 text-lg font-semibold">
                   {activeElement.title}
                 </h3>
-                <p className="my-0 text-sm text-gray-600">
-                  {activeElement.description}
-                </p>
+                <p className="my-0 text-sm text-gray-600">{activeElement.id}</p>
               </div>
               <div className="mt-4">
                 {/* <AttributeList
@@ -213,36 +211,38 @@ export default function Index() {
                     setData(tempData)
                   }}
                 /> */}
-                {Object.entries(activeElement.attributes).map(([key, val]) => (
-                  <div key={key} className="mb-2">
-                    <div className="">
-                      <label className="text-sm font-semibold">{key}</label>
+                {Object.entries(activeElement.attributes).map(
+                  ([key, val], idx) => (
+                    <div key={idx} className="mb-2">
+                      <div className="">
+                        <label className="text-sm font-semibold">{key}</label>
+                      </div>
+                      <div className="">
+                        <input
+                          type="text"
+                          onChange={(e) =>
+                            handleEditBodyComponent(activeElement.id, {
+                              attributes: {
+                                ...activeElement.attributes,
+                                [key]: { ...val, value: e.target.value },
+                              },
+                            })
+                          }
+                          defaultValue={val.value || val.defaultValue}
+                          onBlur={(e) =>
+                            !e.target.value &&
+                            handleEditBodyComponent(activeElement.id, {
+                              attributes: {
+                                ...activeElement.attributes,
+                                [key]: { ...val, value: val.defaultValue },
+                              },
+                            })
+                          }
+                        />
+                      </div>
                     </div>
-                    <div className="">
-                      <input
-                        type="text"
-                        onChange={(e) =>
-                          handleEditBodyComponent(activeElement.id, {
-                            attributes: {
-                              ...activeElement.attributes,
-                              [key]: { ...val, value: e.target.value },
-                            },
-                          })
-                        }
-                        defaultValue={val.value || val.defaultValue}
-                        onBlur={(e) =>
-                          !e.target.value &&
-                          handleEditBodyComponent(activeElement.id, {
-                            attributes: {
-                              ...activeElement.attributes,
-                              [key]: { ...val, value: val.defaultValue },
-                            },
-                          })
-                        }
-                      />
-                    </div>
-                  </div>
-                ))}
+                  )
+                )}
               </div>
             </div>
           </div>
@@ -253,31 +253,38 @@ export default function Index() {
 }
 
 const Preview = ({ html, onElementClick }) => {
-  const elements = document.querySelectorAll('[data-id]')
+  const setEventListeners = (e) => {
+    var iframe = e.target
+    const elements =
+      iframe?.contentWindow?.document?.querySelectorAll('[data-id]') || []
 
-  elements.forEach((el) => {
-    el.addEventListener('click', (e) => {
-      e.stopPropagation()
-      onElementClick(el.dataset.id)
+    elements.forEach((el) => {
+      el.addEventListener('click', (e) => {
+        e.stopPropagation()
+        onElementClick(el.dataset.id)
+      })
+      el.addEventListener('mouseover', (e) => {
+        e.stopPropagation()
+        el.classList.add('ring-2')
+      })
+      el.addEventListener('mouseout', (e) => {
+        e.stopPropagation()
+        el.classList.remove('ring-2')
+      })
     })
-    el.addEventListener('mouseover', (e) => {
-      e.stopPropagation()
-      el.classList.add('ring-2')
-    })
-    el.addEventListener('mouseout', (e) => {
-      e.stopPropagation()
-      el.classList.remove('ring-2')
-    })
-  })
+  }
 
-  return (
-    <div className="h-full grow">
-      {html ? (
-        <div dangerouslySetInnerHTML={{ __html: html }} />
-      ) : (
-        <p>No data</p>
-      )}
-    </div>
+  return html ? (
+    <iframe
+      id="myIframe"
+      className="h-full w-full"
+      title="email"
+      srcDoc={html}
+      // sandbox="allow-same-origin"
+      onLoad={setEventListeners}
+    />
+  ) : (
+    <p>No data</p>
   )
 }
 
