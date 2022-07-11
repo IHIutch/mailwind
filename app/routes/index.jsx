@@ -157,7 +157,7 @@ export default function Index() {
 
   return (
     <div className="flex h-screen">
-      <div className="relative h-full w-[300px] border-r">
+      <div className="relative h-full w-[300px] shrink-0 border-r">
         <div className="absolute inset-x-0 z-10 flex h-16 items-center border-b bg-white px-4">
           <div className="font-semibold">Components</div>
           {/* <button
@@ -179,14 +179,14 @@ export default function Index() {
           ))}
         </div>
       </div>
-      <div className="h-full w-full">
+      <div className="h-full grow">
         <ClientOnly>
           {() => (
             <Preview html={fetcher.data} onElementClick={handleElementClick} />
           )}
         </ClientOnly>
       </div>
-      <div className="relative h-full w-[300px] border-l bg-gray-100">
+      <div className="relative h-full w-[300px] shrink-0 border-l bg-gray-100">
         <div className="absolute inset-x-0 z-10 flex h-16 items-center border-b bg-white px-4">
           <div className="font-semibold">Attributes</div>
         </div>
@@ -226,11 +226,11 @@ const Preview = ({ html, onElementClick }) => {
       })
       el.addEventListener('mouseover', (e) => {
         e.stopPropagation()
-        el.classList.add('ring-2')
+        el.style.boxShadow = 'rgba(59, 130, 246, 0.5) 0px 0px 0px 2px inset'
       })
       el.addEventListener('mouseout', (e) => {
         e.stopPropagation()
-        el.classList.remove('ring-2')
+        el.style.boxShadow = 'none'
       })
     })
   }
