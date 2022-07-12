@@ -5,7 +5,8 @@ import { MjWrapper } from '../components/BodyComponents'
 import getHtml from '../models/getHtml.server'
 import lodash from 'lodash'
 import { ClientOnly } from 'remix-utils'
-
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+import clsx from 'clsx'
 lodash.mixin(lodashId)
 
 export default function Index() {
@@ -289,36 +290,53 @@ const AttributeList = ({ activeId, attributes, handleUpdate }) => {
 const ComponentListItem = ({ el, handleOnClick }) => {
   return (
     <div>
-      <p>{el.title}</p>
-      <div>
-        <ul>
-          {el.allowedChildren.map((child, cIdx) => (
-            <li key={cIdx}>
-              <button
-                type="button"
-                className="rounded-lg bg-blue-700 px-2 py-1 text-xs font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300"
-                onClick={() =>
-                  handleOnClick({
-                    ...child,
-                    parentId: el.id,
-                  })
-                }
-              >
-                Add {child.title}
-              </button>
-            </li>
-          ))}
-        </ul>
+      <div className="w-48 rounded border border-gray-300 bg-white p-2">
+        <div className="flex items-center">
+          <p>{el.title}</p>
+          {el.allowedChildren.length > 0 ? (
+            <div className="ml-auto">
+              <DropdownMenu.Root>
+                <DropdownMenu.Trigger className="flex h-6 w-6 items-center justify-center rounded border border-gray-300 bg-gray-200 hover:bg-gray-300">
+                  <div>+</div>
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content
+                  align="start"
+                  sideOffset={4}
+                  className="min-w-[12rem] rounded border bg-white py-2 shadow"
+                >
+                  {el.allowedChildren.map((child, cIdx) => (
+                    <DropdownMenu.Item
+                      asChild
+                      key={cIdx}
+                      className="min-w-full px-2 py-1 text-left outline-none hover:bg-gray-100"
+                    >
+                      <button
+                        onClick={() =>
+                          handleOnClick({
+                            ...child,
+                            parentId: el.id,
+                          })
+                        }
+                      >
+                        {child.title}
+                      </button>
+                    </DropdownMenu.Item>
+                  ))}
+                </DropdownMenu.Content>
+              </DropdownMenu.Root>
+            </div>
+          ) : null}
+        </div>
       </div>
       {el.children.length > 0 ? (
-        <div className="border-l-2 pl-2">
-          {el.children.map((child, cIdx) => (
-            <ComponentListItem
-              key={cIdx}
-              el={child}
-              handleOnClick={handleOnClick}
-            />
-          ))}
+        <div className="pt-2">
+          <div className="border-l-2">
+            {el.children.map((child, cIdx) => (
+              <div key={cIdx} className="pl-2 pt-2 first:pt-0">
+                <ComponentListItem el={child} handleOnClick={handleOnClick} />
+              </div>
+            ))}
+          </div>
         </div>
       ) : null}
     </div>
