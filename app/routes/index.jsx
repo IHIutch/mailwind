@@ -6,7 +6,8 @@ import getHtml from '../models/getHtml.server'
 import lodash from 'lodash'
 import { ClientOnly } from 'remix-utils'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
-import clsx from 'clsx'
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
+import { GripVertical } from 'lucide-react'
 lodash.mixin(lodashId)
 
 export default function Index() {
@@ -156,6 +157,13 @@ export default function Index() {
     setActiveElement(found)
   }
 
+  const handleDragEnd = (e) => {
+    console.log('dragEnd', e)
+  }
+  const handleDragStart = (e) => {
+    console.log('dragStart', e)
+  }
+
   return (
     <div className="flex h-screen">
       <div className="relative h-full w-[300px] shrink-0 border-r">
@@ -170,14 +178,23 @@ export default function Index() {
           </button> */}
         </div>
         <div className="absolute inset-x-0 h-full overflow-auto bg-gray-100 pt-16">
-          {nestedElements.map((el, idx) => (
-            <div key={idx} className="p-4">
-              <ComponentListItem
-                el={el}
-                handleOnClick={handleAddBodyComponent}
-              />
-            </div>
-          ))}
+          {nestedElements.length > 0 ? (
+            <>
+              <DragDropContext
+                onDragEnd={handleDragEnd}
+                onDragStart={handleDragStart}
+              >
+                {nestedElements.map((el, idx) => (
+                  <div key={idx} className="p-4">
+                    <ComponentListItem
+                      el={el}
+                      handleOnClick={handleAddBodyComponent}
+                    />
+                  </div>
+                ))}
+              </DragDropContext>
+            </>
+          ) : null}
         </div>
       </div>
       <div className="h-full grow">
@@ -287,11 +304,12 @@ const AttributeList = ({ activeId, attributes, handleUpdate }) => {
   )
 }
 
-const ComponentListItem = ({ el, handleOnClick }) => {
+const ComponentListItem = ({ el, handleOnClick, children }) => {
   return (
     <div>
       <div className="w-48 rounded border border-gray-300 bg-white p-2">
         <div className="flex items-center">
+          <div>{children}</div>
           <p>{el.title}</p>
           {el.allowedChildren.length > 0 ? (
             <div className="ml-auto">
@@ -328,17 +346,41 @@ const ComponentListItem = ({ el, handleOnClick }) => {
           ) : null}
         </div>
       </div>
-      {el.children.length > 0 ? (
-        <div className="pt-2">
-          <div className="border-l-2">
-            {el.children.map((child, cIdx) => (
-              <div key={cIdx} className="pl-2 pt-2 first:pt-0">
-                <ComponentListItem el={child} handleOnClick={handleOnClick} />
+      <Droppable droppableId={`droppable-${el.id}`} type={el.tagName}>
+        {(drop, snapshot) => (
+          <div ref={drop.innerRef} {...drop.droppableProps}>
+            {el.children.length > 0 ? (
+              <div className="pt-2">
+                <div className="border-l-2">
+                  {el.children.map((child, cIdx) => (
+                    <div key={cIdx} className="pl-2 pt-2 first:pt-0">
+                      <Draggable
+                        key={`draggable-${child.id}`}
+                        draggableId={`draggable-${child.id}`}
+                        index={cIdx}
+                      >
+                        {(drag, snapshot) => (
+                          <div ref={drag.innerRef} {...drag.draggableProps}>
+                            <ComponentListItem
+                              el={child}
+                              handleOnClick={handleOnClick}
+                            >
+                              <div {...drag.dragHandleProps}>
+                                <GripVertical className="-ml-2 mr-1 h-4 text-gray-400" />
+                              </div>
+                            </ComponentListItem>
+                          </div>
+                        )}
+                      </Draggable>
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
+            ) : null}
+            {drop.placeholder}
           </div>
-        </div>
-      ) : null}
+        )}
+      </Droppable>
     </div>
   )
 }
