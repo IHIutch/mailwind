@@ -1,22 +1,271 @@
-const BodyComponents = {
-  Accordion: 'Accordion',
-  AccordionElement: 'AccordionElement',
-  AccordionTitle: 'AccordionTitle',
-  AccordionText: 'AccordionText',
-  Button: 'Button',
-  Column: 'Column',
-  Divider: 'Divider',
-  Group: 'Group',
-  Hero: 'Hero',
-  Image: 'Image',
-  Navbar: 'Navbar',
-  Raw: 'Raw',
-  Section: 'Section',
-  Social: 'Social',
-  Spacer: 'Spacer',
-  Table: 'Table',
-  Text: 'Text',
-  Wrapper: 'Wrapper',
+// const BodyComponents = {
+//   Accordion: 'Accordion',
+//   AccordionElement: 'AccordionElement',
+//   AccordionTitle: 'AccordionTitle',
+//   AccordionText: 'AccordionText',
+//   Button: 'Button',
+//   Column: 'Column',
+//   Divider: 'Divider',
+//   Group: 'Group',
+//   Hero: 'Hero',
+//   Image: 'Image',
+//   Navbar: 'Navbar',
+//   Raw: 'Raw',
+//   Section: 'Section',
+//   Social: 'Social',
+//   Spacer: 'Spacer',
+//   Table: 'Table',
+//   Text: 'Text',
+//   Wrapper: 'Wrapper',
+// }
+
+export const MjText = {
+  title: 'Text',
+  tagName: 'mj-text',
+  description: 'This tag allows you to display text in your email.',
+  isEndingTag: true,
+  allowedChildren: [],
+  attributes: {
+    color: {
+      unit: 'color',
+      description: 'text color',
+      defaultValue: '#000000',
+    },
+    'font-family': {
+      unit: 'string',
+      description: 'font',
+      defaultValue: 'Ubuntu, Helvetica, Arial, sans-serif',
+    },
+    'font-size': {
+      unit: 'px',
+      description: 'text size',
+      defaultValue: '13px',
+    },
+    'font-style': {
+      unit: 'string',
+      description: 'normal/italic/oblique',
+      defaultValue: null,
+    },
+    'font-weight': {
+      unit: 'number',
+      description: 'text thickness',
+      defaultValue: null,
+    },
+    'line-height': {
+      unit: 'px',
+      description: 'space between the lines',
+      defaultValue: '1',
+    },
+    'letter-spacing': {
+      unit: 'px,em',
+      description: 'letter spacing',
+      defaultValue: 'none',
+    },
+    height: {
+      unit: 'px',
+      description: 'The height of the element',
+      defaultValue: null,
+    },
+    'text-decoration': {
+      unit: 'string',
+      description: 'underline/overline/line-through/none',
+      defaultValue: null,
+    },
+    'text-transform': {
+      unit: 'string',
+      description: 'uppercase/lowercase/capitalize',
+      defaultValue: null,
+    },
+    align: {
+      unit: 'string',
+      description: 'left/right/center/justify',
+      defaultValue: 'left',
+    },
+    'container-background-color': {
+      unit: 'color',
+      description: 'inner element background color',
+      defaultValue: null,
+    },
+    // padding: {
+    //   unit: 'px',
+    //   description: 'supports up to 4 parameters',
+    //   defaultValue: '10px 25px',
+    // },
+    'padding-top': {
+      unit: 'px',
+      description: 'top offset',
+      defaultValue: null,
+    },
+    'padding-bottom': {
+      unit: 'px',
+      description: 'bottom offset',
+      defaultValue: null,
+    },
+    'padding-left': {
+      unit: 'px',
+      description: 'left offset',
+      defaultValue: null,
+    },
+    'padding-right': {
+      unit: 'px',
+      description: 'right offset',
+      defaultValue: null,
+    },
+    'css-class': {
+      unit: 'string',
+      description: 'class name, added to the root HTML element created',
+      defaultValue: null,
+    },
+  },
+}
+
+export const MjImage = {
+  title: 'Image',
+  tagName: 'mj-image',
+  description:
+    'Displays a responsive image in your email. It is similar to the HTML <img /> tag. Note that if no width is provided, the image will use the parent column width.',
+  isEndingTag: false,
+  allowedChildren: [],
+  attributes: {
+    align: {
+      unit: 'position',
+      description: 'image alignment',
+      defaultValue: 'center',
+    },
+    alt: {
+      unit: 'string',
+      description: 'image description',
+      defaultValue: null,
+    },
+    border: {
+      unit: 'string',
+      description: 'css border definition',
+      defaultValue: 'none',
+    },
+    'border-top': {
+      unit: 'string',
+      description: 'css border definition',
+      defaultValue: 'none',
+    },
+    'border-bottom': {
+      unit: 'string',
+      description: 'css border definition',
+      defaultValue: 'none',
+    },
+    'border-left': {
+      unit: 'string',
+      description: 'css border definition',
+      defaultValue: 'none',
+    },
+    'border-right': {
+      unit: 'string',
+      description: 'css border definition',
+      defaultValue: 'none',
+    },
+    'border-radius': {
+      unit: 'px',
+      description: 'border radius',
+      defaultValue: null,
+    },
+    'container-background-color': {
+      unit: 'color',
+      description: 'inner element background color',
+      defaultValue: null,
+    },
+    'css-class': {
+      unit: 'string',
+      description: 'class name, added to the root HTML element created',
+      defaultValue: null,
+    },
+    'fluid-on-mobile': {
+      unit: 'string',
+      description:
+        'if "true", will be full width on mobile even if width is set',
+      defaultValue: false,
+    },
+    height: {
+      unit: 'px',
+      description: 'image height',
+      defaultValue: 'auto',
+    },
+    href: {
+      unit: 'url',
+      description: 'link to redirect to on click',
+      defaultValue: null,
+    },
+    name: {
+      unit: 'string',
+      description: 'specify the link name attribute',
+      defaultValue: null,
+    },
+    // padding: {
+    //   unit: 'px',
+    //   description: 'supports up to 4 parameters',
+    //   defaultValue: '10px 25px',
+    // },
+    'padding-bottom': {
+      unit: 'px',
+      description: 'bottom offset',
+      defaultValue: 0,
+    },
+    'padding-left': {
+      unit: 'px',
+      description: 'left offset',
+      defaultValue: 0,
+    },
+    'padding-right': {
+      unit: 'px',
+      description: 'right offset',
+      defaultValue: 0,
+    },
+    'padding-top': {
+      unit: 'px',
+      description: 'top offset',
+      defaultValue: 0,
+    },
+    rel: {
+      unit: 'string',
+      description: 'specify the rel attribute',
+      defaultValue: null,
+    },
+    sizes: {
+      unit: 'media query & width',
+      description: 'set width based on query',
+      defaultValue: null,
+    },
+    src: {
+      unit: 'url',
+      description: 'image source',
+      defaultValue: null,
+    },
+    srcset: {
+      unit: 'url & width',
+      description:
+        'enables to set a different image source based on the viewport',
+      defaultValue: null,
+    },
+    target: {
+      unit: 'string',
+      description: 'link target on click',
+      defaultValue: '_blank',
+    },
+    title: {
+      unit: 'string',
+      description: 'tooltip & accessibility',
+      defaultValue: null,
+    },
+    usemap: {
+      unit: 'string',
+      description:
+        "reference to image map, be careful, it isn't supported everywhere",
+      defaultValue: null,
+    },
+    width: {
+      unit: 'px',
+      description: 'image width',
+      defaultValue: 'parent width',
+    },
+  },
 }
 
 export const MjButton = {
@@ -155,8 +404,7 @@ export const MjButton = {
       description: 'line-height on link',
       defaultValue: '120%',
     },
-    // 'padding': {
-    // 'padding',
+    // padding: {
     //   type: 'number',
     //   unit: 'px',
     //   description: 'supports up to 4 parameters',
@@ -245,20 +493,238 @@ export const MjButton = {
 export const MjColumn = {
   title: 'Column',
   tagName: 'mj-column',
-  attributes: [],
+  attributes: {
+    'background-color': {
+      unit: 'color',
+      description: 'background color for a column',
+      defaultValue: null,
+    },
+    'inner-background-color': {
+      unit: 'color',
+      description: 'requires: a padding, inner background color for column',
+      defaultValue: null,
+    },
+    border: {
+      unit: 'string',
+      description: 'css border format',
+      defaultValue: 'none',
+    },
+    'border-bottom': {
+      unit: 'string',
+      description: 'css border format',
+      defaultValue: 0,
+    },
+    'border-left': {
+      unit: 'string',
+      description: 'css border format',
+      defaultValue: 0,
+    },
+    'border-right': {
+      unit: 'string',
+      description: 'css border format',
+      defaultValue: 0,
+    },
+    'border-top': {
+      unit: 'string',
+      description: 'css border format',
+      defaultValue: 0,
+    },
+    'border-radius': {
+      unit: 'percent/px',
+      description: 'border radius',
+      defaultValue: 0,
+    },
+    'inner-border': {
+      unit: 'string',
+      description: 'css border format',
+      defaultValue: null,
+    },
+    'inner-border-bottom': {
+      unit: 'string',
+      description: 'css border format ; requires a padding',
+      defaultValue: null,
+    },
+    'inner-border-left': {
+      unit: 'string',
+      description: 'css border format ; requires a padding',
+      defaultValue: null,
+    },
+    'inner-border-right': {
+      unit: 'string',
+      description: 'css border format ; requires a padding',
+      defaultValue: null,
+    },
+    'inner-border-top': {
+      unit: 'string',
+      description: 'css border format ; requires a padding',
+      defaultValue: null,
+    },
+    'inner-border-radius': {
+      unit: 'percent/px',
+      description: 'border radius ; requires a padding',
+      defaultValue: null,
+    },
+    width: {
+      unit: 'percent/px',
+      description: 'column width',
+      defaultValue: '(100 / number of non-raw elements in section)%',
+    },
+    'vertical-align': {
+      unit: 'string',
+      description: 'middle/top/bottom',
+      defaultValue: 'top',
+    },
+    // padding: {
+    //   unit: 'px',
+    //   description: 'supports up to 4 parameters',
+    //   'defaultValue': null,
+    // },
+    'padding-top': {
+      unit: 'px',
+      description: 'section top offset',
+      defaultValue: 0,
+    },
+    'padding-bottom': {
+      unit: 'px',
+      description: 'section bottom offset',
+      defaultValue: 0,
+    },
+    'padding-left': {
+      unit: 'px',
+      description: 'section left offset',
+      defaultValue: 0,
+    },
+    'padding-right': {
+      unit: 'px',
+      description: 'section right offset',
+      defaultValue: 0,
+    },
+    'css-class': {
+      unit: 'string',
+      description: 'class name, added to the root HTML element created',
+      defaultValue: null,
+    },
+  },
   description: 'Displays a customizable column.',
   isEndingTag: false,
-  allowedChildren: [
-    // MjText,
-    // MjImage,
-    MjButton,
-  ],
+  allowedChildren: [MjText, MjImage, MjButton],
 }
 
 export const MjSection = {
   title: 'Section',
   tagName: 'mj-section',
-  attributes: {},
+  attributes: {
+    'background-color': {
+      unit: 'color',
+      description: 'section color',
+      defaultValue: null,
+    },
+    'background-position': {
+      unit: "percent / 'left','top',... (2 values max)",
+      description: 'css background position (see outlook limitations below)',
+      defaultValue: 'top center',
+    },
+    'background-position-x': {
+      unit: 'percent / keyword',
+      description: 'css background position x',
+      defaultValue: 'none',
+    },
+    'background-position-y': {
+      unit: 'percent / keyword',
+      description: 'css background position y',
+      defaultValue: 'none',
+    },
+    'background-repeat': {
+      unit: 'string',
+      description: 'css background repeat',
+      defaultValue: 'repeat',
+    },
+    'background-size': {
+      unit: "px/percent/'cover'/'contain'",
+      description: 'css background size',
+      defaultValue: 'auto',
+    },
+    'background-url': {
+      unit: 'url',
+      description: 'background url',
+      defaultValue: null,
+    },
+    border: {
+      unit: 'string',
+      description: 'css border format',
+      defaultValue: 'none',
+    },
+    'border-bottom': {
+      unit: 'string',
+      description: 'css border format',
+      defaultValue: 0,
+    },
+    'border-left': {
+      unit: 'string',
+      description: 'css border format',
+      defaultValue: 0,
+    },
+    'border-radius': {
+      unit: 'px',
+      description: 'border radius',
+      defaultValue: 0,
+    },
+    'border-right': {
+      unit: 'string',
+      description: 'css border format',
+      defaultValue: 0,
+    },
+    'border-top': {
+      unit: 'string',
+      description: 'css border format',
+      defaultValue: 0,
+    },
+    'css-class': {
+      unit: 'string',
+      description: 'class name, added to the root HTML element created',
+      defaultValue: '',
+    },
+    direction: {
+      unit: 'ltr / rtl',
+      description: 'set the display order of direct children',
+      defaultValue: 'ltr',
+    },
+    'full-width': {
+      unit: 'string',
+      description: 'make the section full-width',
+      defaultValue: null,
+    },
+    // padding: {
+    //   unit: 'px',
+    //   description: 'supports up to 4 parameters',
+    //   defaultValue: '20px 0',
+    // },
+    'padding-bottom': {
+      unit: 'px',
+      description: 'section bottom offset',
+      defaultValue: null,
+    },
+    'padding-left': {
+      unit: 'px',
+      description: 'section left offset',
+      defaultValue: null,
+    },
+    'padding-right': {
+      unit: 'px',
+      description: 'section right offset',
+      defaultValue: null,
+    },
+    'padding-top': {
+      unit: 'px',
+      description: 'section top offset',
+      defaultValue: null,
+    },
+    'text-align': {
+      unit: 'string',
+      description: 'css text-align',
+      defaultValue: 'center',
+    },
+  },
   isEndingTag: false,
   allowedChildren: [MjColumn],
 }
@@ -266,7 +732,114 @@ export const MjSection = {
 export const MjWrapper = {
   title: 'Wrapper',
   tagName: 'mj-wrapper',
-  attributes: {},
+  attributes: {
+    'background-color': {
+      unit: 'color',
+      description: 'section color',
+      defaultValue: null,
+    },
+    'background-position': {
+      unit: "percent / 'left','top',... (2 values max)",
+      description:
+        'css background position (see outlook limitations in mj-section doc)',
+      defaultValue: 'top center',
+    },
+    'background-position-x': {
+      unit: 'percent / keyword',
+      description: 'css background position x',
+      defaultValue: 'auto',
+    },
+    'background-position-y': {
+      unit: 'percent / keyword',
+      description: 'css background position y',
+      defaultValue: 'auto',
+    },
+    'background-repeat': {
+      unit: 'string',
+      description: 'css background repeat',
+      defaultValue: 'repeat',
+    },
+    'background-size': {
+      unit: "px/percent/'cover'/'contain'",
+      description: 'css background size',
+      defaultValue: 'auto',
+    },
+    'background-url': {
+      unit: 'url',
+      description: 'background url',
+      defaultValue: null,
+    },
+    border: {
+      unit: 'string',
+      description: 'css border format',
+      defaultValue: 'none',
+    },
+    'border-bottom': {
+      unit: 'string',
+      description: 'css border format',
+      defaultValue: 0,
+    },
+    'border-left': {
+      unit: 'string',
+      description: 'css border format',
+      defaultValue: 0,
+    },
+    'border-radius': {
+      unit: 'px',
+      description: 'border radius',
+      defaultValue: 0,
+    },
+    'border-right': {
+      unit: 'string',
+      description: 'css border format',
+      defaultValue: 0,
+    },
+    'border-top': {
+      unit: 'string',
+      description: 'css border format',
+      defaultValue: 0,
+    },
+    'css-class': {
+      unit: 'string',
+      description: 'class name, added to the root HTML element created',
+      defaultValue: '',
+    },
+    'full-width': {
+      unit: 'string',
+      description: 'make the wrapper full-width',
+      defaultValue: false,
+    },
+    // padding: {
+    //   unit: 'px',
+    //   description: 'supports up to 4 parameters',
+    //   defaultValue: '20px 0',
+    // },
+    'padding-bottom': {
+      unit: 'px',
+      description: 'section bottom offset',
+      defaultValue: 0,
+    },
+    'padding-left': {
+      unit: 'px',
+      description: 'section left offset',
+      defaultValue: 0,
+    },
+    'padding-right': {
+      unit: 'px',
+      description: 'section right offset',
+      defaultValue: 0,
+    },
+    'padding-top': {
+      unit: 'px',
+      description: 'section top offset',
+      defaultValue: 0,
+    },
+    'text-align': {
+      unit: 'string',
+      description: 'css text-align',
+      defaultValue: 'center',
+    },
+  },
   isEndingTag: false,
   allowedChildren: [MjSection],
 }

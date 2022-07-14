@@ -100,17 +100,31 @@ export default function Index() {
                       ),
                       'css-class': 'data-' + li.id,
                     },
-                    content: li.content || 'Press Me',
+                    content:
+                      li.tagName === 'mj-text'
+                        ? '<p>Text</p>'
+                        : li.content || 'Press Me',
                     children: getNestedElements(list, li),
                   }))
               return {
-                ...el,
+                tagName: el.tagName,
+                attributes: {
+                  ...Object.entries(el.attributes).reduce(
+                    (acc, [key, val]) => ({
+                      ...acc,
+                      [key]: val.value || val.defaultValue,
+                    }),
+                    {}
+                  ),
+                  'css-class': 'data-' + el.id,
+                },
                 children: getNestedElements(data.body, el),
               }
             }),
         },
       ],
     }
+    console.log({ newCode })
     setCode(newCode)
   }, [data])
 
