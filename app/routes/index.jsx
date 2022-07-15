@@ -286,32 +286,31 @@ const AttributeList = ({ activeId, attributes, handleUpdate }) => {
     <div>
       {Object.entries(attributes).map(([key, val], idx) => (
         <div key={`${activeId}-${idx}`} className="mb-2">
-          <div className="block">
-            <label className="text-sm font-semibold">{key}</label>
-          </div>
-          <div className="block">
-            <input
-              type="text"
-              onChange={(e) =>
-                handleUpdate(activeId, {
-                  attributes: {
-                    ...attributes,
-                    [key]: { ...val, value: e.target.value },
-                  },
-                })
-              }
-              defaultValue={val.value || val.defaultValue}
-              onBlur={(e) =>
-                !e.target.value &&
-                handleUpdate(activeId, {
-                  attributes: {
-                    ...attributes,
-                    [key]: { ...val, value: val.defaultValue },
-                  },
-                })
-              }
-            />
-          </div>
+          <label className="mb-2 text-sm font-medium text-gray-900">
+            {val.label}
+          </label>
+          <input
+            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+            type="text"
+            onChange={(e) =>
+              handleUpdate(activeId, {
+                attributes: {
+                  ...attributes,
+                  [key]: { ...val, value: e.target.value },
+                },
+              })
+            }
+            defaultValue={val.value || val.defaultValue}
+            onBlur={(e) =>
+              !e.target.value &&
+              handleUpdate(activeId, {
+                attributes: {
+                  ...attributes,
+                  [key]: { ...val, value: val.defaultValue },
+                },
+              })
+            }
+          />
         </div>
       ))}
     </div>
