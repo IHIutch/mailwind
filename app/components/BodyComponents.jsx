@@ -80,7 +80,7 @@ const Attributes = {
     description: 'left/right/center/justify',
   },
   'container-background-color': {
-    label: 'Container-Background-Color',
+    label: 'Container Background Color',
     type: 'color',
     description: 'inner element background color',
   },
