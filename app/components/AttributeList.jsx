@@ -3,6 +3,12 @@ import Input from './Input'
 import Select from './Select'
 
 const AttributeList = ({ onChange, attributes }) => {
+  const handleChange = (key, value) => {
+    onChange({
+      [key]: value,
+    })
+  }
+
   return Object.entries(attributes).map(([key, val], idx) => {
     switch (key) {
       case 'align':
@@ -14,19 +20,15 @@ const AttributeList = ({ onChange, attributes }) => {
               defaultValue={val.defaultValue}
               options={['left', 'right', 'center', 'justify']}
               onChange={(value) =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value,
                 })
               }
               onBlur={() =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value: val.defaultValue,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value: val.defaultValue,
                 })
               }
             />
@@ -52,19 +54,15 @@ const AttributeList = ({ onChange, attributes }) => {
                 'bottom right',
               ]}
               onChange={(value) =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value,
                 })
               }
               onBlur={() =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value: val.defaultValue,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value: val.defaultValue,
                 })
               }
             />
@@ -80,19 +78,15 @@ const AttributeList = ({ onChange, attributes }) => {
               defaultValue={val.defaultValue}
               options={['repeat', 'repeat-x', 'repeat-y', 'no-repeat']}
               onChange={(value) =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value,
                 })
               }
               onBlur={() =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value: val.defaultValue,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value: val.defaultValue,
                 })
               }
             />
@@ -108,19 +102,15 @@ const AttributeList = ({ onChange, attributes }) => {
               defaultValue={val.defaultValue}
               options={['auto', 'cover', 'contain']}
               onChange={(value) =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value,
                 })
               }
               onBlur={() =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value: val.defaultValue,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value: val.defaultValue,
                 })
               }
             />
@@ -136,19 +126,15 @@ const AttributeList = ({ onChange, attributes }) => {
               value={val.value}
               defaultValue={val.defaultValue}
               onChange={(value) =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value,
                 })
               }
               onBlur={() =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value: val.defaultValue,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value: val.defaultValue,
                 })
               }
             />
@@ -164,19 +150,15 @@ const AttributeList = ({ onChange, attributes }) => {
               defaultValue={val.defaultValue}
               options={['ltr', 'rtl']}
               onChange={(value) =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value,
                 })
               }
               onBlur={() =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value: val.defaultValue,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value: val.defaultValue,
                 })
               }
             />
@@ -192,19 +174,15 @@ const AttributeList = ({ onChange, attributes }) => {
               defaultValue={val.defaultValue}
               options={['none', 'italic']}
               onChange={(value) =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value,
                 })
               }
               onBlur={() =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value: val.defaultValue,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value: val.defaultValue,
                 })
               }
             />
@@ -220,19 +198,15 @@ const AttributeList = ({ onChange, attributes }) => {
               defaultValue={val.defaultValue}
               options={['none', 'capitalize', 'lowercase', 'uppercase']}
               onChange={(value) =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value,
                 })
               }
               onBlur={() =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value: val.defaultValue,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value: val.defaultValue,
                 })
               }
             />
@@ -258,19 +232,15 @@ const AttributeList = ({ onChange, attributes }) => {
                 '900',
               ]}
               onChange={(value) =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value,
                 })
               }
               onBlur={() =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value: val.defaultValue,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value: val.defaultValue,
                 })
               }
             />
@@ -294,23 +264,46 @@ const AttributeList = ({ onChange, attributes }) => {
         return (
           <div key={idx} className="mb-2 inline-block w-1/2 pl-2 first:pl-0">
             <Input
+              type="text"
               label={val.label}
               value={val.value}
               defaultValue={val.defaultValue}
               onChange={(value) =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value,
                 })
               }
               onBlur={() =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value: val.defaultValue,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value: val.defaultValue,
+                })
+              }
+            />
+          </div>
+        )
+
+      case 'color':
+      case 'background-color':
+      case 'container-background-color':
+        return (
+          <div key={idx} className="mb-2 w-full">
+            <Input
+              type="color"
+              label={val.label}
+              value={val.value}
+              defaultValue={val.defaultValue}
+              onChange={(value) =>
+                handleChange(key, {
+                  ...val,
+                  value,
+                })
+              }
+              onBlur={() =>
+                handleChange(key, {
+                  ...val,
+                  value: val.defaultValue,
                 })
               }
             />
@@ -326,19 +319,15 @@ const AttributeList = ({ onChange, attributes }) => {
               defaultValue={val.defaultValue}
               options={['_self', '_blank']}
               onChange={(value) =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value,
                 })
               }
               onBlur={() =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value: val.defaultValue,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value: val.defaultValue,
                 })
               }
             />
@@ -354,19 +343,15 @@ const AttributeList = ({ onChange, attributes }) => {
               defaultValue={val.defaultValue}
               options={['left', 'right', 'center']}
               onChange={(value) =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value,
                 })
               }
               onBlur={() =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value: val.defaultValue,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value: val.defaultValue,
                 })
               }
             />
@@ -382,19 +367,15 @@ const AttributeList = ({ onChange, attributes }) => {
               defaultValue={val.defaultValue}
               options={['none', 'underline', 'line-through']}
               onChange={(value) =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value,
                 })
               }
               onBlur={() =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value: val.defaultValue,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value: val.defaultValue,
                 })
               }
             />
@@ -410,19 +391,15 @@ const AttributeList = ({ onChange, attributes }) => {
               defaultValue={val.defaultValue}
               options={['top', 'middle', 'bottom']}
               onChange={(value) =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value,
                 })
               }
               onBlur={() =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value: val.defaultValue,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value: val.defaultValue,
                 })
               }
             />
@@ -437,19 +414,15 @@ const AttributeList = ({ onChange, attributes }) => {
               value={val.value}
               defaultValue={val.defaultValue}
               onChange={(value) =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value,
                 })
               }
               onBlur={() =>
-                onChange({
-                  [key]: {
-                    ...val,
-                    value: val.defaultValue,
-                  },
+                handleChange(key, {
+                  ...val,
+                  value: val.defaultValue,
                 })
               }
             />
