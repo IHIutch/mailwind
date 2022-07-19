@@ -215,7 +215,7 @@ const Attributes = {
     label: 'Width',
     unit: 'px',
     type: Number,
-    description: 'image width',
+    description: '',
   },
   'background-color': {
     label: 'Background Color',
@@ -396,7 +396,7 @@ export const MjImage = {
     target: { ...Attributes.target, defaultValue: '_blank' },
     title: { ...Attributes.title, defaultValue: null },
     usemap: { ...Attributes.usemap, defaultValue: null },
-    width: { ...Attributes.width, defaultValue: 'parent width' },
+    width: { ...Attributes.width, defaultValue: '100%' },
   },
 }
 
@@ -503,7 +503,7 @@ export const MjColumn = {
     },
     width: {
       ...Attributes.width,
-      defaultValue: '(100 / number of non-raw elements in section)%',
+      defaultValue: null,
     },
     'vertical-align': { ...Attributes['vertical-align'], defaultValue: 'top' },
     padding: { ...Attributes.padding, defaultValue: null },

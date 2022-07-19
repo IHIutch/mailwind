@@ -6,6 +6,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from '@remix-run/react'
+import { ActiveElementProvider } from '../context/activeElement'
 import styles from './styles/app.css'
 
 export function links() {
@@ -26,7 +27,9 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Outlet />
+        <ActiveElementProvider>
+          <Outlet />
+        </ActiveElementProvider>
         <ScrollRestoration />
         <Scripts />
         <LiveReload />

@@ -3,7 +3,7 @@ import ColorPicker from './ColorPicker'
 import Input from './Input'
 import Select from './Select'
 
-const AttributeList = ({ onChange, attributes }) => {
+const AttributeList = ({ activeId, onChange, attributes }) => {
   const handleChange = (key, value) => {
     onChange({
       [key]: value,
@@ -14,7 +14,7 @@ const AttributeList = ({ onChange, attributes }) => {
     switch (key) {
       case 'align':
         return (
-          <div key={idx} className="mb-2 w-full">
+          <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <Select
               label={val.label}
               value={val.value}
@@ -38,7 +38,7 @@ const AttributeList = ({ onChange, attributes }) => {
 
       case 'background-position':
         return (
-          <div key={idx} className="mb-2 w-full">
+          <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <Select
               label={val.label}
               value={val.value}
@@ -72,7 +72,7 @@ const AttributeList = ({ onChange, attributes }) => {
 
       case 'background-repeat':
         return (
-          <div key={idx} className="mb-2 w-full">
+          <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <Select
               label={val.label}
               value={val.value}
@@ -96,7 +96,7 @@ const AttributeList = ({ onChange, attributes }) => {
 
       case 'background-size':
         return (
-          <div key={idx} className="mb-2 w-full">
+          <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <Select
               label={val.label}
               value={val.value}
@@ -120,7 +120,7 @@ const AttributeList = ({ onChange, attributes }) => {
 
       case 'background-url':
         return (
-          <div key={idx} className="mb-2 w-full">
+          <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <Input
               type="url"
               label={val.label}
@@ -144,7 +144,7 @@ const AttributeList = ({ onChange, attributes }) => {
 
       case 'direction':
         return (
-          <div key={idx} className="mb-2 w-full">
+          <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <Select
               label={val.label}
               value={val.value}
@@ -168,7 +168,7 @@ const AttributeList = ({ onChange, attributes }) => {
 
       case 'font-style':
         return (
-          <div key={idx} className="mb-2 w-full">
+          <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <Select
               label={val.label}
               value={val.value}
@@ -192,7 +192,7 @@ const AttributeList = ({ onChange, attributes }) => {
 
       case 'text-transform':
         return (
-          <div key={idx} className="mb-2 w-full">
+          <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <Select
               label={val.label}
               value={val.value}
@@ -216,7 +216,7 @@ const AttributeList = ({ onChange, attributes }) => {
 
       case 'font-weight':
         return (
-          <div key={idx} className="mb-2 w-full">
+          <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <Select
               label={val.label}
               value={val.value}
@@ -263,7 +263,10 @@ const AttributeList = ({ onChange, attributes }) => {
       case 'inner-padding-bottom':
       case 'inner-padding-left':
         return (
-          <div key={idx} className="mb-2 inline-block w-1/2 pl-2 first:pl-0">
+          <div
+            key={`${activeId}-${idx}`}
+            className="mb-2 inline-block w-1/2 pl-2 first:pl-0"
+          >
             <Input
               type="text"
               label={val.label}
@@ -289,40 +292,23 @@ const AttributeList = ({ onChange, attributes }) => {
       case 'background-color':
       case 'container-background-color':
         return (
-          <div key={idx} className="mb-2 w-full">
+          <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <ColorPicker
-              value={val.value || val.defaultValue || '#ffffff'}
-              onChange={(value) =>
-                handleChange(key, {
-                  ...val,
-                  value,
-                })
-              }
-            />
-            {/* <Input
-              type="color"
               label={val.label}
-              value={val.value}
-              defaultValue={val.defaultValue}
-              onChange={(value) =>
+              value={val.value || val.defaultValue || '#ffffff'}
+              onChange={(value) => {
                 handleChange(key, {
                   ...val,
                   value,
                 })
-              }
-              onBlur={() =>
-                handleChange(key, {
-                  ...val,
-                  value: val.defaultValue,
-                })
-              }
-            /> */}
+              }}
+            />
           </div>
         )
 
       case 'target':
         return (
-          <div key={idx} className="mb-2 w-full">
+          <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <Select
               label={val.label}
               value={val.value}
@@ -346,7 +332,7 @@ const AttributeList = ({ onChange, attributes }) => {
 
       case 'text-align':
         return (
-          <div key={idx} className="mb-2 w-full">
+          <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <Select
               label={val.label}
               value={val.value}
@@ -370,7 +356,7 @@ const AttributeList = ({ onChange, attributes }) => {
 
       case 'text-decoration':
         return (
-          <div key={idx} className="mb-2 w-full">
+          <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <Select
               label={val.label}
               value={val.value}
@@ -394,7 +380,7 @@ const AttributeList = ({ onChange, attributes }) => {
 
       case 'vertical-align':
         return (
-          <div key={idx} className="mb-2 w-full">
+          <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <Select
               label={val.label}
               value={val.value}
@@ -418,7 +404,7 @@ const AttributeList = ({ onChange, attributes }) => {
 
       default:
         return (
-          <div key={idx} className="mb-2 w-full">
+          <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <Input
               label={val.label}
               value={val.value}

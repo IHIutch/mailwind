@@ -9,15 +9,22 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 import { GripVertical } from 'lucide-react'
 import AttributeList from '../components/AttributeList'
+import {
+  setActiveElement,
+  useActiveElementDispatch,
+  useActiveElementState,
+} from '../../context/activeElement'
+import clsx from 'clsx'
 lodash.mixin(lodashId)
 
 export default function Index() {
+  const dispatch = useActiveElementDispatch()
+  const { data: activeElement } = useActiveElementState()
   const fetcher = useFetcher()
   const [data, setData] = useState({
     head: [],
     body: [],
   })
-  const [activeElement, setActiveElement] = useState(null)
   const [code, setCode] = useState({
     tagName: 'mjml',
     attributes: {},
@@ -169,7 +176,7 @@ export default function Index() {
 
   const handleElementClick = (id) => {
     const found = data.body.find((el) => el.id === id)
-    setActiveElement(found)
+    dispatch(setActiveElement(found))
   }
 
   const handleDragEnd = (e) => {
@@ -233,7 +240,7 @@ export default function Index() {
               </div>
               <div className="mt-4">
                 <AttributeList
-                  key={activeElement.id}
+                  activeId={activeElement.id}
                   attributes={activeElement.attributes}
                   onChange={(payload) => {
                     handleEditBodyComponent(activeElement.id, {
@@ -326,12 +333,24 @@ const Preview = ({ html, onElementClick }) => {
 // }
 
 const ComponentListItem = ({ el, handleOnClick, children }) => {
+  const { data: activeElement } = useActiveElementState()
+  const dispatch = useActiveElementDispatch()
+
   return (
     <div>
-      <div className="w-48 rounded border border-gray-300 bg-white p-2">
+      <div
+        className={clsx(
+          'w-48 rounded border border-gray-300 p-2',
+          activeElement?.id === el.id
+            ? 'border-blue-500 bg-blue-50'
+            : 'border-gray-300 bg-white'
+        )}
+      >
         <div className="flex items-center">
           <div>{children}</div>
-          <p>{el.title}</p>
+          <button type="button" onClick={() => dispatch(setActiveElement(el))}>
+            {el.title}
+          </button>
           {el.allowedChildren.length > 0 ? (
             <div className="ml-auto">
               <DropdownMenu.Root>
