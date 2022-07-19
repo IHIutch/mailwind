@@ -1,4 +1,5 @@
 import React from 'react'
+import ColorPicker from './ColorPicker'
 import Input from './Input'
 import Select from './Select'
 
@@ -289,7 +290,16 @@ const AttributeList = ({ onChange, attributes }) => {
       case 'container-background-color':
         return (
           <div key={idx} className="mb-2 w-full">
-            <Input
+            <ColorPicker
+              value={val.value || val.defaultValue || '#ffffff'}
+              onChange={(value) =>
+                handleChange(key, {
+                  ...val,
+                  value,
+                })
+              }
+            />
+            {/* <Input
               type="color"
               label={val.label}
               value={val.value}
@@ -306,7 +316,7 @@ const AttributeList = ({ onChange, attributes }) => {
                   value: val.defaultValue,
                 })
               }
-            />
+            /> */}
           </div>
         )
 
