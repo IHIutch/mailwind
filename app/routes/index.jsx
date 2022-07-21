@@ -132,7 +132,6 @@ export default function Index() {
         },
       ],
     }
-    console.log({ newCode })
     setCode(newCode)
   }, [data])
 
@@ -164,7 +163,7 @@ export default function Index() {
     setData(tempData)
   }
 
-  const handleEditBodyComponent = (id, payload) => {
+  const handleUpdateBodyComponent = (id, payload) => {
     const tempData = { ...data }
     const found = tempData.body.find((el) => el.id === id)
     lodash.updateById(tempData.body, id, {
@@ -179,8 +178,28 @@ export default function Index() {
     dispatch(setActiveElement(found))
   }
 
-  const handleDragEnd = (e) => {
-    console.log('dragEnd', e)
+  // const move = (sourceList = [], destinationList = [], source, destination) => {
+  //   const [removed] = sourceList.splice(source.index, 1)
+  //   destinationList.splice(destination.index, 0, removed)
+
+  //   return {
+  //     [source.droppableId]: sourceList,
+  //     [destination.droppableId]: destinationList,
+  //   }
+  // }
+
+  const handleDragEnd = (result) => {
+    const { source, destination, draggableId, type } = result
+    if (!destination) return // dropped outside the list
+
+    const id = draggableId.replace('draggable-', '')
+    const found = data.body.find((el) => el.id === id)
+    const newData = {
+      ...found,
+      parentId: destination.droppableId.replace('droppable-', ''),
+    }
+
+    handleUpdateBodyComponent(id, newData)
   }
   const handleDragStart = (e) => {
     console.log('dragStart', e)
@@ -243,7 +262,7 @@ export default function Index() {
                   activeId={activeElement.id}
                   attributes={activeElement.attributes}
                   onChange={(payload) => {
-                    handleEditBodyComponent(activeElement.id, {
+                    handleUpdateBodyComponent(activeElement.id, {
                       attributes: {
                         ...activeElement.attributes,
                         ...payload,
@@ -296,42 +315,6 @@ const Preview = ({ html, onElementClick }) => {
   )
 }
 
-// const AttributeList = ({ activeId, attributes, handleUpdate }) => {
-//   return (
-//     <div>
-//       {Object.entries(attributes).map(([key, val], idx) => (
-//         <div key={`${activeId}-${idx}`} className="mb-2">
-//           <label className="mb-2 text-sm font-medium text-gray-900">
-//             {val.label}
-//           </label>
-//           <input
-//             className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-//             type="text"
-//             onChange={(e) =>
-//               handleUpdate(activeId, {
-//                 attributes: {
-//                   ...attributes,
-//                   [key]: { ...val, value: e.target.value },
-//                 },
-//               })
-//             }
-//             defaultValue={val.value || val.defaultValue}
-//             onBlur={(e) =>
-//               !e.target.value &&
-//               handleUpdate(activeId, {
-//                 attributes: {
-//                   ...attributes,
-//                   [key]: { ...val, value: val.defaultValue },
-//                 },
-//               })
-//             }
-//           />
-//         </div>
-//       ))}
-//     </div>
-//   )
-// }
-
 const ComponentListItem = ({ el, handleOnClick, children }) => {
   const { data: activeElement } = useActiveElementState()
   const dispatch = useActiveElementDispatch()
@@ -350,6 +333,7 @@ const ComponentListItem = ({ el, handleOnClick, children }) => {
           <div>{children}</div>
           <button type="button" onClick={() => dispatch(setActiveElement(el))}>
             {el.title}
+            {/* <p className="text-xs">{el.id}</p> */}
           </button>
           {el.allowedChildren.length > 0 ? (
             <div className="ml-auto">
