@@ -1,10 +1,17 @@
 import { useFetcher } from '@remix-run/react'
 import lodashId from 'lodash-id'
 import { useEffect, useState } from 'react'
-import { MjWrapper } from '../components/BodyComponents'
+import {
+  MjButton,
+  MjColumn,
+  MjImage,
+  MjSection,
+  MjText,
+  MjWrapper,
+} from '../components/BodyComponents'
 import getHtml from '../models/getHtml.server'
 import lodash from 'lodash'
-import { ClientOnly } from 'remix-utils'
+import { ClientOnly, useHydrated } from 'remix-utils'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 import { GripVertical } from 'lucide-react'
@@ -15,16 +22,15 @@ import {
   useActiveElementState,
 } from '../../context/activeElement'
 import clsx from 'clsx'
+import { db } from '../models/db'
+import { useLiveQuery } from 'dexie-react-hooks'
 lodash.mixin(lodashId)
 
 export default function Index() {
+  const isHydrated = useHydrated()
   const dispatch = useActiveElementDispatch()
   const { data: activeElement } = useActiveElementState()
   const fetcher = useFetcher()
-  const [data, setData] = useState({
-    head: [],
-    body: [],
-  })
   const [code, setCode] = useState({
     tagName: 'mjml',
     attributes: {},
@@ -41,8 +47,14 @@ export default function Index() {
     ],
   })
 
-  const nestedElements = data.body
-    .filter((el) => el.parentId === '-1')
+  let bodyComps = useLiveQuery(
+    () => (isHydrated ? db.body.toArray() : []),
+    [isHydrated]
+  )
+  bodyComps = bodyComps || []
+
+  const nestedElements = bodyComps
+    .filter((el) => el.parentId === -1)
     .map((el) => {
       const getNestedElements = (list, parent) =>
         list
@@ -53,7 +65,7 @@ export default function Index() {
           }))
       return {
         ...el,
-        children: getNestedElements(data.body, el),
+        children: getNestedElements(bodyComps, el),
       }
     })
 
@@ -69,7 +81,7 @@ export default function Index() {
               tagName: 'mj-html-attributes',
               attributes: {},
               children:
-                data.body.map((item) => ({
+                bodyComps.map((item) => ({
                   tagName: 'mj-selector',
                   attributes: {
                     path: '.data-' + item.id,
@@ -90,8 +102,8 @@ export default function Index() {
         {
           tagName: 'mj-body',
           attributes: {},
-          children: data.body
-            .filter((el) => el.parentId === '-1')
+          children: bodyComps
+            .filter((el) => el.parentId === -1)
             .map((el) => {
               const getNestedElements = (list, parent) =>
                 list
@@ -99,10 +111,10 @@ export default function Index() {
                   .map((li) => ({
                     tagName: li.tagName,
                     attributes: {
-                      ...Object.entries(li.attributes).reduce(
+                      ...Object.entries(li).reduce(
                         (acc, [key, val]) => ({
                           ...acc,
-                          [key]: val.value || val.defaultValue,
+                          [key]: val,
                         }),
                         {}
                       ),
@@ -117,23 +129,23 @@ export default function Index() {
               return {
                 tagName: el.tagName,
                 attributes: {
-                  ...Object.entries(el.attributes).reduce(
+                  ...Object.entries(el).reduce(
                     (acc, [key, val]) => ({
                       ...acc,
-                      [key]: val.value || val.defaultValue,
+                      [key]: val,
                     }),
                     {}
                   ),
                   'css-class': 'data-' + el.id,
                 },
-                children: getNestedElements(data.body, el),
+                children: getNestedElements(bodyComps, el),
               }
             }),
         },
       ],
     }
     setCode(newCode)
-  }, [data])
+  }, [bodyComps])
 
   useEffect(() => {
     try {
@@ -150,31 +162,33 @@ export default function Index() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [code])
 
-  useEffect(() => {
-    const tempData = { ...data }
-    lodash.insert(tempData.body, { ...MjWrapper, parentId: '-1' })
-    setData(tempData)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  // useEffect(() => {
+  //   const tempData = { ...data }
+  //   lodash.insert(tempData.body, { ...MjWrapper, parentId: '-1' })
+  //   setData(tempData)
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [])
 
   const handleAddBodyComponent = (payload) => {
-    const tempData = { ...data }
-    lodash.insert(tempData.body, { ...payload })
-    setData(tempData)
+    const attributes = Object.entries(payload.attributes).reduce(
+      (acc, [key, value]) => ({ ...acc, [key]: value.defaultValue }),
+      {}
+    )
+    db.body.add({
+      ...attributes,
+      tagName: payload.tagName,
+      parentId: payload.parentId,
+    })
   }
 
   const handleUpdateBodyComponent = (id, payload) => {
-    const tempData = { ...data }
-    const found = tempData.body.find((el) => el.id === id)
-    lodash.updateById(tempData.body, id, {
-      ...found,
+    db.body.update(id, {
       ...payload,
     })
-    setData(tempData)
   }
 
   const handleElementClick = (id) => {
-    const found = data.body.find((el) => el.id === id)
+    const found = bodyComps.find((el) => el.id === id)
     dispatch(setActiveElement(found))
   }
 
@@ -193,7 +207,7 @@ export default function Index() {
     if (!destination) return // dropped outside the list
 
     const id = draggableId.replace('draggable-', '')
-    const found = data.body.find((el) => el.id === id)
+    const found = bodyComps.find((el) => el.id === id)
     const newData = {
       ...found,
       parentId: destination.droppableId.replace('droppable-', ''),
@@ -210,13 +224,6 @@ export default function Index() {
       <div className="relative h-full w-[300px] shrink-0 border-r">
         <div className="absolute inset-x-0 z-10 flex h-16 items-center border-b bg-white px-4">
           <div className="font-semibold">Components</div>
-          {/* <button
-            type="button"
-            className="ml-auto rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300"
-            onClick={() => handleAddBodyComponent(MjButton)}
-          >
-            Add Button
-          </button> */}
         </div>
         <div className="absolute inset-x-0 h-full overflow-auto bg-gray-100 pt-16">
           {nestedElements.length > 0 ? (
@@ -260,14 +267,9 @@ export default function Index() {
               <div className="mt-4">
                 <AttributeList
                   activeId={activeElement.id}
-                  attributes={activeElement.attributes}
+                  attributes={activeElement || {}}
                   onChange={(payload) => {
-                    handleUpdateBodyComponent(activeElement.id, {
-                      attributes: {
-                        ...activeElement.attributes,
-                        ...payload,
-                      },
-                    })
+                    handleUpdateBodyComponent(activeElement.id, payload)
                   }}
                 />
               </div>
@@ -288,7 +290,7 @@ const Preview = ({ html, onElementClick }) => {
     elements.forEach((el) => {
       el.addEventListener('click', (e) => {
         e.stopPropagation()
-        onElementClick(el.dataset.id)
+        onElementClick(parseInt(el.dataset.id))
       })
       el.addEventListener('mouseover', (e) => {
         e.stopPropagation()
@@ -319,6 +321,17 @@ const ComponentListItem = ({ el, handleOnClick, children }) => {
   const { data: activeElement } = useActiveElementState()
   const dispatch = useActiveElementDispatch()
 
+  const bodyComps = [MjSection, MjWrapper, MjColumn, MjText, MjImage, MjButton]
+
+  const getAllowedChildren = (tagName) => {
+    const found = bodyComps.find((el) => el.tagName === tagName)
+    return found ? found.allowedChildren : []
+  }
+  const getTitle = (tagName) => {
+    const found = bodyComps.find((el) => el.tagName === tagName)
+    return found ? found.title : ''
+  }
+
   return (
     <div>
       <div
@@ -332,10 +345,10 @@ const ComponentListItem = ({ el, handleOnClick, children }) => {
         <div className="flex items-center">
           <div>{children}</div>
           <button type="button" onClick={() => dispatch(setActiveElement(el))}>
-            {el.title}
+            {getTitle(el.tagName)}
             {/* <p className="text-xs">{el.id}</p> */}
           </button>
-          {el.allowedChildren.length > 0 ? (
+          {getAllowedChildren(el.tagName).length > 0 ? (
             <div className="ml-auto">
               <DropdownMenu.Root>
                 <DropdownMenu.Trigger className="flex h-6 w-6 items-center justify-center rounded border border-gray-300 bg-gray-200 hover:bg-gray-300">
@@ -346,7 +359,7 @@ const ComponentListItem = ({ el, handleOnClick, children }) => {
                   sideOffset={4}
                   className="min-w-[12rem] rounded border bg-white py-2 shadow"
                 >
-                  {el.allowedChildren.map((child, cIdx) => (
+                  {getAllowedChildren(el.tagName).map((child, cIdx) => (
                     <DropdownMenu.Item
                       asChild
                       key={cIdx}

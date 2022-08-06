@@ -4,10 +4,8 @@ import Input from './Input'
 import Select from './Select'
 
 const AttributeList = ({ activeId, onChange, attributes }) => {
-  const handleChange = (key, value) => {
-    onChange({
-      [key]: value,
-    })
+  const handleChange = (payload) => {
+    onChange(payload)
   }
 
   return Object.entries(attributes).map(([key, val], idx) => {
@@ -16,22 +14,11 @@ const AttributeList = ({ activeId, onChange, attributes }) => {
         return (
           <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <Select
-              label={val.label}
-              value={val.value}
-              defaultValue={val.defaultValue}
+              label={key}
+              value={val || ''}
               options={['left', 'right', 'center', 'justify']}
-              onChange={(value) =>
-                handleChange(key, {
-                  ...val,
-                  value,
-                })
-              }
-              onBlur={() =>
-                handleChange(key, {
-                  ...val,
-                  value: val.defaultValue,
-                })
-              }
+              onChange={(value) => handleChange({ [key]: value })}
+              // onBlur={() => handleChange({ [key]: val.defaultValue })}
             />
           </div>
         )
@@ -40,9 +27,8 @@ const AttributeList = ({ activeId, onChange, attributes }) => {
         return (
           <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <Select
-              label={val.label}
-              value={val.value}
-              defaultValue={val.defaultValue}
+              label={key}
+              value={val || ''}
               options={[
                 'top left',
                 'top center',
@@ -54,18 +40,8 @@ const AttributeList = ({ activeId, onChange, attributes }) => {
                 'bottom center',
                 'bottom right',
               ]}
-              onChange={(value) =>
-                handleChange(key, {
-                  ...val,
-                  value,
-                })
-              }
-              onBlur={() =>
-                handleChange(key, {
-                  ...val,
-                  value: val.defaultValue,
-                })
-              }
+              onChange={(value) => handleChange({ [key]: value })}
+              // onBlur={() => handleChange({ [key]: val.defaultValue })}
             />
           </div>
         )
@@ -74,22 +50,11 @@ const AttributeList = ({ activeId, onChange, attributes }) => {
         return (
           <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <Select
-              label={val.label}
-              value={val.value}
-              defaultValue={val.defaultValue}
+              label={key}
+              value={val || ''}
               options={['repeat', 'repeat-x', 'repeat-y', 'no-repeat']}
-              onChange={(value) =>
-                handleChange(key, {
-                  ...val,
-                  value,
-                })
-              }
-              onBlur={() =>
-                handleChange(key, {
-                  ...val,
-                  value: val.defaultValue,
-                })
-              }
+              onChange={(value) => handleChange({ [key]: value })}
+              // onBlur={() => handleChange({ [key]: val.defaultValue })}
             />
           </div>
         )
@@ -98,22 +63,11 @@ const AttributeList = ({ activeId, onChange, attributes }) => {
         return (
           <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <Select
-              label={val.label}
-              value={val.value}
-              defaultValue={val.defaultValue}
+              label={key}
+              value={val || ''}
               options={['auto', 'cover', 'contain']}
-              onChange={(value) =>
-                handleChange(key, {
-                  ...val,
-                  value,
-                })
-              }
-              onBlur={() =>
-                handleChange(key, {
-                  ...val,
-                  value: val.defaultValue,
-                })
-              }
+              onChange={(value) => handleChange({ [key]: value })}
+              // onBlur={() => handleChange({ [key]: val.defaultValue })}
             />
           </div>
         )
@@ -123,21 +77,10 @@ const AttributeList = ({ activeId, onChange, attributes }) => {
           <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <Input
               type="url"
-              label={val.label}
-              value={val.value}
-              defaultValue={val.defaultValue}
-              onChange={(value) =>
-                handleChange(key, {
-                  ...val,
-                  value,
-                })
-              }
-              onBlur={() =>
-                handleChange(key, {
-                  ...val,
-                  value: val.defaultValue,
-                })
-              }
+              label={key}
+              value={val || ''}
+              onChange={(value) => handleChange({ [key]: value })}
+              // onBlur={() => handleChange({ [key]: val.defaultValue })}
             />
           </div>
         )
@@ -146,22 +89,11 @@ const AttributeList = ({ activeId, onChange, attributes }) => {
         return (
           <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <Select
-              label={val.label}
-              value={val.value}
-              defaultValue={val.defaultValue}
+              label={key}
+              value={val || ''}
               options={['ltr', 'rtl']}
-              onChange={(value) =>
-                handleChange(key, {
-                  ...val,
-                  value,
-                })
-              }
-              onBlur={() =>
-                handleChange(key, {
-                  ...val,
-                  value: val.defaultValue,
-                })
-              }
+              onChange={(value) => handleChange({ [key]: value })}
+              // onBlur={() => handleChange({ [key]: val.defaultValue })}
             />
           </div>
         )
@@ -170,22 +102,11 @@ const AttributeList = ({ activeId, onChange, attributes }) => {
         return (
           <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <Select
-              label={val.label}
-              value={val.value}
-              defaultValue={val.defaultValue}
+              label={key}
+              value={val || ''}
               options={['none', 'italic']}
-              onChange={(value) =>
-                handleChange(key, {
-                  ...val,
-                  value,
-                })
-              }
-              onBlur={() =>
-                handleChange(key, {
-                  ...val,
-                  value: val.defaultValue,
-                })
-              }
+              onChange={(value) => handleChange({ [key]: value })}
+              // onBlur={() => handleChange({ [key]: val.defaultValue })}
             />
           </div>
         )
@@ -194,22 +115,11 @@ const AttributeList = ({ activeId, onChange, attributes }) => {
         return (
           <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <Select
-              label={val.label}
-              value={val.value}
-              defaultValue={val.defaultValue}
+              label={key}
+              value={val || ''}
               options={['none', 'capitalize', 'lowercase', 'uppercase']}
-              onChange={(value) =>
-                handleChange(key, {
-                  ...val,
-                  value,
-                })
-              }
-              onBlur={() =>
-                handleChange(key, {
-                  ...val,
-                  value: val.defaultValue,
-                })
-              }
+              onChange={(value) => handleChange({ [key]: value })}
+              // onBlur={() => handleChange({ [key]: val.defaultValue })}
             />
           </div>
         )
@@ -218,9 +128,8 @@ const AttributeList = ({ activeId, onChange, attributes }) => {
         return (
           <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <Select
-              label={val.label}
-              value={val.value}
-              defaultValue={val.defaultValue}
+              label={key}
+              value={val || ''}
               options={[
                 '100',
                 '200',
@@ -232,18 +141,8 @@ const AttributeList = ({ activeId, onChange, attributes }) => {
                 '800',
                 '900',
               ]}
-              onChange={(value) =>
-                handleChange(key, {
-                  ...val,
-                  value,
-                })
-              }
-              onBlur={() =>
-                handleChange(key, {
-                  ...val,
-                  value: val.defaultValue,
-                })
-              }
+              onChange={(value) => handleChange({ [key]: value })}
+              // onBlur={() => handleChange({ [key]: val.defaultValue })}
             />
           </div>
         )
@@ -269,21 +168,10 @@ const AttributeList = ({ activeId, onChange, attributes }) => {
           >
             <Input
               type="text"
-              label={val.label}
-              value={val.value}
-              defaultValue={val.defaultValue}
-              onChange={(value) =>
-                handleChange(key, {
-                  ...val,
-                  value,
-                })
-              }
-              onBlur={() =>
-                handleChange(key, {
-                  ...val,
-                  value: val.defaultValue,
-                })
-              }
+              label={key}
+              value={val || ''}
+              onChange={(value) => handleChange({ [key]: value })}
+              // onBlur={() => handleChange({ [key]: val.defaultValue })}
             />
           </div>
         )
@@ -294,13 +182,10 @@ const AttributeList = ({ activeId, onChange, attributes }) => {
         return (
           <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <ColorPicker
-              label={val.label}
-              value={val.value || val.defaultValue || '#ffffff'}
+              label={key}
+              value={val || '#ffffff'}
               onChange={(value) => {
-                handleChange(key, {
-                  ...val,
-                  value,
-                })
+                handleChange({ [key]: value })
               }}
             />
           </div>
@@ -310,22 +195,11 @@ const AttributeList = ({ activeId, onChange, attributes }) => {
         return (
           <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <Select
-              label={val.label}
-              value={val.value}
-              defaultValue={val.defaultValue}
+              label={key}
+              value={val || ''}
               options={['_self', '_blank']}
-              onChange={(value) =>
-                handleChange(key, {
-                  ...val,
-                  value,
-                })
-              }
-              onBlur={() =>
-                handleChange(key, {
-                  ...val,
-                  value: val.defaultValue,
-                })
-              }
+              onChange={(value) => handleChange({ [key]: value })}
+              // onBlur={() => handleChange({ [key]: val.defaultValue })}
             />
           </div>
         )
@@ -334,22 +208,11 @@ const AttributeList = ({ activeId, onChange, attributes }) => {
         return (
           <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <Select
-              label={val.label}
-              value={val.value}
-              defaultValue={val.defaultValue}
+              label={key}
+              value={val || ''}
               options={['left', 'right', 'center']}
-              onChange={(value) =>
-                handleChange(key, {
-                  ...val,
-                  value,
-                })
-              }
-              onBlur={() =>
-                handleChange(key, {
-                  ...val,
-                  value: val.defaultValue,
-                })
-              }
+              onChange={(value) => handleChange({ [key]: value })}
+              // onBlur={() => handleChange({ [key]: val.defaultValue })}
             />
           </div>
         )
@@ -358,22 +221,11 @@ const AttributeList = ({ activeId, onChange, attributes }) => {
         return (
           <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <Select
-              label={val.label}
-              value={val.value}
-              defaultValue={val.defaultValue}
+              label={key}
+              value={val || ''}
               options={['none', 'underline', 'line-through']}
-              onChange={(value) =>
-                handleChange(key, {
-                  ...val,
-                  value,
-                })
-              }
-              onBlur={() =>
-                handleChange(key, {
-                  ...val,
-                  value: val.defaultValue,
-                })
-              }
+              onChange={(value) => handleChange({ [key]: value })}
+              // onBlur={() => handleChange({ [key]: val.defaultValue })}
             />
           </div>
         )
@@ -382,22 +234,11 @@ const AttributeList = ({ activeId, onChange, attributes }) => {
         return (
           <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <Select
-              label={val.label}
-              value={val.value}
-              defaultValue={val.defaultValue}
+              label={key}
+              value={val || ''}
               options={['top', 'middle', 'bottom']}
-              onChange={(value) =>
-                handleChange(key, {
-                  ...val,
-                  value,
-                })
-              }
-              onBlur={() =>
-                handleChange(key, {
-                  ...val,
-                  value: val.defaultValue,
-                })
-              }
+              onChange={(value) => handleChange({ [key]: value })}
+              // onBlur={() => handleChange({ [key]: val.defaultValue })}
             />
           </div>
         )
@@ -406,21 +247,10 @@ const AttributeList = ({ activeId, onChange, attributes }) => {
         return (
           <div key={`${activeId}-${idx}`} className="mb-2 w-full">
             <Input
-              label={val.label}
-              value={val.value}
-              defaultValue={val.defaultValue}
-              onChange={(value) =>
-                handleChange(key, {
-                  ...val,
-                  value,
-                })
-              }
-              onBlur={() =>
-                handleChange(key, {
-                  ...val,
-                  value: val.defaultValue,
-                })
-              }
+              label={key}
+              value={val || ''}
+              onChange={(value) => handleChange({ [key]: value })}
+              // onBlur={() => handleChange({ [key]: val.defaultValue })}
             />
           </div>
         )
