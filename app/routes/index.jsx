@@ -1,5 +1,4 @@
 import { useFetcher } from '@remix-run/react'
-import lodashId from 'lodash-id'
 import { useEffect, useState } from 'react'
 import {
   MjButton,
@@ -10,7 +9,6 @@ import {
   MjWrapper,
 } from '../components/BodyComponents'
 import getHtml from '../models/getHtml.server'
-import lodash from 'lodash'
 import { ClientOnly, useHydrated } from 'remix-utils'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
@@ -24,7 +22,6 @@ import {
 import clsx from 'clsx'
 import { db } from '../models/db'
 import { useLiveQuery } from 'dexie-react-hooks'
-lodash.mixin(lodashId)
 
 export default function Index() {
   const isHydrated = useHydrated()
@@ -182,6 +179,7 @@ export default function Index() {
   }
 
   const handleUpdateBodyComponent = (id, payload) => {
+    console.log({ id, payload })
     db.body.update(id, {
       ...payload,
     })
@@ -206,11 +204,9 @@ export default function Index() {
     const { source, destination, draggableId, type } = result
     if (!destination) return // dropped outside the list
 
-    const id = draggableId.replace('draggable-', '')
-    const found = bodyComps.find((el) => el.id === id)
+    const id = parseInt(draggableId.replace('draggable-', ''))
     const newData = {
-      ...found,
-      parentId: destination.droppableId.replace('droppable-', ''),
+      parentId: parseInt(destination.droppableId.replace('droppable-', '')),
     }
 
     handleUpdateBodyComponent(id, newData)
