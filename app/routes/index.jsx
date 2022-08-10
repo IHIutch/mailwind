@@ -1,5 +1,5 @@
 import { useFetcher } from '@remix-run/react'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   MjButton,
   MjColumn,
@@ -10,7 +10,7 @@ import {
 } from '../components/BodyComponents'
 import getHtml from '../models/getHtml.server'
 import { ClientOnly, useHydrated } from 'remix-utils'
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+// import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 import { GripVertical } from 'lucide-react'
 import AttributeList from '../components/AttributeList'
@@ -48,9 +48,9 @@ export default function Index() {
     () => (isHydrated ? db.body.toArray() : []),
     [isHydrated]
   )
-  bodyComps = bodyComps || []
+  const memoBodyComps = useMemo(() => bodyComps || [], [bodyComps])
 
-  const nestedElements = bodyComps
+  const nestedElements = memoBodyComps
     .filter((el) => el.parentId === -1)
     .map((el) => {
       const getNestedElements = (list, parent) =>
@@ -62,11 +62,12 @@ export default function Index() {
           }))
       return {
         ...el,
-        children: getNestedElements(bodyComps, el),
+        children: getNestedElements(memoBodyComps, el),
       }
     })
 
   useEffect(() => {
+    console.log('bodyComps', memoBodyComps)
     const newCode = {
       tagName: 'mjml',
       attributes: {},
@@ -78,7 +79,7 @@ export default function Index() {
               tagName: 'mj-html-attributes',
               attributes: {},
               children:
-                bodyComps.map((item) => ({
+                memoBodyComps.map((item) => ({
                   tagName: 'mj-selector',
                   attributes: {
                     path: '.data-' + item.id,
@@ -99,7 +100,7 @@ export default function Index() {
         {
           tagName: 'mj-body',
           attributes: {},
-          children: bodyComps
+          children: memoBodyComps
             .filter((el) => el.parentId === -1)
             .map((el) => {
               const getNestedElements = (list, parent) =>
@@ -135,14 +136,14 @@ export default function Index() {
                   ),
                   'css-class': 'data-' + el.id,
                 },
-                children: getNestedElements(bodyComps, el),
+                children: getNestedElements(memoBodyComps, el),
               }
             }),
         },
       ],
     }
     setCode(newCode)
-  }, [bodyComps])
+  }, [memoBodyComps])
 
   useEffect(() => {
     try {
@@ -186,7 +187,7 @@ export default function Index() {
   }
 
   const handleElementClick = (id) => {
-    const found = bodyComps.find((el) => el.id === id)
+    const found = memoBodyComps.find((el) => el.id === id)
     dispatch(setActiveElement(found))
   }
 
@@ -346,7 +347,7 @@ const ComponentListItem = ({ el, handleOnClick, children }) => {
           </button>
           {getAllowedChildren(el.tagName).length > 0 ? (
             <div className="ml-auto">
-              <DropdownMenu.Root>
+              {/* <DropdownMenu.Root>
                 <DropdownMenu.Trigger className="flex h-6 w-6 items-center justify-center rounded border border-gray-300 bg-gray-200 hover:bg-gray-300">
                   <div>+</div>
                 </DropdownMenu.Trigger>
@@ -374,7 +375,7 @@ const ComponentListItem = ({ el, handleOnClick, children }) => {
                     </DropdownMenu.Item>
                   ))}
                 </DropdownMenu.Content>
-              </DropdownMenu.Root>
+              </DropdownMenu.Root> */}
             </div>
           ) : null}
         </div>
