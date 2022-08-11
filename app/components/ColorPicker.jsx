@@ -1,40 +1,43 @@
-import React, { useRef, useState } from 'react'
+import {
+  Box,
+  Button,
+  Popover,
+  PopoverArrow,
+  PopoverContent,
+  PopoverTrigger,
+} from '@chakra-ui/react'
 import { HexColorPicker } from 'react-colorful'
+import debounce from 'lodash/debounce'
+import { useCallback, useState } from 'react'
 
-export default function ColorPicker({ label, value, onChange }) {
-  const popover = useRef()
-  const [isOpen, setIsOpen] = useState(false)
-  const [color, setColor] = useState(value)
-
-  // const close = useCallback(() => setIsOpen(false), [])
+export default function ColorPicker({ value, onChange }) {
+  const [color, setColor] = useState(value) // This is needed to update the background color for some reason
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleChange = useCallback(debounce(onChange, 500), [onChange])
 
   return (
-    <div className="relative">
-      <label className="mb-2 text-sm font-medium text-gray-900">{label}</label>
-      <button
-        className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-0.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <div
-          className="z-0 h-8 rounded-lg"
-          style={{ backgroundColor: color }}
-        />
-      </button>
-
-      {isOpen && (
-        <div
-          className="absolute left-0 top-full z-10 rounded shadow"
-          ref={popover}
+    <Popover>
+      <PopoverTrigger>
+        <Button
+          variant="link"
+          borderWidth="1px"
+          borderColor="gray.200"
+          w="100%"
+          p="1"
         >
-          <HexColorPicker
-            color={color}
-            onChange={(value) => {
-              setColor(value)
-              onChange(value)
-            }}
-          />
-        </div>
-      )}
-    </div>
+          <Box h="8" w="100%" rounded="md" bg={color} />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent width="fit-content" p="1">
+        <PopoverArrow />
+        <HexColorPicker
+          color={color}
+          onChange={(value) => {
+            setColor(value)
+            handleChange(value)
+          }}
+        />
+      </PopoverContent>
+    </Popover>
   )
 }

@@ -1,4 +1,4 @@
-import { useFetcher, useSubmit } from '@remix-run/react'
+import { useFetcher } from '@remix-run/react'
 import { useEffect, useMemo, useState } from 'react'
 import {
   MjButton,
@@ -12,31 +12,38 @@ import getHtml from '../models/getHtml.server'
 import { ClientOnly, useHydrated } from 'remix-utils'
 // import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
-import { GripVertical, Send } from 'lucide-react'
+import { GripVertical, Plus, Send } from 'lucide-react'
 import AttributeList from '../components/AttributeList'
 import {
   setActiveElement,
   useActiveElementDispatch,
   useActiveElementState,
 } from '../../context/activeElement'
-import clsx from 'clsx'
 import { db } from '../models/db'
 import { useLiveQuery } from 'dexie-react-hooks'
 import {
   Box,
   Button,
   ButtonGroup,
+  Center,
   Flex,
   FormControl,
   FormLabel,
+  Heading,
   Icon,
   IconButton,
   Input,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Popover,
   PopoverArrow,
   PopoverCloseButton,
   PopoverContent,
   PopoverTrigger,
+  Stack,
+  Text,
 } from '@chakra-ui/react'
 
 export default function Index() {
@@ -67,16 +74,17 @@ export default function Index() {
   )
   const memoBodyComps = useMemo(() => bodyComps || [], [bodyComps])
 
+  const getNestedElements = (list, parent) =>
+    list
+      .filter((li) => li.parentId === parent.id)
+      .map((li) => ({
+        ...li,
+        children: getNestedElements(list, li),
+      }))
+
   const nestedElements = memoBodyComps
     .filter((el) => el.parentId === -1)
     .map((el) => {
-      const getNestedElements = (list, parent) =>
-        list
-          .filter((li) => li.parentId === parent.id)
-          .map((li) => ({
-            ...li,
-            children: getNestedElements(list, li),
-          }))
       return {
         ...el,
         children: getNestedElements(memoBodyComps, el),
@@ -84,7 +92,6 @@ export default function Index() {
     })
 
   useEffect(() => {
-    console.log('bodyComps', memoBodyComps)
     const newCode = {
       tagName: 'mjml',
       attributes: {},
@@ -282,6 +289,8 @@ export default function Index() {
         h="16"
         bg="white"
         shadow="sm"
+        borderBottomWidth="1px"
+        borderBottomColor="gray.100"
         display="flex"
         px="8"
       >
@@ -336,19 +345,42 @@ export default function Index() {
           </Box>
         </Flex>
       </Box>
-      <Box pt="16">
+      <Flex w="100%" pt="16">
         <Box
           position="relative"
           h="100%"
           w="300px"
           flexShrink="0"
           borderRightWidth="1px"
-          borderRightColor="gray.300"
+          borderRightColor="gray.200"
         >
-          <div className="absolute inset-x-0 z-10 flex h-16 items-center border-b bg-white px-4">
-            <div className="font-semibold">Components</div>
-          </div>
-          <div className="absolute inset-x-0 h-full overflow-auto bg-gray-100 pt-16">
+          <Flex
+            position="absolute"
+            top="0"
+            left="0"
+            right="0"
+            zIndex="10"
+            align="center"
+            borderBottomWidth="1px"
+            borderBottomColor="gray.200"
+            bg="white"
+            px="4"
+            h="12"
+          >
+            <Heading fontWeight="semibold" fontSize="lg">
+              Components
+            </Heading>
+          </Flex>
+          <Box
+            position="absolute"
+            top="0"
+            left="0"
+            right="0"
+            h="100%"
+            overflow="auto"
+            bg="gray.50"
+            pt="12"
+          >
             {nestedElements.length > 0 ? (
               <>
                 <DragDropContext
@@ -356,19 +388,19 @@ export default function Index() {
                   onDragStart={handleDragStart}
                 >
                   {nestedElements.map((el, idx) => (
-                    <div key={idx} className="p-4">
+                    <Box key={idx} p="4">
                       <ComponentListItem
                         el={el}
                         handleOnClick={handleAddBodyComponent}
                       />
-                    </div>
+                    </Box>
                   ))}
                 </DragDropContext>
               </>
             ) : null}
-          </div>
+          </Box>
         </Box>
-        <div className="h-full grow">
+        <Box h="100%" flexGrow="1">
           <ClientOnly>
             {() => (
               <Preview
@@ -377,20 +409,49 @@ export default function Index() {
               />
             )}
           </ClientOnly>
-        </div>
-        <Box className="relative h-full w-[300px] shrink-0 border-l bg-gray-100">
-          <div className="absolute inset-x-0 z-10 flex h-16 items-center border-b bg-white px-4">
-            <div className="font-semibold">Attributes</div>
-          </div>
+        </Box>
+        <Box
+          position="relative"
+          h="100%"
+          w="300px"
+          flexShrink="0"
+          borderLeftWidth="1px"
+          borderLeftColor="gray.200"
+          bg="gray.50"
+        >
+          <Flex
+            position="absolute"
+            top="0"
+            left="0"
+            right="0"
+            zIndex="10"
+            align="center"
+            borderBottomWidth="1px"
+            borderBottomColor="gray.200"
+            bg="white"
+            px="4"
+            h="12"
+          >
+            <Heading fontWeight="semibold" fontSize="lg">
+              Attribute
+            </Heading>
+          </Flex>
           {activeElement ? (
-            <div className="absolute inset-x-0 h-full overflow-auto bg-gray-100 pt-16">
-              <div className="p-4">
-                <div>
-                  <h3 className="mb-1 text-lg font-semibold">
-                    {activeElement.title}
-                  </h3>
-                </div>
-                <div className="mt-4">
+            <Box
+              position="absolute"
+              top="0"
+              left="0"
+              right="0"
+              h="100%"
+              overflow="auto"
+              bg="gray.50"
+              pt="12"
+            >
+              <Box p="4">
+                <Text mb="1" fontSize="lg" fontWeight="semibold">
+                  {activeElement.title}
+                </Text>
+                <Box mt="4" position="relative" zIndex="1">
                   <AttributeList
                     activeId={activeElement.id}
                     attributes={activeElement || {}}
@@ -398,12 +459,12 @@ export default function Index() {
                       handleUpdateBodyComponent(activeElement.id, payload)
                     }}
                   />
-                </div>
-              </div>
-            </div>
+                </Box>
+              </Box>
+            </Box>
           ) : null}
         </Box>
-      </Box>
+      </Flex>
     </Flex>
   )
 }
@@ -431,12 +492,11 @@ const Preview = ({ html, onElementClick }) => {
   }
 
   return html ? (
-    <iframe
-      id="myIframe"
-      className="h-full w-full"
+    <Box
+      as="iframe"
+      boxSize="100%"
       title="email"
       srcDoc={html}
-      // sandbox="allow-same-origin"
       onLoad={setEventListeners}
     />
   ) : (
@@ -460,92 +520,95 @@ const ComponentListItem = ({ el, handleOnClick, children }) => {
   }
 
   return (
-    <div>
-      <div
-        className={clsx(
-          'w-48 rounded border border-gray-300 p-2',
-          activeElement?.id === el.id
-            ? 'border-blue-500 bg-blue-50'
-            : 'border-gray-300 bg-white'
-        )}
+    <Box>
+      <Box
+        w="48"
+        rounded="md"
+        borderWidth="1px"
+        borderColor={activeElement?.id === el.id ? 'blue.500' : 'gray.300'}
+        bg={activeElement?.id === el.id ? 'blue.50' : 'white'}
+        p="2"
       >
-        <div className="flex items-center">
-          <div>{children}</div>
-          <button type="button" onClick={() => dispatch(setActiveElement(el))}>
+        <Flex align="center">
+          <Box>{children}</Box>
+          <Button variant="link" onClick={() => dispatch(setActiveElement(el))}>
             {getTitle(el.tagName)}
-            {/* <p className="text-xs">{el.id}</p> */}
-          </button>
+          </Button>
           {getAllowedChildren(el.tagName).length > 0 ? (
-            <div className="ml-auto">
-              {/* <DropdownMenu.Root>
-                <DropdownMenu.Trigger className="flex h-6 w-6 items-center justify-center rounded border border-gray-300 bg-gray-200 hover:bg-gray-300">
-                  <div>+</div>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Content
-                  align="start"
-                  sideOffset={4}
-                  className="min-w-[12rem] rounded border bg-white py-2 shadow"
-                >
+            <Box ml="auto">
+              <Menu placement="bottom-start" strategy="fixed">
+                <IconButton
+                  as={MenuButton}
+                  variant="outline"
+                  size="xs"
+                  lineHeight="0"
+                  icon={<Icon boxSize="4" as={Plus} />}
+                />
+                <MenuList>
                   {getAllowedChildren(el.tagName).map((child, cIdx) => (
-                    <DropdownMenu.Item
-                      asChild
+                    <MenuItem
                       key={cIdx}
-                      className="min-w-full px-2 py-1 text-left outline-none hover:bg-gray-100"
+                      onClick={() =>
+                        handleOnClick({
+                          ...child,
+                          parentId: el.id,
+                        })
+                      }
                     >
-                      <button
-                        onClick={() =>
-                          handleOnClick({
-                            ...child,
-                            parentId: el.id,
-                          })
-                        }
-                      >
-                        {child.title}
-                      </button>
-                    </DropdownMenu.Item>
+                      {getTitle(child.tagName)}
+                    </MenuItem>
                   ))}
-                </DropdownMenu.Content>
-              </DropdownMenu.Root> */}
-            </div>
+                </MenuList>
+              </Menu>
+            </Box>
           ) : null}
-        </div>
-      </div>
+        </Flex>
+      </Box>
       <Droppable droppableId={`droppable-${el.id}`} type={el.tagName}>
         {(drop, snapshot) => (
-          <div ref={drop.innerRef} {...drop.droppableProps}>
+          <Box ref={drop.innerRef} {...drop.droppableProps}>
             {el.children.length > 0 ? (
-              <div className="pt-2">
-                <div className="border-l-2">
+              <Box pt="2">
+                <Stack
+                  direction="column"
+                  borderLeftWidth="2px"
+                  borderLeftColor="gray.200"
+                >
                   {el.children.map((child, cIdx) => (
-                    <div key={cIdx} className="pl-2 pt-2 first:pt-0">
+                    <Box key={cIdx} pl="2">
                       <Draggable
                         key={`draggable-${child.id}`}
                         draggableId={`draggable-${child.id}`}
                         index={cIdx}
                       >
                         {(drag, snapshot) => (
-                          <div ref={drag.innerRef} {...drag.draggableProps}>
+                          <Box ref={drag.innerRef} {...drag.draggableProps}>
                             <ComponentListItem
                               el={child}
                               handleOnClick={handleOnClick}
                             >
-                              <div {...drag.dragHandleProps}>
-                                <GripVertical className="-ml-2 mr-1 h-4 text-gray-400" />
-                              </div>
+                              <Center
+                                boxSize="4"
+                                ml="-1"
+                                mr="1"
+                                {...drag.dragHandleProps}
+                              >
+                                <Icon color="gray.600" as={GripVertical} />
+                              </Center>
                             </ComponentListItem>
-                          </div>
+                          </Box>
                         )}
                       </Draggable>
-                    </div>
+                    </Box>
                   ))}
-                </div>
-              </div>
+                </Stack>
+              </Box>
             ) : null}
             {drop.placeholder}
-          </div>
+          </Box>
         )}
       </Droppable>
-    </div>
+    </Box>
   )
 }
 
