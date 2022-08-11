@@ -11,11 +11,6 @@ import {
 import { useContext, useEffect } from 'react'
 import { ActiveElementProvider } from '../context/activeElement'
 import { ClientStyleContext, ServerStyleContext } from './context'
-import styles from './styles/app.css'
-
-export function links() {
-  return [{ rel: 'stylesheet', href: styles }]
-}
 
 export const meta = () => ({
   charset: 'utf-8',

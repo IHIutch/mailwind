@@ -1,4 +1,4 @@
-import { useFetcher } from '@remix-run/react'
+import { useFetcher, useSubmit } from '@remix-run/react'
 import { useEffect, useMemo, useState } from 'react'
 import {
   MjButton,
@@ -12,7 +12,7 @@ import getHtml from '../models/getHtml.server'
 import { ClientOnly, useHydrated } from 'remix-utils'
 // import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
-import { GripVertical } from 'lucide-react'
+import { GripVertical, Send } from 'lucide-react'
 import AttributeList from '../components/AttributeList'
 import {
   setActiveElement,
@@ -22,12 +22,29 @@ import {
 import clsx from 'clsx'
 import { db } from '../models/db'
 import { useLiveQuery } from 'dexie-react-hooks'
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  Flex,
+  FormControl,
+  FormLabel,
+  Icon,
+  IconButton,
+  Input,
+  Popover,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverTrigger,
+} from '@chakra-ui/react'
 
 export default function Index() {
   const isHydrated = useHydrated()
   const dispatch = useActiveElementDispatch()
   const { data: activeElement } = useActiveElementState()
   const fetcher = useFetcher()
+  const [email, setEmail] = useState('')
   const [code, setCode] = useState({
     tagName: 'mjml',
     attributes: {},
@@ -216,65 +233,162 @@ export default function Index() {
     console.log('dragStart', e)
   }
 
+  const emailFetcher = useFetcher()
+  const downloadFetcher = useFetcher()
+
+  const handleSendEmail = () => {
+    emailFetcher.submit(
+      {
+        email,
+        json: JSON.stringify(code),
+      },
+      { method: 'post', action: '/send-email' }
+    )
+  }
+
+  const handleDownload = () => {
+    console.log('download')
+    downloadFetcher.submit(
+      {
+        json: JSON.stringify(code),
+      },
+      { method: 'post', action: '/download' }
+    )
+  }
+
   return (
-    <div className="flex h-screen">
-      <div className="relative h-full w-[300px] shrink-0 border-r">
-        <div className="absolute inset-x-0 z-10 flex h-16 items-center border-b bg-white px-4">
-          <div className="font-semibold">Components</div>
-        </div>
-        <div className="absolute inset-x-0 h-full overflow-auto bg-gray-100 pt-16">
-          {nestedElements.length > 0 ? (
-            <>
-              <DragDropContext
-                onDragEnd={handleDragEnd}
-                onDragStart={handleDragStart}
-              >
-                {nestedElements.map((el, idx) => (
-                  <div key={idx} className="p-4">
-                    <ComponentListItem
-                      el={el}
-                      handleOnClick={handleAddBodyComponent}
+    <Flex h="100vh">
+      <Box
+        position="fixed"
+        top="0"
+        right="0"
+        left="0"
+        h="16"
+        bg="white"
+        shadow="sm"
+        display="flex"
+        px="8"
+      >
+        <Flex
+          position="absolute"
+          left="0"
+          right="0"
+          align="center"
+          justify="center"
+          h="100%"
+        >
+          <ButtonGroup size="sm" variant="outline" isAttached>
+            <Button>Desktop</Button>
+            <Button>Mobile</Button>
+          </ButtonGroup>
+        </Flex>
+        <Flex ml="auto" alignItems="center">
+          <Button
+            colorScheme="blue"
+            onClick={handleDownload}
+            isLoading={downloadFetcher.state === 'submitting'}
+          >
+            Download
+          </Button>
+          <Box ml="4">
+            <Popover placement="bottom-end">
+              <PopoverTrigger>
+                <Button>Send Test</Button>
+              </PopoverTrigger>
+              <PopoverContent>
+                <PopoverArrow />
+                <PopoverCloseButton />
+                <Flex p="4" alignItems="flex-end">
+                  <FormControl>
+                    <FormLabel htmlFor="yourEmail">Your Email</FormLabel>
+                    <Input
+                      onChange={(e) => setEmail(e.target.value)}
+                      id="yourEmail"
+                      type="email"
                     />
-                  </div>
-                ))}
-              </DragDropContext>
-            </>
-          ) : null}
-        </div>
-      </div>
-      <div className="h-full grow">
-        <ClientOnly>
-          {() => (
-            <Preview html={fetcher.data} onElementClick={handleElementClick} />
-          )}
-        </ClientOnly>
-      </div>
-      <div className="relative h-full w-[300px] shrink-0 border-l bg-gray-100">
-        <div className="absolute inset-x-0 z-10 flex h-16 items-center border-b bg-white px-4">
-          <div className="font-semibold">Attributes</div>
-        </div>
-        {activeElement ? (
+                  </FormControl>
+                  <IconButton
+                    ml="2"
+                    colorScheme="blue"
+                    icon={<Icon boxSize="4" as={Send} />}
+                    onClick={handleSendEmail}
+                    isLoading={emailFetcher.state === 'loading'}
+                  />
+                </Flex>
+              </PopoverContent>
+            </Popover>
+          </Box>
+        </Flex>
+      </Box>
+      <Box pt="16">
+        <Box
+          position="relative"
+          h="100%"
+          w="300px"
+          flexShrink="0"
+          borderRightWidth="1px"
+          borderRightColor="gray.300"
+        >
+          <div className="absolute inset-x-0 z-10 flex h-16 items-center border-b bg-white px-4">
+            <div className="font-semibold">Components</div>
+          </div>
           <div className="absolute inset-x-0 h-full overflow-auto bg-gray-100 pt-16">
-            <div className="p-4">
-              <div>
-                <h3 className="mb-1 text-lg font-semibold">
-                  {activeElement.title}
-                </h3>
-              </div>
-              <div className="mt-4">
-                <AttributeList
-                  activeId={activeElement.id}
-                  attributes={activeElement || {}}
-                  onChange={(payload) => {
-                    handleUpdateBodyComponent(activeElement.id, payload)
-                  }}
-                />
+            {nestedElements.length > 0 ? (
+              <>
+                <DragDropContext
+                  onDragEnd={handleDragEnd}
+                  onDragStart={handleDragStart}
+                >
+                  {nestedElements.map((el, idx) => (
+                    <div key={idx} className="p-4">
+                      <ComponentListItem
+                        el={el}
+                        handleOnClick={handleAddBodyComponent}
+                      />
+                    </div>
+                  ))}
+                </DragDropContext>
+              </>
+            ) : null}
+          </div>
+        </Box>
+        <div className="h-full grow">
+          <ClientOnly>
+            {() => (
+              <Preview
+                html={fetcher.data}
+                onElementClick={handleElementClick}
+              />
+            )}
+          </ClientOnly>
+        </div>
+        <Box className="relative h-full w-[300px] shrink-0 border-l bg-gray-100">
+          <div className="absolute inset-x-0 z-10 flex h-16 items-center border-b bg-white px-4">
+            <div className="font-semibold">Attributes</div>
+          </div>
+          {activeElement ? (
+            <div className="absolute inset-x-0 h-full overflow-auto bg-gray-100 pt-16">
+              <div className="p-4">
+                <div>
+                  <h3 className="mb-1 text-lg font-semibold">
+                    {activeElement.title}
+                  </h3>
+                </div>
+                <div className="mt-4">
+                  <AttributeList
+                    activeId={activeElement.id}
+                    attributes={activeElement || {}}
+                    onChange={(payload) => {
+                      handleUpdateBodyComponent(activeElement.id, payload)
+                    }}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        ) : null}
-      </div>
-    </div>
+          ) : null}
+        </Box>
+      </Box>
+    </Flex>
   )
 }
 
