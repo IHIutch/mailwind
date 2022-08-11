@@ -1,6 +1,4 @@
 import getHtml from '~/models/getHtml.server'
-import https from 'https'
-import fs from 'fs'
 
 export async function action({ request }) {
   const formData = await request.formData()
@@ -20,7 +18,7 @@ export async function action({ request }) {
   return new Response(html, {
     status: 200,
     headers: {
-      'Content-Type': 'application/octet-stream',
+      'Content-Type': 'text/html',
       'Content-Disposition': 'attachment; filename="email.html"',
     },
   })
