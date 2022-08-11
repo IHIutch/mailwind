@@ -10,7 +10,6 @@ import {
 } from '../components/BodyComponents'
 import getHtml from '../models/getHtml.server'
 import { ClientOnly, useHydrated } from 'remix-utils'
-// import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 import { GripVertical, Plus, Send } from 'lucide-react'
 import AttributeList from '../components/AttributeList'
@@ -100,6 +99,12 @@ export default function Index() {
         {
           tagName: 'mj-head',
           children: [
+            {
+              tagName: 'mj-breakpoint',
+              attributes: {
+                width: '640px',
+              },
+            },
             {
               tagName: 'mj-html-attributes',
               attributes: {},
@@ -417,7 +422,7 @@ export default function Index() {
           <ClientOnly>
             {() => (
               <Preview
-                width={previewSize === 'desktop' ? '100%' : '324px'}
+                width={previewSize === 'desktop' ? '100%' : '640px'}
                 html={fetcher.data}
                 onElementClick={handleElementClick}
               />
