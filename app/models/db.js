@@ -14,6 +14,7 @@ db.on('populate', async () => {
   await db.body.add({
     ...wrapperAttributes,
     tagName: MjWrapper.tagName,
+    // 'background-color': '#ffffff',
     parentId: -1,
   })
 })

@@ -418,7 +418,7 @@ export default function Index() {
             ) : null}
           </Box>
         </Box>
-        <Box h="100%" flexGrow="1">
+        <Box h="100%" flexGrow="1" bg="gray.50">
           <ClientOnly>
             {() => (
               <Preview

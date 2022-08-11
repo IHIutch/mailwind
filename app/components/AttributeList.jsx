@@ -209,7 +209,7 @@ const AttributeList = ({ activeId, onChange, attributes }) => {
             <FormLabel>{key}</FormLabel>
             <ColorPicker
               label={key}
-              value={val || '#ffffff'}
+              value={val || 'transparent'}
               onChange={(value) => {
                 onChange({ [key]: value })
               }}
