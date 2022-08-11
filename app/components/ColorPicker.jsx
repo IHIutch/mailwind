@@ -13,7 +13,7 @@ import { useCallback, useState } from 'react'
 export default function ColorPicker({ value, onChange }) {
   const [color, setColor] = useState(value) // This is needed to update the background color for some reason
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const handleChange = useCallback(debounce(onChange, 500), [onChange])
+  const handleChange = useCallback(debounce(onChange, 250), [onChange])
 
   return (
     <Popover>

@@ -332,7 +332,8 @@ export const MjText = {
     color: { ...Attributes.color, defaultValue: '#000000' },
     'font-family': {
       ...Attributes['font-family'],
-      defaultValue: 'Ubuntu, Helvetica, Arial, sans-serif',
+      defaultValue:
+        'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif',
     },
     'font-size': { ...Attributes['font-size'], defaultValue: '13px' },
     'font-style': { ...Attributes['font-style'], defaultValue: null },
@@ -426,7 +427,8 @@ export const MjButton = {
     'css-class': { ...Attributes['css-class'], defaultValue: null },
     'font-family': {
       ...Attributes['font-family'],
-      defaultValue: 'Ubuntu, Helvetica, Arial, sans-serif',
+      defaultValue:
+        'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif',
     },
     'font-size': { ...Attributes['font-size'], defaultValue: '13px' },
     'font-style': { ...Attributes['font-style'], defaultValue: null },
