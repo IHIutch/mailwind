@@ -256,6 +256,22 @@ export default function Index() {
     )
   }
 
+  useEffect(() => {
+    if (downloadFetcher.data) {
+      var blob = new Blob([downloadFetcher.data], {
+        type: 'text/html;charset=utf-8',
+      })
+      var link = document.createElement('a')
+      link.href = window.URL.createObjectURL(blob)
+      link.download = 'email.html'
+
+      document.body.appendChild(link)
+      link.click()
+
+      document.body.removeChild(link)
+    }
+  }, [downloadFetcher.data])
+
   return (
     <Flex h="100vh">
       <Box
