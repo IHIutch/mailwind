@@ -51,6 +51,7 @@ export default function Index() {
   const dispatch = useActiveElementDispatch()
   const { data: activeElement } = useActiveElementState()
   const fetcher = useFetcher()
+  const [previewSize, setPreviewSize] = useState('desktop')
   const [email, setEmail] = useState('')
   const [code, setCode] = useState({
     tagName: 'mjml',
@@ -302,9 +303,21 @@ export default function Index() {
           justify="center"
           h="100%"
         >
-          <ButtonGroup size="sm" variant="outline" isAttached>
-            <Button>Desktop</Button>
-            <Button>Mobile</Button>
+          <ButtonGroup size="sm" isAttached>
+            <Button
+              colorScheme={previewSize === 'desktop' ? 'blue' : 'gray'}
+              variant={previewSize === 'desktop' ? 'solid' : 'outline'}
+              onClick={() => setPreviewSize('desktop')}
+            >
+              Desktop
+            </Button>
+            <Button
+              colorScheme={previewSize === 'mobile' ? 'blue' : 'gray'}
+              variant={previewSize === 'mobile' ? 'solid' : 'outline'}
+              onClick={() => setPreviewSize('mobile')}
+            >
+              Mobile
+            </Button>
           </ButtonGroup>
         </Flex>
         <Flex ml="auto" alignItems="center">
@@ -404,6 +417,7 @@ export default function Index() {
           <ClientOnly>
             {() => (
               <Preview
+                width={previewSize === 'desktop' ? '100%' : '324px'}
                 html={fetcher.data}
                 onElementClick={handleElementClick}
               />
@@ -469,7 +483,7 @@ export default function Index() {
   )
 }
 
-const Preview = ({ html, onElementClick }) => {
+const Preview = ({ width, html, onElementClick }) => {
   const setEventListeners = (e) => {
     var iframe = e.target
     const elements =
@@ -493,8 +507,11 @@ const Preview = ({ html, onElementClick }) => {
 
   return html ? (
     <Box
+      mx="auto"
+      borderWidth="1px"
       as="iframe"
-      boxSize="100%"
+      height="100%"
+      width={width}
       title="email"
       srcDoc={html}
       onLoad={setEventListeners}
@@ -533,6 +550,7 @@ const ComponentListItem = ({ el, handleOnClick, children }) => {
           <Box>{children}</Box>
           <Button variant="link" onClick={() => dispatch(setActiveElement(el))}>
             {getTitle(el.tagName)}
+            {/* <p className="text-xs">{el.id}</p> */}
           </Button>
           {getAllowedChildren(el.tagName).length > 0 ? (
             <Box ml="auto">
