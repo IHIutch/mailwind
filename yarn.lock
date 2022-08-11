@@ -7357,6 +7357,11 @@ mjml-body@4.13.0:
     lodash "^4.17.21"
     mjml-core "4.13.0"
 
+mjml-browser@^4.13.0:
+  version "4.13.0"
+  resolved "https://registry.yarnpkg.com/mjml-browser/-/mjml-browser-4.13.0.tgz#ff648cad8e37ea9056a9cdac8ff55d960e03d44f"
+  integrity sha512-ZlQNcw7sBzA36gjBM9In5v+85cXb+LFrC4QdTZq6pjCKyF/in1KmVM9PoYbBDl/HqwFbFC9uEv+HiAY6ZmfMxw==
+
 mjml-button@4.13.0:
   version "4.13.0"
   resolved "https://registry.yarnpkg.com/mjml-button/-/mjml-button-4.13.0.tgz#0d72a26ac5474be0fb8a921381acb5b6096b9542"

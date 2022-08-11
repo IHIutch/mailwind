@@ -8,7 +8,6 @@ import {
   MjText,
   MjWrapper,
 } from '../components/BodyComponents'
-import getHtml from '../models/getHtml.server'
 import { ClientOnly, useHydrated } from 'remix-utils'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 import { GripVertical, Plus, Send } from 'lucide-react'
@@ -44,6 +43,7 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react'
+import getHtml from '~/models/getHtml.client'
 
 export default function Index() {
   const isHydrated = useHydrated()
@@ -175,20 +175,22 @@ export default function Index() {
     setCode(newCode)
   }, [memoBodyComps])
 
-  useEffect(() => {
-    try {
-      if (code) {
-        fetcher.submit({ json: JSON.stringify(code) }, { method: 'post' })
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error(error.message)
-      } else {
-        throw error
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [code])
+  // useEffect(() => {
+  //   try {
+  //     if (code) {
+  //       const html = getHtml(code)
+  //       console.log({ html })
+  //       // fetcher.submit({ json: JSON.stringify(code) }, { method: 'post' })
+  //     }
+  //   } catch (error) {
+  //     if (error instanceof Error) {
+  //       console.error(error.message)
+  //     } else {
+  //       throw error
+  //     }
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [code])
 
   // useEffect(() => {
   //   const tempData = { ...data }
@@ -423,7 +425,7 @@ export default function Index() {
             {() => (
               <Preview
                 width={previewSize === 'desktop' ? '100%' : '640px'}
-                html={fetcher.data}
+                html={code}
                 onElementClick={handleElementClick}
               />
             )}
@@ -474,6 +476,7 @@ export default function Index() {
                   <AttributeList
                     activeId={activeElement.id}
                     attributes={activeElement || {}}
+                    tagName={activeElement.tagName}
                     onChange={(payload) => {
                       handleUpdateBodyComponent(activeElement.id, payload)
                     }}
@@ -510,7 +513,9 @@ const Preview = ({ width, html, onElementClick }) => {
     })
   }
 
-  return html ? (
+  const newHtml = getHtml(html)
+
+  return newHtml ? (
     <Box
       mx="auto"
       borderWidth="1px"
@@ -518,7 +523,7 @@ const Preview = ({ width, html, onElementClick }) => {
       height="100%"
       width={width}
       title="email"
-      srcDoc={html}
+      srcDoc={newHtml}
       onLoad={setEventListeners}
     />
   ) : (

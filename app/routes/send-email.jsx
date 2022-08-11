@@ -1,4 +1,4 @@
-import getHtml from '~/models/getHtml.server'
+import getHtml from '~/models/getHtml.client'
 import nodemailer from 'nodemailer'
 
 export async function action({ request }) {
