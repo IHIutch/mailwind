@@ -1,37 +1,15 @@
-import {
-  Box,
-  FormControl,
-  FormLabel,
-  Input,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  Select,
-  Stack,
-  Text,
-} from '@chakra-ui/react'
+import { Box, Select, Stack, Text } from '@chakra-ui/react'
 import { useActiveElementState } from 'context/activeElement'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { useCallback, useMemo } from 'react'
+import { useCallback } from 'react'
 import { useHydrated } from 'remix-utils'
 import { db } from '~/models/db'
-import {
-  MjButton,
-  MjColumn,
-  MjImage,
-  MjSection,
-  MjText,
-  MjWrapper,
-} from './BodyComponents'
 import ColorPicker from './ColorPicker'
 import BorderController from './controllers/BorderController'
 import PaddingController from './controllers/PaddingController'
 import InnerPaddingController from './controllers/InnerPaddingController'
 import debounce from 'lodash/debounce'
-
-const bodyCompList = [MjSection, MjWrapper, MjColumn, MjText, MjImage, MjButton]
+import { getComponentAttributes } from 'utils/functions'
 
 const AttributeList = () => {
   const isHydrated = useHydrated()
@@ -40,32 +18,16 @@ const AttributeList = () => {
     () => (isHydrated ? db.body.toArray() : []),
     [isHydrated]
   )
-  const memoBodyComps = useMemo(() => bodyComps || [], [bodyComps])
-
-  const liveActiveElement = memoBodyComps.find(
+  const currentLiveElement = (bodyComps || []).find(
     (el) => el.id === activeElement.id
   )
 
-  const getAttributeValues = () => {
-    const found = bodyCompList.find(
-      (el) => el.tagName === liveActiveElement?.tagName
-    )
-    return found
-      ? Object.entries(found.attributes).reduce((acc, [key, val], idx) => {
-          return {
-            ...acc,
-            [key]: val,
-          }
-        }, {})
-      : []
-  }
-  const attributeValues = getAttributeValues()
-  const attributeList = Object.keys(attributeValues).map((key) => key)
-
-  console.log({ attributeValues, attributeList })
+  const componentAttributes = currentLiveElement
+    ? getComponentAttributes(currentLiveElement.tagName)
+    : {}
 
   const handleUpdateBodyComponent = (payload) => {
-    db.body.update(liveActiveElement.id, {
+    db.body.update(activeElement.id, {
       ...payload,
     })
   }
@@ -78,16 +40,16 @@ const AttributeList = () => {
 
   return (
     <Box>
-      {liveActiveElement ? (
+      {currentLiveElement ? (
         <>
           <Stack spacing="8">
-            {attributeList.includes('border') ? (
+            {'border' in componentAttributes ? (
               <Box>
                 <BorderController
                   value={
-                    liveActiveElement['border'] === 'none'
+                    currentLiveElement['border'] === 'none'
                       ? '0 0 0 0'
-                      : liveActiveElement['border']
+                      : currentLiveElement['border']
                   }
                   onChange={(value) =>
                     handleUpdateDebounce({
@@ -97,10 +59,10 @@ const AttributeList = () => {
                 />
               </Box>
             ) : null}
-            {attributeList.includes('padding') ? (
+            {'padding' in componentAttributes ? (
               <Box>
                 <PaddingController
-                  value={liveActiveElement['padding'] || '0 0 0 0'}
+                  value={currentLiveElement['padding'] || '0 0 0 0'}
                   onChange={(value) =>
                     handleUpdateDebounce({
                       padding: value,
@@ -109,10 +71,10 @@ const AttributeList = () => {
                 />
               </Box>
             ) : null}
-            {attributeList.includes('inner-padding') ? (
+            {'inner-padding' in componentAttributes ? (
               <Box>
                 <InnerPaddingController
-                  value={liveActiveElement['inner-padding'] || '0 0 0 0'}
+                  value={currentLiveElement['inner-padding'] || '0 0 0 0'}
                   onChange={(value) =>
                     handleUpdateDebounce({
                       'inner-padding': value,
@@ -131,7 +93,7 @@ const AttributeList = () => {
                     'border-radius': value + 'px',
                   })
                 }
-                defaultValue={liveActiveElement['border-radius'] || '0'}
+                defaultValue={currentLiveElement['border-radius'] || '0'}
               >
                 <NumberInputField />
                 <NumberInputStepper>
@@ -147,7 +109,7 @@ const AttributeList = () => {
               switch (key) {
                 case 'align':
                   return (
-                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                    <FormControl key={`${currentLiveElement.id}-${idx}`} mb="2">
                       <FormLabel>{key}</FormLabel>
                       <Select
                         value={val || ''}
@@ -168,7 +130,7 @@ const AttributeList = () => {
 
                 case 'background-position':
                   return (
-                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                    <FormControl key={`${currentLiveElement.id}-${idx}`} mb="2">
                       <FormLabel>{key}</FormLabel>
                       <Select
                         value={val || ''}
@@ -197,7 +159,7 @@ const AttributeList = () => {
 
                 case 'background-repeat':
                   return (
-                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                    <FormControl key={`${currentLiveElement.id}-${idx}`} mb="2">
                       <FormLabel>{key}</FormLabel>
                       <Select
                         value={val || ''}
@@ -218,7 +180,7 @@ const AttributeList = () => {
 
                 case 'background-size':
                   return (
-                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                    <FormControl key={`${currentLiveElement.id}-${idx}`} mb="2">
                       <FormLabel>{key}</FormLabel>
                       <Select
                         value={val || ''}
@@ -237,7 +199,7 @@ const AttributeList = () => {
 
                 case 'background-url':
                   return (
-                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                    <FormControl key={`${currentLiveElement.id}-${idx}`} mb="2">
                       <FormLabel>{key}</FormLabel>
                       <Input
                         type="url"
@@ -251,7 +213,7 @@ const AttributeList = () => {
 
                 case 'direction':
                   return (
-                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                    <FormControl key={`${currentLiveElement.id}-${idx}`} mb="2">
                       <FormLabel>{key}</FormLabel>
                       <Select
                         value={val || ''}
@@ -270,7 +232,7 @@ const AttributeList = () => {
 
                 case 'font-style':
                   return (
-                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                    <FormControl key={`${currentLiveElement.id}-${idx}`} mb="2">
                       <FormLabel>{key}</FormLabel>
                       <Select
                         value={val || ''}
@@ -289,7 +251,7 @@ const AttributeList = () => {
 
                 case 'text-transform':
                   return (
-                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                    <FormControl key={`${currentLiveElement.id}-${idx}`} mb="2">
                       <FormLabel>{key}</FormLabel>
                       <Select
                         value={val || ''}
@@ -310,7 +272,7 @@ const AttributeList = () => {
 
                 case 'font-weight':
                   return (
-                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                    <FormControl key={`${currentLiveElement.id}-${idx}`} mb="2">
                       <FormLabel>{key}</FormLabel>
                       <Select
                         value={val || ''}
@@ -353,7 +315,7 @@ const AttributeList = () => {
                 case 'inner-padding-left':
                   return (
                     <FormControl
-                      key={`${liveActiveElement.id}-${idx}`}
+                      key={`${currentLiveElement.id}-${idx}`}
                       w="1/2"
                       mb="2"
                       pl="2"
@@ -373,7 +335,7 @@ const AttributeList = () => {
                 case 'background-color':
                 case 'container-background-color':
                   return (
-                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                    <FormControl key={`${currentLiveElement.id}-${idx}`} mb="2">
                       <FormLabel>{key}</FormLabel>
                       <ColorPicker
                         label={key}
@@ -387,7 +349,7 @@ const AttributeList = () => {
 
                 case 'target':
                   return (
-                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                    <FormControl key={`${currentLiveElement.id}-${idx}`} mb="2">
                       <FormLabel>{key}</FormLabel>
                       <Select
                         value={val || ''}
@@ -406,7 +368,7 @@ const AttributeList = () => {
 
                 case 'text-align':
                   return (
-                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                    <FormControl key={`${currentLiveElement.id}-${idx}`} mb="2">
                       <FormLabel>{key}</FormLabel>
                       <Select
                         value={val || ''}
@@ -425,7 +387,7 @@ const AttributeList = () => {
 
                 case 'text-decoration':
                   return (
-                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                    <FormControl key={`${currentLiveElement.id}-${idx}`} mb="2">
                       <FormLabel>{key}</FormLabel>
                       <Select
                         value={val || ''}
@@ -446,7 +408,7 @@ const AttributeList = () => {
 
                 case 'vertical-align':
                   return (
-                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                    <FormControl key={`${currentLiveElement.id}-${idx}`} mb="2">
                       <FormLabel>{key}</FormLabel>
                       <Select
                         value={val || ''}
@@ -465,7 +427,7 @@ const AttributeList = () => {
 
                 default:
                   return (
-                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                    <FormControl key={`${currentLiveElement.id}-${idx}`} mb="2">
                       <FormLabel>{key}</FormLabel>
                       <Input
                         value={val || ''}

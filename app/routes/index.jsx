@@ -1,13 +1,6 @@
 import { useFetcher } from '@remix-run/react'
 import { useEffect, useMemo, useState } from 'react'
-import {
-  MjButton,
-  MjColumn,
-  MjImage,
-  MjSection,
-  MjText,
-  MjWrapper,
-} from '../components/BodyComponents'
+
 import { ClientOnly, useHydrated } from 'remix-utils'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 import { GripVertical, Plus, Send } from 'lucide-react'
@@ -17,6 +10,10 @@ import {
   useActiveElementDispatch,
   useActiveElementState,
 } from '../../context/activeElement'
+import {
+  getComponentAllowedChildren,
+  getComponentTitle,
+} from '../../utils/functions'
 import { db } from '../models/db'
 import { useLiveQuery } from 'dexie-react-hooks'
 import {
@@ -528,17 +525,6 @@ const ComponentListItem = ({ el, handleOnClick, children }) => {
   const { data: activeElement } = useActiveElementState()
   const dispatch = useActiveElementDispatch()
 
-  const bodyComps = [MjSection, MjWrapper, MjColumn, MjText, MjImage, MjButton]
-
-  const getAllowedChildren = (tagName) => {
-    const found = bodyComps.find((el) => el.tagName === tagName)
-    return found ? found.allowedChildren : []
-  }
-  const getTitle = (tagName) => {
-    const found = bodyComps.find((el) => el.tagName === tagName)
-    return found ? found.title : ''
-  }
-
   return (
     <Box>
       <Box
@@ -551,11 +537,21 @@ const ComponentListItem = ({ el, handleOnClick, children }) => {
       >
         <Flex align="center">
           <Box>{children}</Box>
-          <Button variant="link" onClick={() => dispatch(setActiveElement(el))}>
-            {getTitle(el.tagName)}
+          <Button
+            variant="link"
+            onClick={() =>
+              dispatch(
+                setActiveElement({
+                  tagName: el.tagName,
+                  id: el.id,
+                })
+              )
+            }
+          >
+            {getComponentTitle(el.tagName)}
             {/* <p className="text-xs">{el.id}</p> */}
           </Button>
-          {getAllowedChildren(el.tagName).length > 0 ? (
+          {getComponentAllowedChildren(el.tagName).length > 0 ? (
             <Box ml="auto">
               <Menu placement="bottom-start" strategy="fixed">
                 <IconButton
@@ -566,19 +562,21 @@ const ComponentListItem = ({ el, handleOnClick, children }) => {
                   icon={<Icon boxSize="4" as={Plus} />}
                 />
                 <MenuList>
-                  {getAllowedChildren(el.tagName).map((child, cIdx) => (
-                    <MenuItem
-                      key={cIdx}
-                      onClick={() =>
-                        handleOnClick({
-                          ...child,
-                          parentId: el.id,
-                        })
-                      }
-                    >
-                      {getTitle(child.tagName)}
-                    </MenuItem>
-                  ))}
+                  {getComponentAllowedChildren(el.tagName).map(
+                    (child, cIdx) => (
+                      <MenuItem
+                        key={cIdx}
+                        onClick={() =>
+                          handleOnClick({
+                            ...child,
+                            parentId: el.id,
+                          })
+                        }
+                      >
+                        {getComponentTitle(child.tagName)}
+                      </MenuItem>
+                    )
+                  )}
                 </MenuList>
               </Menu>
             </Box>
