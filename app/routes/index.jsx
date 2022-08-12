@@ -369,7 +369,7 @@ export default function Index() {
         <Box
           position="relative"
           h="100%"
-          w="300px"
+          w="320px"
           flexShrink="0"
           borderRightWidth="1px"
           borderRightColor="gray.200"
@@ -434,7 +434,7 @@ export default function Index() {
         <Box
           position="relative"
           h="100%"
-          w="300px"
+          w="320px"
           flexShrink="0"
           borderLeftWidth="1px"
           borderLeftColor="gray.200"
@@ -473,7 +473,7 @@ export default function Index() {
                   {activeElement.title}
                 </Text>
                 <Box mt="4" position="relative" zIndex="1">
-                  <AttributeList />
+                  <AttributeList key={activeElement.id} />
                 </Box>
               </Box>
             </Box>

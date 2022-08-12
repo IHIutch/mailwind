@@ -11,7 +11,7 @@ import {
   SimpleGrid,
 } from '@chakra-ui/react'
 
-const BorderController = ({ value = '0 0 0 0', onChange }) => {
+const InnerPaddingController = ({ value = '0 0 0 0', onChange }) => {
   const top = value.split(' ')[0] || '0'
   const right = value.split(' ')[1] || '0'
   const bottom = value.split(' ')[2] || '0'
@@ -35,7 +35,7 @@ const BorderController = ({ value = '0 0 0 0', onChange }) => {
   return (
     <Box as="fieldset">
       <Heading as="legend" mb="2" fontSize="md" fontWeight="semibold">
-        Border
+        Inner Padding
       </Heading>
       <SimpleGrid columns="2" rowGap="2" columnGap="4">
         <FormControl
@@ -139,4 +139,4 @@ const BorderController = ({ value = '0 0 0 0', onChange }) => {
   )
 }
 
-export default BorderController
+export default InnerPaddingController

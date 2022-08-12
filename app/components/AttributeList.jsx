@@ -9,11 +9,12 @@ import {
   NumberInputField,
   NumberInputStepper,
   Select,
+  Stack,
   Text,
 } from '@chakra-ui/react'
 import { useActiveElementState } from 'context/activeElement'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useHydrated } from 'remix-utils'
 import { db } from '~/models/db'
 import {
@@ -26,6 +27,9 @@ import {
 } from './BodyComponents'
 import ColorPicker from './ColorPicker'
 import BorderController from './controllers/BorderController'
+import PaddingController from './controllers/PaddingController'
+import InnerPaddingController from './controllers/InnerPaddingController'
+import debounce from 'lodash/debounce'
 
 const bodyCompList = [MjSection, MjWrapper, MjColumn, MjText, MjImage, MjButton]
 
@@ -66,35 +70,68 @@ const AttributeList = () => {
     })
   }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleUpdateDebounce = useCallback(
+    debounce(handleUpdateBodyComponent, 250),
+    [handleUpdateBodyComponent]
+  )
+
   return (
     <Box>
       {liveActiveElement ? (
         <>
-          {attributeList.includes('border') ? (
-            <BorderController
-              value={
-                liveActiveElement['border'] === 'none'
-                  ? '0 0 0 0'
-                  : liveActiveElement['border']
-              }
-              onChange={(value) =>
-                handleUpdateBodyComponent({
-                  border: value,
-                })
-              }
-            />
-          ) : null}
-          {/* {attributeList.includes('border-top') ? (
+          <Stack spacing="8">
+            {attributeList.includes('border') ? (
+              <Box>
+                <BorderController
+                  value={
+                    liveActiveElement['border'] === 'none'
+                      ? '0 0 0 0'
+                      : liveActiveElement['border']
+                  }
+                  onChange={(value) =>
+                    handleUpdateDebounce({
+                      border: value,
+                    })
+                  }
+                />
+              </Box>
+            ) : null}
+            {attributeList.includes('padding') ? (
+              <Box>
+                <PaddingController
+                  value={liveActiveElement['padding'] || '0 0 0 0'}
+                  onChange={(value) =>
+                    handleUpdateDebounce({
+                      padding: value,
+                    })
+                  }
+                />
+              </Box>
+            ) : null}
+            {attributeList.includes('inner-padding') ? (
+              <Box>
+                <InnerPaddingController
+                  value={liveActiveElement['inner-padding'] || '0 0 0 0'}
+                  onChange={(value) =>
+                    handleUpdateDebounce({
+                      'inner-padding': value,
+                    })
+                  }
+                />
+              </Box>
+            ) : null}
+          </Stack>
+          {/* {attributeList.includes('border-radius') ? (
             <FormControl>
-              <FormLabel>Border Top</FormLabel>
+              <FormLabel>Border Radius</FormLabel>
               <NumberInput
                 onChange={(value) =>
-                  handleUpdateBodyComponent({
-                    'border-top': value + 'px',
+                  handleUpdateDebounce({
+                    'border-radius': value + 'px',
                   })
                 }
-                // value={liveActiveElement['border-top'] + 'px'}
-                defaultValue={liveActiveElement['border-top']?.toString() || 0}
+                defaultValue={liveActiveElement['border-radius'] || '0'}
               >
                 <NumberInputField />
                 <NumberInputStepper>
@@ -104,26 +141,6 @@ const AttributeList = () => {
               </NumberInput>
             </FormControl>
           ) : null} */}
-          {attributeList.includes('border-radius') ? (
-            <FormControl>
-              <FormLabel>Border Radius</FormLabel>
-              <NumberInput
-                onChange={(value) =>
-                  handleUpdateBodyComponent({
-                    'border-radius': value,
-                  })
-                }
-                value={liveActiveElement['border-radius']}
-                defaultValue={liveActiveElement['border-radius'] || 0}
-              >
-                <NumberInputField />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
-            </FormControl>
-          ) : null}
 
           {/* <Box mt="12">
             {Object.entries(attributeValues).map(([key, val], idx) => {
