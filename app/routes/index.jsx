@@ -68,7 +68,7 @@ export default function Index() {
     ],
   })
 
-  let bodyComps = useLiveQuery(
+  const bodyComps = useLiveQuery(
     () => (isHydrated ? db.body.toArray() : []),
     [isHydrated]
   )
@@ -473,14 +473,7 @@ export default function Index() {
                   {activeElement.title}
                 </Text>
                 <Box mt="4" position="relative" zIndex="1">
-                  <AttributeList
-                    activeId={activeElement.id}
-                    attributes={activeElement || {}}
-                    tagName={activeElement.tagName}
-                    onChange={(payload) => {
-                      handleUpdateBodyComponent(activeElement.id, payload)
-                    }}
-                  />
+                  <AttributeList />
                 </Box>
               </Box>
             </Box>

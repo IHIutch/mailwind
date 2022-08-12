@@ -11,6 +11,11 @@ import {
   Select,
   Text,
 } from '@chakra-ui/react'
+import { useActiveElementState } from 'context/activeElement'
+import { useLiveQuery } from 'dexie-react-hooks'
+import { useMemo } from 'react'
+import { useHydrated } from 'remix-utils'
+import { db } from '~/models/db'
 import {
   MjButton,
   MjColumn,
@@ -20,353 +25,444 @@ import {
   MjWrapper,
 } from './BodyComponents'
 import ColorPicker from './ColorPicker'
+import BorderController from './controllers/BorderController'
 
-const bodyComps = [MjSection, MjWrapper, MjColumn, MjText, MjImage, MjButton]
+const bodyCompList = [MjSection, MjWrapper, MjColumn, MjText, MjImage, MjButton]
 
-const AttributeList = ({ activeId, onChange, attributes, tagName }) => {
-  const getAttributes = () => {
-    const found = bodyComps.find((el) => el.tagName === tagName)
-    return found ? Object.keys(found.attributes).map((key) => key) : []
+const AttributeList = () => {
+  const isHydrated = useHydrated()
+  const { data: activeElement } = useActiveElementState()
+  const bodyComps = useLiveQuery(
+    () => (isHydrated ? db.body.toArray() : []),
+    [isHydrated]
+  )
+  const memoBodyComps = useMemo(() => bodyComps || [], [bodyComps])
+
+  const liveActiveElement = memoBodyComps.find(
+    (el) => el.id === activeElement.id
+  )
+
+  const getAttributeValues = () => {
+    const found = bodyCompList.find(
+      (el) => el.tagName === liveActiveElement?.tagName
+    )
+    return found
+      ? Object.entries(found.attributes).reduce((acc, [key, val], idx) => {
+          return {
+            ...acc,
+            [key]: val,
+          }
+        }, {})
+      : []
   }
-  const theAttributes = getAttributes()
+  const attributeValues = getAttributeValues()
+  const attributeList = Object.keys(attributeValues).map((key) => key)
+
+  console.log({ attributeValues, attributeList })
+
+  const handleUpdateBodyComponent = (payload) => {
+    db.body.update(liveActiveElement.id, {
+      ...payload,
+    })
+  }
 
   return (
     <Box>
-      {theAttributes.includes('border-top') ? (
-        <FormControl>
-          <FormLabel>Border Top</FormLabel>
-          <NumberInput
-            onChange={(e) => onChange({ 'border-top': e.target.value + 'px' })}
-            // value={attributes['border-top'] + 'px'}
-            defaultValue={attributes['border-top']?.toString() || 0}
-          >
-            <NumberInputField />
-            <NumberInputStepper>
-              <NumberIncrementStepper />
-              <NumberDecrementStepper />
-            </NumberInputStepper>
-          </NumberInput>
-        </FormControl>
+      {liveActiveElement ? (
+        <>
+          {attributeList.includes('border') ? (
+            <BorderController
+              value={
+                liveActiveElement['border'] === 'none'
+                  ? '0 0 0 0'
+                  : liveActiveElement['border']
+              }
+              onChange={(value) =>
+                handleUpdateBodyComponent({
+                  border: value,
+                })
+              }
+            />
+          ) : null}
+          {/* {attributeList.includes('border-top') ? (
+            <FormControl>
+              <FormLabel>Border Top</FormLabel>
+              <NumberInput
+                onChange={(value) =>
+                  handleUpdateBodyComponent({
+                    'border-top': value + 'px',
+                  })
+                }
+                // value={liveActiveElement['border-top'] + 'px'}
+                defaultValue={liveActiveElement['border-top']?.toString() || 0}
+              >
+                <NumberInputField />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+            </FormControl>
+          ) : null} */}
+          {attributeList.includes('border-radius') ? (
+            <FormControl>
+              <FormLabel>Border Radius</FormLabel>
+              <NumberInput
+                onChange={(value) =>
+                  handleUpdateBodyComponent({
+                    'border-radius': value,
+                  })
+                }
+                value={liveActiveElement['border-radius']}
+                defaultValue={liveActiveElement['border-radius'] || 0}
+              >
+                <NumberInputField />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+            </FormControl>
+          ) : null}
+
+          {/* <Box mt="12">
+            {Object.entries(attributeValues).map(([key, val], idx) => {
+              switch (key) {
+                case 'align':
+                  return (
+                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                      <FormLabel>{key}</FormLabel>
+                      <Select
+                        value={val || ''}
+                        onChange={(e) =>
+                          handleUpdateBodyComponent({ [key]: e.target.value })
+                        }
+                      >
+                        {['left', 'right', 'center', 'justify'].map(
+                          (value, iIdx) => (
+                            <option key={iIdx} value={value}>
+                              {value}
+                            </option>
+                          )
+                        )}
+                      </Select>
+                    </FormControl>
+                  )
+
+                case 'background-position':
+                  return (
+                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                      <FormLabel>{key}</FormLabel>
+                      <Select
+                        value={val || ''}
+                        onChange={(e) =>
+                          handleUpdateBodyComponent({ [key]: e.target.value })
+                        }
+                      >
+                        {[
+                          'top left',
+                          'top center',
+                          'top right',
+                          'center left',
+                          'center center',
+                          'center right',
+                          'bottom left',
+                          'bottom center',
+                          'bottom right',
+                        ].map((value, iIdx) => (
+                          <option key={iIdx} value={value}>
+                            {value}
+                          </option>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  )
+
+                case 'background-repeat':
+                  return (
+                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                      <FormLabel>{key}</FormLabel>
+                      <Select
+                        value={val || ''}
+                        onChange={(e) =>
+                          handleUpdateBodyComponent({ [key]: e.target.value })
+                        }
+                      >
+                        {['repeat', 'repeat-x', 'repeat-y', 'no-repeat'].map(
+                          (value, iIdx) => (
+                            <option key={iIdx} value={value}>
+                              {value}
+                            </option>
+                          )
+                        )}
+                      </Select>
+                    </FormControl>
+                  )
+
+                case 'background-size':
+                  return (
+                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                      <FormLabel>{key}</FormLabel>
+                      <Select
+                        value={val || ''}
+                        onChange={(e) =>
+                          handleUpdateBodyComponent({ [key]: e.target.value })
+                        }
+                      >
+                        {['auto', 'cover', 'contain'].map((value, iIdx) => (
+                          <option key={iIdx} value={value}>
+                            {value}
+                          </option>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  )
+
+                case 'background-url':
+                  return (
+                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                      <FormLabel>{key}</FormLabel>
+                      <Input
+                        type="url"
+                        value={val || ''}
+                        onChange={(e) =>
+                          handleUpdateBodyComponent({ [key]: e.target.value })
+                        }
+                      />
+                    </FormControl>
+                  )
+
+                case 'direction':
+                  return (
+                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                      <FormLabel>{key}</FormLabel>
+                      <Select
+                        value={val || ''}
+                        onChange={(e) =>
+                          handleUpdateBodyComponent({ [key]: e.target.value })
+                        }
+                      >
+                        {['ltr', 'rtl'].map((value, iIdx) => (
+                          <option key={iIdx} value={value}>
+                            {value}
+                          </option>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  )
+
+                case 'font-style':
+                  return (
+                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                      <FormLabel>{key}</FormLabel>
+                      <Select
+                        value={val || ''}
+                        onChange={(e) =>
+                          handleUpdateBodyComponent({ [key]: e.target.value })
+                        }
+                      >
+                        {['none', 'italic'].map((value, iIdx) => (
+                          <option key={iIdx} value={value}>
+                            {value}
+                          </option>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  )
+
+                case 'text-transform':
+                  return (
+                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                      <FormLabel>{key}</FormLabel>
+                      <Select
+                        value={val || ''}
+                        onChange={(e) =>
+                          handleUpdateBodyComponent({ [key]: e.target.value })
+                        }
+                      >
+                        {['none', 'capitalize', 'lowercase', 'uppercase'].map(
+                          (value, iIdx) => (
+                            <option key={iIdx} value={value}>
+                              {value}
+                            </option>
+                          )
+                        )}
+                      </Select>
+                    </FormControl>
+                  )
+
+                case 'font-weight':
+                  return (
+                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                      <FormLabel>{key}</FormLabel>
+                      <Select
+                        value={val || ''}
+                        onChange={(e) =>
+                          handleUpdateBodyComponent({ [key]: e.target.value })
+                        }
+                      >
+                        {[
+                          '100',
+                          '200',
+                          '300',
+                          '400',
+                          '500',
+                          '600',
+                          '700',
+                          '800',
+                          '900',
+                        ].map((value, iIdx) => (
+                          <option key={iIdx} value={value}>
+                            {value}
+                          </option>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  )
+
+                case 'background-position-x':
+                case 'background-position-y':
+                case 'border-top':
+                case 'border-right':
+                case 'border-bottom':
+                case 'border-left':
+                case 'padding-top':
+                case 'padding-right':
+                case 'padding-bottom':
+                case 'padding-left':
+                case 'inner-padding-top':
+                case 'inner-padding-right':
+                case 'inner-padding-bottom':
+                case 'inner-padding-left':
+                  return (
+                    <FormControl
+                      key={`${liveActiveElement.id}-${idx}`}
+                      w="1/2"
+                      mb="2"
+                      pl="2"
+                    >
+                      <FormLabel>{key}</FormLabel>
+                      <Input
+                        type="text"
+                        value={val || ''}
+                        onChange={(e) =>
+                          handleUpdateBodyComponent({ [key]: e.target.value })
+                        }
+                      />
+                    </FormControl>
+                  )
+
+                case 'color':
+                case 'background-color':
+                case 'container-background-color':
+                  return (
+                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                      <FormLabel>{key}</FormLabel>
+                      <ColorPicker
+                        label={key}
+                        value={val || 'transparent'}
+                        onChange={(e) =>
+                          handleUpdateBodyComponent({ [key]: e.target.value })
+                        }
+                      />
+                    </FormControl>
+                  )
+
+                case 'target':
+                  return (
+                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                      <FormLabel>{key}</FormLabel>
+                      <Select
+                        value={val || ''}
+                        onChange={(e) =>
+                          handleUpdateBodyComponent({ [key]: e.target.value })
+                        }
+                      >
+                        {['_self', '_blank'].map((value, iIdx) => (
+                          <option key={iIdx} value={value}>
+                            {value}
+                          </option>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  )
+
+                case 'text-align':
+                  return (
+                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                      <FormLabel>{key}</FormLabel>
+                      <Select
+                        value={val || ''}
+                        onChange={(e) =>
+                          handleUpdateBodyComponent({ [key]: e.target.value })
+                        }
+                      >
+                        {['left', 'right', 'center'].map((value, iIdx) => (
+                          <option key={iIdx} value={value}>
+                            {value}
+                          </option>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  )
+
+                case 'text-decoration':
+                  return (
+                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                      <FormLabel>{key}</FormLabel>
+                      <Select
+                        value={val || ''}
+                        onChange={(e) =>
+                          handleUpdateBodyComponent({ [key]: e.target.value })
+                        }
+                      >
+                        {['none', 'underline', 'line-through'].map(
+                          (value, iIdx) => (
+                            <option key={iIdx} value={value}>
+                              {value}
+                            </option>
+                          )
+                        )}
+                      </Select>
+                    </FormControl>
+                  )
+
+                case 'vertical-align':
+                  return (
+                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                      <FormLabel>{key}</FormLabel>
+                      <Select
+                        value={val || ''}
+                        onChange={(e) =>
+                          handleUpdateBodyComponent({ [key]: e.target.value })
+                        }
+                      >
+                        {['top', 'middle', 'bottom'].map((value, iIdx) => (
+                          <option key={iIdx} value={value}>
+                            {value}
+                          </option>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  )
+
+                default:
+                  return (
+                    <FormControl key={`${liveActiveElement.id}-${idx}`} mb="2">
+                      <FormLabel>{key}</FormLabel>
+                      <Input
+                        value={val || ''}
+                        onChange={(e) =>
+                          handleUpdateBodyComponent({ [key]: e.target.value })
+                        }
+                      />
+                    </FormControl>
+                  )
+              }
+            })}
+          </Box> */}
+        </>
       ) : null}
-
-      {theAttributes.includes('border-radius') ? (
-        <FormControl>
-          <FormLabel>Border Radius</FormLabel>
-          <NumberInput
-            onChange={(e) =>
-              onChange({ 'border-radius': e.target.value + 'px' })
-            }
-            // value={attributes['border-top'] + 'px'}
-            defaultValue={attributes['border-radius']?.toString() + 'px' || 0}
-          >
-            <NumberInputField />
-            <NumberInputStepper>
-              <NumberIncrementStepper />
-              <NumberDecrementStepper />
-            </NumberInputStepper>
-          </NumberInput>
-        </FormControl>
-      ) : null}
-
-      <Box mt="12">
-        {Object.entries(attributes).map(([key, val], idx) => {
-          switch (key) {
-            case 'align':
-              return (
-                <FormControl key={`${activeId}-${idx}`} mb="2">
-                  <FormLabel>{key}</FormLabel>
-                  <Select
-                    value={val || ''}
-                    onChange={(e) => onChange({ [key]: e.target.value })}
-                  >
-                    {['left', 'right', 'center', 'justify'].map(
-                      (value, iIdx) => (
-                        <option key={iIdx} value={value}>
-                          {value}
-                        </option>
-                      )
-                    )}
-                  </Select>
-                </FormControl>
-              )
-
-            case 'background-position':
-              return (
-                <FormControl key={`${activeId}-${idx}`} mb="2">
-                  <FormLabel>{key}</FormLabel>
-                  <Select
-                    value={val || ''}
-                    onChange={(e) => onChange({ [key]: e.target.value })}
-                  >
-                    {[
-                      'top left',
-                      'top center',
-                      'top right',
-                      'center left',
-                      'center center',
-                      'center right',
-                      'bottom left',
-                      'bottom center',
-                      'bottom right',
-                    ].map((value, iIdx) => (
-                      <option key={iIdx} value={value}>
-                        {value}
-                      </option>
-                    ))}
-                  </Select>
-                </FormControl>
-              )
-
-            case 'background-repeat':
-              return (
-                <FormControl key={`${activeId}-${idx}`} mb="2">
-                  <FormLabel>{key}</FormLabel>
-                  <Select
-                    value={val || ''}
-                    onChange={(e) => onChange({ [key]: e.target.value })}
-                  >
-                    {['repeat', 'repeat-x', 'repeat-y', 'no-repeat'].map(
-                      (value, iIdx) => (
-                        <option key={iIdx} value={value}>
-                          {value}
-                        </option>
-                      )
-                    )}
-                  </Select>
-                </FormControl>
-              )
-
-            case 'background-size':
-              return (
-                <FormControl key={`${activeId}-${idx}`} mb="2">
-                  <FormLabel>{key}</FormLabel>
-                  <Select
-                    value={val || ''}
-                    onChange={(e) => onChange({ [key]: e.target.value })}
-                  >
-                    {['auto', 'cover', 'contain'].map((value, iIdx) => (
-                      <option key={iIdx} value={value}>
-                        {value}
-                      </option>
-                    ))}
-                  </Select>
-                </FormControl>
-              )
-
-            case 'background-url':
-              return (
-                <FormControl key={`${activeId}-${idx}`} mb="2">
-                  <FormLabel>{key}</FormLabel>
-                  <Input
-                    type="url"
-                    value={val || ''}
-                    onChange={(e) => onChange({ [key]: e.target.value })}
-                  />
-                </FormControl>
-              )
-
-            case 'direction':
-              return (
-                <FormControl key={`${activeId}-${idx}`} mb="2">
-                  <FormLabel>{key}</FormLabel>
-                  <Select
-                    value={val || ''}
-                    onChange={(e) => onChange({ [key]: e.target.value })}
-                  >
-                    {['ltr', 'rtl'].map((value, iIdx) => (
-                      <option key={iIdx} value={value}>
-                        {value}
-                      </option>
-                    ))}
-                  </Select>
-                </FormControl>
-              )
-
-            case 'font-style':
-              return (
-                <FormControl key={`${activeId}-${idx}`} mb="2">
-                  <FormLabel>{key}</FormLabel>
-                  <Select
-                    value={val || ''}
-                    onChange={(e) => onChange({ [key]: e.target.value })}
-                  >
-                    {['none', 'italic'].map((value, iIdx) => (
-                      <option key={iIdx} value={value}>
-                        {value}
-                      </option>
-                    ))}
-                  </Select>
-                </FormControl>
-              )
-
-            case 'text-transform':
-              return (
-                <FormControl key={`${activeId}-${idx}`} mb="2">
-                  <FormLabel>{key}</FormLabel>
-                  <Select
-                    value={val || ''}
-                    onChange={(e) => onChange({ [key]: e.target.value })}
-                  >
-                    {['none', 'capitalize', 'lowercase', 'uppercase'].map(
-                      (value, iIdx) => (
-                        <option key={iIdx} value={value}>
-                          {value}
-                        </option>
-                      )
-                    )}
-                  </Select>
-                </FormControl>
-              )
-
-            case 'font-weight':
-              return (
-                <FormControl key={`${activeId}-${idx}`} mb="2">
-                  <FormLabel>{key}</FormLabel>
-                  <Select
-                    value={val || ''}
-                    onChange={(e) => onChange({ [key]: e.target.value })}
-                  >
-                    {[
-                      '100',
-                      '200',
-                      '300',
-                      '400',
-                      '500',
-                      '600',
-                      '700',
-                      '800',
-                      '900',
-                    ].map((value, iIdx) => (
-                      <option key={iIdx} value={value}>
-                        {value}
-                      </option>
-                    ))}
-                  </Select>
-                </FormControl>
-              )
-
-            case 'background-position-x':
-            case 'background-position-y':
-            case 'border-top':
-            case 'border-right':
-            case 'border-bottom':
-            case 'border-left':
-            case 'padding-top':
-            case 'padding-right':
-            case 'padding-bottom':
-            case 'padding-left':
-            case 'inner-padding-top':
-            case 'inner-padding-right':
-            case 'inner-padding-bottom':
-            case 'inner-padding-left':
-              return (
-                <FormControl key={`${activeId}-${idx}`} w="1/2" mb="2" pl="2">
-                  <FormLabel>{key}</FormLabel>
-                  <Input
-                    type="text"
-                    value={val || ''}
-                    onChange={(e) => onChange({ [key]: e.target.value })}
-                  />
-                </FormControl>
-              )
-
-            case 'color':
-            case 'background-color':
-            case 'container-background-color':
-              return (
-                <FormControl key={`${activeId}-${idx}`} mb="2">
-                  <FormLabel>{key}</FormLabel>
-                  <ColorPicker
-                    label={key}
-                    value={val || 'transparent'}
-                    onChange={(e) => onChange({ [key]: e.target.value })}
-                  />
-                </FormControl>
-              )
-
-            case 'target':
-              return (
-                <FormControl key={`${activeId}-${idx}`} mb="2">
-                  <FormLabel>{key}</FormLabel>
-                  <Select
-                    value={val || ''}
-                    onChange={(e) => onChange({ [key]: e.target.value })}
-                  >
-                    {['_self', '_blank'].map((value, iIdx) => (
-                      <option key={iIdx} value={value}>
-                        {value}
-                      </option>
-                    ))}
-                  </Select>
-                </FormControl>
-              )
-
-            case 'text-align':
-              return (
-                <FormControl key={`${activeId}-${idx}`} mb="2">
-                  <FormLabel>{key}</FormLabel>
-                  <Select
-                    value={val || ''}
-                    onChange={(e) => onChange({ [key]: e.target.value })}
-                  >
-                    {['left', 'right', 'center'].map((value, iIdx) => (
-                      <option key={iIdx} value={value}>
-                        {value}
-                      </option>
-                    ))}
-                  </Select>
-                </FormControl>
-              )
-
-            case 'text-decoration':
-              return (
-                <FormControl key={`${activeId}-${idx}`} mb="2">
-                  <FormLabel>{key}</FormLabel>
-                  <Select
-                    value={val || ''}
-                    onChange={(e) => onChange({ [key]: e.target.value })}
-                  >
-                    {['none', 'underline', 'line-through'].map(
-                      (value, iIdx) => (
-                        <option key={iIdx} value={value}>
-                          {value}
-                        </option>
-                      )
-                    )}
-                  </Select>
-                </FormControl>
-              )
-
-            case 'vertical-align':
-              return (
-                <FormControl key={`${activeId}-${idx}`} mb="2">
-                  <FormLabel>{key}</FormLabel>
-                  <Select
-                    value={val || ''}
-                    onChange={(e) => onChange({ [key]: e.target.value })}
-                  >
-                    {['top', 'middle', 'bottom'].map((value, iIdx) => (
-                      <option key={iIdx} value={value}>
-                        {value}
-                      </option>
-                    ))}
-                  </Select>
-                </FormControl>
-              )
-
-            default:
-              return (
-                <FormControl key={`${activeId}-${idx}`} mb="2">
-                  <FormLabel>{key}</FormLabel>
-                  <Input
-                    value={val || ''}
-                    onChange={(e) => onChange({ [key]: e.target.value })}
-                  />
-                </FormControl>
-              )
-          }
-        })}
-      </Box>
     </Box>
   )
 }
