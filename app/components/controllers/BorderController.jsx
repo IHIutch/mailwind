@@ -11,7 +11,7 @@ import {
   SimpleGrid,
 } from '@chakra-ui/react'
 
-const BorderController = ({ value = '0 0 0 0', onChange }) => {
+const BorderController = ({ value, onChange }) => {
   const top = value.split(' ')[0] || '0'
   const right = value.split(' ')[1] || '0'
   const bottom = value.split(' ')[2] || '0'
@@ -49,7 +49,7 @@ const BorderController = ({ value = '0 0 0 0', onChange }) => {
           <NumberInput
             display="block"
             onChange={(value) => handleChange(0, value)}
-            defaultValue={top}
+            value={top}
             w="20"
             ml="auto"
             size="sm"
@@ -73,7 +73,7 @@ const BorderController = ({ value = '0 0 0 0', onChange }) => {
           <NumberInput
             display="block"
             onChange={(value) => handleChange(1, value)}
-            defaultValue={right}
+            value={right}
             w="20"
             ml="auto"
             size="sm"
@@ -97,7 +97,7 @@ const BorderController = ({ value = '0 0 0 0', onChange }) => {
           <NumberInput
             display="block"
             onChange={(value) => handleChange(2, value)}
-            defaultValue={bottom}
+            value={bottom}
             w="20"
             ml="auto"
             size="sm"
@@ -121,7 +121,7 @@ const BorderController = ({ value = '0 0 0 0', onChange }) => {
           <NumberInput
             display="block"
             onChange={(value) => handleChange(3, value)}
-            defaultValue={left}
+            value={left}
             w="20"
             ml="auto"
             size="sm"

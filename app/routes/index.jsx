@@ -1,4 +1,3 @@
-import { useFetcher } from '@remix-run/react'
 import { useEffect, useMemo, useState } from 'react'
 
 import { ClientOnly, useHydrated } from 'remix-utils'
@@ -46,9 +45,7 @@ export default function Index() {
   const isHydrated = useHydrated()
   const dispatch = useActiveElementDispatch()
   const { data: activeElement } = useActiveElementState()
-  const fetcher = useFetcher()
   const [previewSize, setPreviewSize] = useState('desktop')
-  const [email, setEmail] = useState('')
   const [code, setCode] = useState({
     tagName: 'mjml',
     attributes: {},
@@ -245,32 +242,13 @@ export default function Index() {
     console.log('dragStart', e)
   }
 
-  const emailFetcher = useFetcher()
-  const downloadFetcher = useFetcher()
-
   const handleSendEmail = () => {
-    emailFetcher.submit(
-      {
-        email,
-        json: JSON.stringify(code),
-      },
-      { method: 'post', action: '/send-email' }
-    )
+    console.log('send email')
   }
 
   const handleDownload = () => {
-    console.log('download')
-    downloadFetcher.submit(
-      {
-        json: JSON.stringify(code),
-      },
-      { method: 'post', action: '/download' }
-    )
-  }
-
-  useEffect(() => {
-    if (downloadFetcher.data) {
-      var blob = new Blob([downloadFetcher.data], {
+    if (code) {
+      var blob = new Blob([code], {
         type: 'text/html;charset=utf-8',
       })
       var link = document.createElement('a')
@@ -282,7 +260,7 @@ export default function Index() {
 
       document.body.removeChild(link)
     }
-  }, [downloadFetcher.data])
+  }
 
   return (
     <Flex h="100vh">
@@ -325,11 +303,7 @@ export default function Index() {
           </ButtonGroup>
         </Flex>
         <Flex ml="auto" alignItems="center">
-          <Button
-            colorScheme="blue"
-            onClick={handleDownload}
-            isLoading={downloadFetcher.state === 'submitting'}
-          >
+          <Button colorScheme="blue" onClick={handleDownload}>
             Download
           </Button>
           <Box ml="4">
@@ -343,18 +317,13 @@ export default function Index() {
                 <Flex p="4" alignItems="flex-end">
                   <FormControl>
                     <FormLabel htmlFor="yourEmail">Your Email</FormLabel>
-                    <Input
-                      onChange={(e) => setEmail(e.target.value)}
-                      id="yourEmail"
-                      type="email"
-                    />
+                    <Input id="yourEmail" type="email" />
                   </FormControl>
                   <IconButton
                     ml="2"
                     colorScheme="blue"
                     icon={<Icon boxSize="4" as={Send} />}
                     onClick={handleSendEmail}
-                    isLoading={emailFetcher.state === 'loading'}
                   />
                 </Flex>
               </PopoverContent>

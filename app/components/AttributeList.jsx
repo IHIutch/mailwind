@@ -1,108 +1,145 @@
-import { Box, Select, Stack, Text } from '@chakra-ui/react'
+import {
+  Box,
+  FormControl,
+  FormLabel,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  Select,
+  Stack,
+  Text,
+} from '@chakra-ui/react'
 import { useActiveElementState } from 'context/activeElement'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { useCallback } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useHydrated } from 'remix-utils'
 import { db } from '~/models/db'
 import ColorPicker from './ColorPicker'
 import BorderController from './controllers/BorderController'
 import PaddingController from './controllers/PaddingController'
-import InnerPaddingController from './controllers/InnerPaddingController'
 import debounce from 'lodash/debounce'
 import { getComponentAttributes } from 'utils/functions'
+import { Controller, useForm } from 'react-hook-form'
 
 const AttributeList = () => {
   const isHydrated = useHydrated()
   const { data: activeElement } = useActiveElementState()
-  const bodyComps = useLiveQuery(
-    () => (isHydrated ? db.body.toArray() : []),
+  const liveElementData = useLiveQuery(
+    () => (isHydrated ? db.body.where({ id: activeElement.id }).first() : null),
     [isHydrated]
   )
-  const currentLiveElement = (bodyComps || []).find(
-    (el) => el.id === activeElement.id
-  )
 
-  const componentAttributes = currentLiveElement
-    ? getComponentAttributes(currentLiveElement.tagName)
+  const componentAttributes = activeElement
+    ? getComponentAttributes(activeElement.tagName)
     : {}
 
-  const handleUpdateBodyComponent = (payload) => {
-    db.body.update(activeElement.id, {
-      ...payload,
-    })
-  }
+  const {
+    register,
+    reset,
+    control,
+    watch,
+    formState: { isDirty },
+  } = useForm({
+    mode: 'onChange',
+  })
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    reset(liveElementData || {})
+  }, [liveElementData, reset])
+
+  const handleUpdateBodyComponent = useCallback(
+    (payload) => {
+      db.body.update(activeElement.id, {
+        ...payload,
+      })
+    },
+    [activeElement.id]
+  )
+
   const handleUpdateDebounce = useCallback(
     debounce(handleUpdateBodyComponent, 250),
     [handleUpdateBodyComponent]
   )
 
+  watch((data) => {
+    if (Object.keys(data).length && isDirty) {
+      handleUpdateDebounce(data)
+    }
+  })
+
+  console.log('repaint')
+
   return (
     <Box>
-      {currentLiveElement ? (
+      {liveElementData ? (
         <>
           <Stack spacing="8">
             {'border' in componentAttributes ? (
               <Box>
-                <BorderController
-                  value={
-                    currentLiveElement['border'] === 'none'
-                      ? '0 0 0 0'
-                      : currentLiveElement['border']
-                  }
-                  onChange={(value) =>
-                    handleUpdateDebounce({
-                      border: value,
-                    })
-                  }
+                <Controller
+                  control={control}
+                  name="border"
+                  render={({ field: { onChange, value } }) => (
+                    <BorderController
+                      onChange={onChange}
+                      value={!value || value === 'none' ? '0 0 0 0' : value}
+                    />
+                  )}
                 />
               </Box>
             ) : null}
             {'padding' in componentAttributes ? (
               <Box>
-                <PaddingController
-                  value={currentLiveElement['padding'] || '0 0 0 0'}
-                  onChange={(value) =>
-                    handleUpdateDebounce({
-                      padding: value,
-                    })
-                  }
+                <Controller
+                  control={control}
+                  name="padding"
+                  render={({ field: { onChange, value } }) => (
+                    <PaddingController
+                      onChange={onChange}
+                      value={!value || value === 'none' ? '0 0 0 0' : value}
+                    />
+                  )}
                 />
               </Box>
             ) : null}
             {'inner-padding' in componentAttributes ? (
               <Box>
-                <InnerPaddingController
-                  value={currentLiveElement['inner-padding'] || '0 0 0 0'}
-                  onChange={(value) =>
-                    handleUpdateDebounce({
-                      'inner-padding': value,
-                    })
-                  }
+                <Controller
+                  control={control}
+                  name="inner-padding"
+                  render={({ field: { onChange, value } }) => (
+                    <PaddingController
+                      onChange={onChange}
+                      value={!value || value === 'none' ? '0 0 0 0' : value}
+                    />
+                  )}
                 />
               </Box>
             ) : null}
           </Stack>
-          {/* {attributeList.includes('border-radius') ? (
-            <FormControl>
-              <FormLabel>Border Radius</FormLabel>
-              <NumberInput
-                onChange={(value) =>
-                  handleUpdateDebounce({
-                    'border-radius': value + 'px',
-                  })
-                }
-                defaultValue={currentLiveElement['border-radius'] || '0'}
-              >
-                <NumberInputField />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
-            </FormControl>
-          ) : null} */}
+          {'border-radius' in componentAttributes ? (
+            <Controller
+              control={control}
+              name="border-radius"
+              render={({ field }) => (
+                <FormControl>
+                  <FormLabel>Border Radius</FormLabel>
+                  <NumberInput
+                    {...field}
+                    onChange={(value) => field.onChange(value + 'px')}
+                  >
+                    <NumberInputField />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                </FormControl>
+              )}
+            />
+          ) : null}
 
           {/* <Box mt="12">
             {Object.entries(attributeValues).map(([key, val], idx) => {
