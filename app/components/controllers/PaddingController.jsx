@@ -11,7 +11,7 @@ import {
   SimpleGrid,
 } from '@chakra-ui/react'
 
-const PaddingController = ({ value, onChange }) => {
+const PaddingController = ({ value, onChange, label }) => {
   const top = value.split(' ')[0] || '0'
   const right = value.split(' ')[1] || '0'
   const bottom = value.split(' ')[2] || '0'
@@ -34,8 +34,8 @@ const PaddingController = ({ value, onChange }) => {
 
   return (
     <Box as="fieldset">
-      <Heading as="legend" mb="2" fontSize="md" fontWeight="semibold">
-        Padding
+      <Heading as="legend" mb="1" fontSize="md" fontWeight="semibold">
+        {label}
       </Heading>
       <SimpleGrid columns="2" rowGap="2" columnGap="4">
         <FormControl

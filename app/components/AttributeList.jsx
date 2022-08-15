@@ -1,7 +1,9 @@
 import {
   Box,
   FormControl,
+  FormErrorMessage,
   FormLabel,
+  Input,
   NumberDecrementStepper,
   NumberIncrementStepper,
   NumberInput,
@@ -10,10 +12,11 @@ import {
   Select,
   Stack,
   Text,
+  Textarea,
 } from '@chakra-ui/react'
 import { useActiveElementState } from 'context/activeElement'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useHydrated } from 'remix-utils'
 import { db } from '~/models/db'
 import ColorPicker from './ColorPicker'
@@ -40,14 +43,14 @@ const AttributeList = () => {
     reset,
     control,
     watch,
-    formState: { isDirty },
+    formState: { isDirty, errors },
   } = useForm({
     mode: 'onChange',
   })
 
   useEffect(() => {
     reset(liveElementData || {})
-  }, [liveElementData, reset])
+  }, [liveElementData?.id])
 
   const handleUpdateBodyComponent = useCallback(
     (payload) => {
@@ -63,8 +66,8 @@ const AttributeList = () => {
     [handleUpdateBodyComponent]
   )
 
-  watch((data) => {
-    if (Object.keys(data).length && isDirty) {
+  watch((data, { type }) => {
+    if (Object.keys(data).length && type === 'change') {
       handleUpdateDebounce(data)
     }
   })
@@ -76,6 +79,23 @@ const AttributeList = () => {
       {liveElementData ? (
         <>
           <Stack spacing="8">
+            {/* {'content' in componentAttributes ? ( */}
+            <Box>
+              <FormControl isInvalid={errors.content}>
+                <FormLabel mb="1" fontSize="md" fontWeight="semibold">
+                  Content
+                </FormLabel>
+                <>
+                  {activeElement.tagName === 'mj-button' ? (
+                    <Input type="text" {...register('content')} />
+                  ) : (
+                    <Textarea {...register('content')} />
+                  )}
+                </>
+                <FormErrorMessage>{errors.content?.message}</FormErrorMessage>
+              </FormControl>
+            </Box>
+            {/* ) : null} */}
             {'border' in componentAttributes ? (
               <Box>
                 <Controller
@@ -97,6 +117,7 @@ const AttributeList = () => {
                   name="padding"
                   render={({ field: { onChange, value } }) => (
                     <PaddingController
+                      label="Padding"
                       onChange={onChange}
                       value={!value || value === 'none' ? '0 0 0 0' : value}
                     />
@@ -111,6 +132,7 @@ const AttributeList = () => {
                   name="inner-padding"
                   render={({ field: { onChange, value } }) => (
                     <PaddingController
+                      label="Inner Padding"
                       onChange={onChange}
                       value={!value || value === 'none' ? '0 0 0 0' : value}
                     />
@@ -125,7 +147,7 @@ const AttributeList = () => {
               name="border-radius"
               render={({ field }) => (
                 <FormControl>
-                  <FormLabel>Border Radius</FormLabel>
+                  <FormLabel mb="1">Border Radius</FormLabel>
                   <NumberInput
                     {...field}
                     onChange={(value) => field.onChange(value + 'px')}

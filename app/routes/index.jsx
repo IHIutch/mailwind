@@ -134,18 +134,13 @@ export default function Index() {
                     tagName: li.tagName,
                     attributes: {
                       ...Object.entries(li).reduce(
-                        (acc, [key, val]) => ({
-                          ...acc,
-                          [key]: val,
-                        }),
+                        (acc, [key, val]) =>
+                          key === 'content' ? acc : { ...acc, [key]: val },
                         {}
                       ),
                       'css-class': 'data-' + li.id,
                     },
-                    content:
-                      li.tagName === 'mj-text'
-                        ? '<p>Text</p>'
-                        : li.content || 'Press Me',
+                    content: li.content,
                     children: getNestedElements(list, li),
                   }))
               return {

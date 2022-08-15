@@ -25,6 +25,11 @@ const Attributes = {
     type: String,
     description: 'text color',
   },
+  content: {
+    label: 'Content',
+    type: String,
+    description: 'text content',
+  },
   'font-family': {
     label: 'Font Family',
     type: String,
@@ -335,7 +340,8 @@ export const MjText = {
       defaultValue:
         'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif',
     },
-    'font-size': { ...Attributes['font-size'], defaultValue: '13px' },
+    content: { ...Attributes.content, defaultValue: 'This is a text tag' },
+    'font-size': { ...Attributes['font-size'], defaultValue: '16px' },
     'font-style': { ...Attributes['font-style'], defaultValue: null },
     'font-weight': { ...Attributes['font-weight'], defaultValue: null },
     'line-height': { ...Attributes['line-height'], defaultValue: '1' },
@@ -424,6 +430,7 @@ export const MjButton = {
       ...Attributes['container-background-color'],
       defaultValue: null,
     },
+    content: { ...Attributes.content, defaultValue: 'Press Me' },
     'css-class': { ...Attributes['css-class'], defaultValue: null },
     'font-family': {
       ...Attributes['font-family'],
