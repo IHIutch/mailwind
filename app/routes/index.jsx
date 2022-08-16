@@ -29,6 +29,7 @@ import {
 } from '@chakra-ui/react'
 import getHtml from '~/models/getHtml.client'
 import ComponentList from '~/components/ComponentList'
+import { getComponentTitle } from 'utils/functions'
 
 export default function Index() {
   const { data: activeElement } = useActiveElementState()
@@ -193,7 +194,7 @@ export default function Index() {
             h="12"
           >
             <Heading fontWeight="semibold" fontSize="lg">
-              Attribute
+              {getComponentTitle(activeElement?.tagName) || 'Attributes'}
             </Heading>
           </Flex>
           {activeElement ? (
@@ -208,11 +209,8 @@ export default function Index() {
               pt="12"
             >
               <Box p="4">
-                <Text mb="1" fontSize="lg" fontWeight="semibold">
-                  {activeElement.title}
-                </Text>
                 <Box mt="4" position="relative" zIndex="1">
-                  <AttributeList key={activeElement.id} />
+                  <AttributeList />
                 </Box>
               </Box>
             </Box>

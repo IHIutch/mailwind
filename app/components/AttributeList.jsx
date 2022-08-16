@@ -31,7 +31,7 @@ export default function AttributeList() {
   const { data: activeElement } = useActiveElementState()
   const liveElementData = useLiveQuery(
     () => (isHydrated ? db.body.where({ id: activeElement.id }).first() : null),
-    [isHydrated]
+    [isHydrated, activeElement.id]
   )
 
   const componentAttributes = activeElement
@@ -49,8 +49,8 @@ export default function AttributeList() {
   })
 
   useEffect(() => {
-    reset(liveElementData || {})
-  }, [liveElementData?.id, reset])
+    reset({ ...liveElementData } || {})
+  }, [liveElementData, reset])
 
   const handleUpdateBodyComponent = useCallback(
     (payload) => {
@@ -80,23 +80,23 @@ export default function AttributeList() {
       {liveElementData ? (
         <>
           <Stack spacing="8">
-            {/* {'content' in componentAttributes ? ( */}
-            <Box>
-              <FormControl isInvalid={errors.content}>
-                <FormLabel mb="1" fontSize="md" fontWeight="semibold">
-                  Content
-                </FormLabel>
-                <>
-                  {activeElement.tagName === 'mj-button' ? (
-                    <Input type="text" {...register('content')} />
-                  ) : (
-                    <Textarea {...register('content')} />
-                  )}
-                </>
-                <FormErrorMessage>{errors.content?.message}</FormErrorMessage>
-              </FormControl>
-            </Box>
-            {/* ) : null} */}
+            {'content' in componentAttributes ? (
+              <Box>
+                <FormControl isInvalid={errors.content}>
+                  <FormLabel mb="1" fontSize="md" fontWeight="semibold">
+                    Content
+                  </FormLabel>
+                  <>
+                    {activeElement.tagName === 'mj-button' ? (
+                      <Input type="text" {...register('content')} />
+                    ) : (
+                      <Textarea {...register('content')} />
+                    )}
+                  </>
+                  <FormErrorMessage>{errors.content?.message}</FormErrorMessage>
+                </FormControl>
+              </Box>
+            ) : null}
             {'border' in componentAttributes ? (
               <Box>
                 <Controller

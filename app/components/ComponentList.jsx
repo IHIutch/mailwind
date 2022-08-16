@@ -29,8 +29,19 @@ export default function ComponentList() {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const bodyComps =
-    useLiveQuery(() => (isHydrated ? db.body.toArray() : []), [isHydrated]) ||
-    []
+    useLiveQuery(
+      () =>
+        isHydrated
+          ? db.body.toArray((arr) =>
+              arr.map((a) => ({
+                id: a.id,
+                tagName: a.tagName,
+                parentId: a.parentId,
+              }))
+            )
+          : [],
+      [isHydrated]
+    ) || []
 
   const getNestedElements = useCallback(
     (list, parent) =>
