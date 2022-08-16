@@ -1,25 +1,18 @@
-import { useEffect, useMemo, useState } from 'react'
-
+import { useMemo, useState } from 'react'
 import { ClientOnly, useHydrated } from 'remix-utils'
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
-import { GripVertical, Plus, Send } from 'lucide-react'
+import { Send } from 'lucide-react'
 import AttributeList from '../components/AttributeList'
 import {
   setActiveElement,
   useActiveElementDispatch,
   useActiveElementState,
 } from '../../context/activeElement'
-import {
-  getComponentAllowedChildren,
-  getComponentTitle,
-} from '../../utils/functions'
 import { db } from '../models/db'
 import { useLiveQuery } from 'dexie-react-hooks'
 import {
   Box,
   Button,
   ButtonGroup,
-  Center,
   Flex,
   FormControl,
   FormLabel,
@@ -27,164 +20,39 @@ import {
   Icon,
   IconButton,
   Input,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
   Popover,
   PopoverArrow,
   PopoverCloseButton,
   PopoverContent,
   PopoverTrigger,
-  Stack,
   Text,
 } from '@chakra-ui/react'
 import getHtml from '~/models/getHtml.client'
 import ComponentList from '~/components/ComponentList'
 
 export default function Index() {
-  const isHydrated = useHydrated()
-  const dispatch = useActiveElementDispatch()
   const { data: activeElement } = useActiveElementState()
   const [previewSize, setPreviewSize] = useState('desktop')
-  const [code, setCode] = useState({
-    tagName: 'mjml',
-    attributes: {},
-    children: [
-      {
-        tagName: 'mj-head',
-        children: [],
-      },
-      {
-        tagName: 'mj-body',
-        attributes: {},
-        children: [],
-      },
-    ],
-  })
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const bodyComps = useLiveQuery(
-    () => (isHydrated ? db.body.toArray() : []),
-    [isHydrated]
-  )
-
-  const memoBodyComps = useMemo(() => bodyComps || [], [bodyComps])
-
-  const getNestedElements = (list, parent) =>
-    list
-      .filter((li) => li.parentId === parent.id)
-      .map((li) => ({
-        ...li,
-        children: getNestedElements(list, li),
-      }))
-
-  const nestedElements = memoBodyComps
-    .filter((el) => el.parentId === -1)
-    .map((el) => {
-      return {
-        ...el,
-        children: getNestedElements(memoBodyComps, el),
-      }
-    })
-
-  useEffect(() => {
-    const newCode = {
-      tagName: 'mjml',
-      attributes: {},
-      children: [
-        {
-          tagName: 'mj-head',
-          children: [
-            {
-              tagName: 'mj-breakpoint',
-              attributes: {
-                width: '640px',
-              },
-            },
-            {
-              tagName: 'mj-html-attributes',
-              attributes: {},
-              children:
-                memoBodyComps.map((item) => ({
-                  tagName: 'mj-selector',
-                  attributes: {
-                    path: '.data-' + item.id,
-                  },
-                  children: [
-                    {
-                      tagName: 'mj-html-attribute',
-                      attributes: {
-                        name: 'data-id',
-                      },
-                      content: item.id,
-                    },
-                  ],
-                })) || [],
-            },
-          ],
-        },
-        {
-          tagName: 'mj-body',
-          attributes: {},
-          children: memoBodyComps
-            .filter((el) => el.parentId === -1)
-            .map((el) => {
-              const getNestedElements = (list, parent) =>
-                list
-                  .filter((li) => li.parentId === parent.id)
-                  .map((li) => ({
-                    tagName: li.tagName,
-                    attributes: {
-                      ...Object.entries(li).reduce(
-                        (acc, [key, val]) =>
-                          key === 'content' ? acc : { ...acc, [key]: val },
-                        {}
-                      ),
-                      'css-class': 'data-' + li.id,
-                    },
-                    content: li.content,
-                    children: getNestedElements(list, li),
-                  }))
-              return {
-                tagName: el.tagName,
-                attributes: {
-                  ...Object.entries(el).reduce(
-                    (acc, [key, val]) => ({
-                      ...acc,
-                      [key]: val,
-                    }),
-                    {}
-                  ),
-                  'css-class': 'data-' + el.id,
-                },
-                children: getNestedElements(memoBodyComps, el),
-              }
-            }),
-        },
-      ],
-    }
-    setCode(newCode)
-  }, [memoBodyComps])
 
   const handleSendEmail = () => {
     console.log('send email')
   }
 
   const handleDownload = () => {
-    if (code) {
-      var blob = new Blob([code], {
-        type: 'text/html;charset=utf-8',
-      })
-      var link = document.createElement('a')
-      link.href = window.URL.createObjectURL(blob)
-      link.download = 'email.html'
+    console.log('download')
+    // if (code) {
+    //   var blob = new Blob([code], {
+    //     type: 'text/html;charset=utf-8',
+    //   })
+    //   var link = document.createElement('a')
+    //   link.href = window.URL.createObjectURL(blob)
+    //   link.download = 'email.html'
 
-      document.body.appendChild(link)
-      link.click()
+    //   document.body.appendChild(link)
+    //   link.click()
 
-      document.body.removeChild(link)
-    }
+    //   document.body.removeChild(link)
+    // }
   }
 
   return (
@@ -298,10 +166,7 @@ export default function Index() {
         <Box h="100%" flexGrow="1" bg="gray.50">
           <ClientOnly>
             {() => (
-              <Preview
-                width={previewSize === 'desktop' ? '100%' : '640px'}
-                html={code}
-              />
+              <Preview width={previewSize === 'desktop' ? '100%' : '640px'} />
             )}
           </ClientOnly>
         </Box>
@@ -358,8 +223,9 @@ export default function Index() {
   )
 }
 
-const Preview = ({ width, html }) => {
+const Preview = ({ width }) => {
   const isHydrated = useHydrated()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const bodyComps =
     useLiveQuery(() => (isHydrated ? db.body.toArray() : []), [isHydrated]) ||
     []
@@ -397,9 +263,105 @@ const Preview = ({ width, html }) => {
     })
   }
 
-  const newHtml = getHtml(html)
+  const html = useMemo(() => {
+    const code =
+      bodyComps?.length > 0
+        ? {
+            tagName: 'mjml',
+            attributes: {},
+            children: [
+              {
+                tagName: 'mj-head',
+                children: [
+                  {
+                    tagName: 'mj-breakpoint',
+                    attributes: {
+                      width: '640px',
+                    },
+                  },
+                  {
+                    tagName: 'mj-html-attributes',
+                    attributes: {},
+                    children:
+                      bodyComps.map((item) => ({
+                        tagName: 'mj-selector',
+                        attributes: {
+                          path: '.data-' + item.id,
+                        },
+                        children: [
+                          {
+                            tagName: 'mj-html-attribute',
+                            attributes: {
+                              name: 'data-id',
+                            },
+                            content: item.id,
+                          },
+                        ],
+                      })) || [],
+                  },
+                ],
+              },
+              {
+                tagName: 'mj-body',
+                attributes: {},
+                children: bodyComps
+                  .filter((el) => el.parentId === -1)
+                  .map((el) => {
+                    const getNestedElements = (list, parent) =>
+                      list
+                        .filter((li) => li.parentId === parent.id)
+                        .map((li) => ({
+                          tagName: li.tagName,
+                          attributes: {
+                            ...Object.entries(li).reduce(
+                              (acc, [key, val]) =>
+                                key === 'content'
+                                  ? acc
+                                  : { ...acc, [key]: val },
+                              {}
+                            ),
+                            'css-class': 'data-' + li.id,
+                          },
+                          content: li.content,
+                          children: getNestedElements(list, li),
+                        }))
+                    return {
+                      tagName: el.tagName,
+                      attributes: {
+                        ...Object.entries(el).reduce(
+                          (acc, [key, val]) => ({
+                            ...acc,
+                            [key]: val,
+                          }),
+                          {}
+                        ),
+                        'css-class': 'data-' + el.id,
+                      },
+                      children: getNestedElements(bodyComps, el),
+                    }
+                  }),
+              },
+            ],
+          }
+        : {
+            tagName: 'mjml',
+            attributes: {},
+            children: [
+              {
+                tagName: 'mj-head',
+                children: [],
+              },
+              {
+                tagName: 'mj-body',
+                attributes: {},
+                children: [],
+              },
+            ],
+          }
+    return getHtml(code)
+  }, [bodyComps])
 
-  return newHtml ? (
+  return html ? (
     <Box
       mx="auto"
       borderWidth="1px"
@@ -407,7 +369,7 @@ const Preview = ({ width, html }) => {
       height="100%"
       width={width}
       title="email"
-      srcDoc={newHtml}
+      srcDoc={html}
       onLoad={setEventListeners}
     />
   ) : (

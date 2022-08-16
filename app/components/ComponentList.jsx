@@ -27,31 +27,34 @@ import { db } from '~/models/db'
 export default function ComponentList() {
   const isHydrated = useHydrated()
 
-  const bodyComps = useLiveQuery(
-    () => (isHydrated ? db.body.toArray() : []),
-    [isHydrated]
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const bodyComps =
+    useLiveQuery(() => (isHydrated ? db.body.toArray() : []), [isHydrated]) ||
+    []
+
+  const getNestedElements = useCallback(
+    (list, parent) =>
+      list
+        .filter((li) => li.parentId === parent.id)
+        .map((li) => ({
+          ...li,
+          children: getNestedElements(list, li),
+        })),
+    []
   )
 
-  const memoBodyComps = useMemo(() => bodyComps || [], [bodyComps])
-
-  const getNestedElements = (list, parent) =>
-    list
-      .filter((li) => li.parentId === parent.id)
-      .map((li) => ({
-        ...li,
-        children: getNestedElements(list, li),
-      }))
-
-  const nestedElements = memoBodyComps
-    .filter((el) => el.parentId === -1)
-    .map((el) => {
-      return {
-        ...el,
-        children: getNestedElements(memoBodyComps, el),
-      }
-    })
-
-  console.log({ nestedElements })
+  const nestedElements = useMemo(
+    () =>
+      bodyComps
+        .filter((el) => el.parentId === -1)
+        .map((el) => {
+          return {
+            ...el,
+            children: getNestedElements(bodyComps, el),
+          }
+        }),
+    [bodyComps, getNestedElements]
+  )
 
   const handleUpdateBodyComponent = (id, payload) => {
     db.body.update(id, {
