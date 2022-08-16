@@ -14,28 +14,9 @@ import { ClientStyleContext, ServerStyleContext } from './context'
 
 export const meta = () => ({
   charset: 'utf-8',
-  title: 'New Remix App',
+  title: 'Mailwind',
   viewport: 'width=device-width,initial-scale=1',
 })
-
-// export default function App() {
-//   return (
-//     <html lang="en">
-//       <head>
-//         <Meta />
-//         <Links />
-//       </head>
-//       <body>
-//         <ActiveElementProvider>
-//           <Outlet />
-//         </ActiveElementProvider>
-//         <ScrollRestoration />
-//         <Scripts />
-//         <LiveReload />
-//       </body>
-//     </html>
-//   )
-// }
 
 const Document = withEmotionCache(({ children }, emotionCache) => {
   const serverStyleData = useContext(ServerStyleContext)
@@ -72,6 +53,12 @@ const Document = withEmotionCache(({ children }, emotionCache) => {
       <body>
         <ChakraProvider>{children}</ChakraProvider>
         <ScrollRestoration />
+
+        <script
+          src="https://joy-effective.mailwind.app/script.js"
+          data-site="NPSQRRYS"
+          defer
+        />
         <Scripts />
         <LiveReload />
       </body>
