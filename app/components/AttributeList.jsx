@@ -10,6 +10,7 @@ import {
   NumberInputField,
   NumberInputStepper,
   Select,
+  SimpleGrid,
   Stack,
   Text,
   Textarea,
@@ -80,22 +81,81 @@ export default function AttributeList() {
       {liveElementData ? (
         <>
           <Stack spacing="8">
+            {'src' in componentAttributes ? (
+              <FormControl isInvalid={errors.content}>
+                <FormLabel mb="1" fontSize="sm" fontWeight="semibold">
+                  Image URL
+                </FormLabel>
+                <Input size="sm" type="text" {...register('src')} />
+                <FormErrorMessage>{errors.src?.message}</FormErrorMessage>
+              </FormControl>
+            ) : null}
+            {'alt' in componentAttributes ? (
+              <FormControl isInvalid={errors.content}>
+                <FormLabel mb="1" fontSize="sm" fontWeight="semibold">
+                  Alt Text
+                </FormLabel>
+                <Input size="sm" type="text" {...register('alt')} />
+                <FormErrorMessage>{errors.alt?.message}</FormErrorMessage>
+              </FormControl>
+            ) : null}
             {'content' in componentAttributes ? (
               <Box>
                 <FormControl isInvalid={errors.content}>
-                  <FormLabel mb="1" fontSize="md" fontWeight="semibold">
+                  <FormLabel mb="1" fontSize="sm" fontWeight="semibold">
                     Content
                   </FormLabel>
                   <>
                     {activeElement.tagName === 'mj-button' ? (
-                      <Input type="text" {...register('content')} />
+                      <Input size="sm" type="text" {...register('content')} />
                     ) : (
-                      <Textarea {...register('content')} />
+                      <Textarea size="sm" {...register('content')} />
                     )}
                   </>
                   <FormErrorMessage>{errors.content?.message}</FormErrorMessage>
                 </FormControl>
               </Box>
+            ) : null}
+
+            {'background-color' in componentAttributes ? (
+              <FormControl mb="2">
+                <FormLabel mb="1" fontSize="sm" fontWeight="semibold">
+                  Background Color
+                </FormLabel>
+                <Controller
+                  control={control}
+                  name="background-color"
+                  render={({ field: { onChange, value } }) => (
+                    <ColorPicker onChange={onChange} value={value || ''} />
+                  )}
+                />
+              </FormControl>
+            ) : null}
+
+            {'width' in componentAttributes ||
+            'height' in componentAttributes ? (
+              <Stack direction="row" spacing="4">
+                {'width' in componentAttributes ? (
+                  <FormControl isInvalid={errors.content}>
+                    <FormLabel mb="1" fontSize="sm" fontWeight="semibold">
+                      Width
+                    </FormLabel>
+                    <Input size="sm" type="text" {...register('width')} />
+                    <FormErrorMessage>{errors.width?.message}</FormErrorMessage>
+                  </FormControl>
+                ) : null}
+                {'height' in componentAttributes ? (
+                  <FormControl isInvalid={errors.content}>
+                    <FormLabel mb="1" fontSize="sm" fontWeight="semibold">
+                      Height
+                    </FormLabel>
+                    <Input size="sm" type="text" {...register('height')} />
+                    <FormErrorMessage>
+                      {errors.height?.message}
+                    </FormErrorMessage>
+                  </FormControl>
+                ) : null}
+              </Stack>
             ) : null}
             {'border' in componentAttributes ? (
               <Box>
@@ -141,29 +201,35 @@ export default function AttributeList() {
                 />
               </Box>
             ) : null}
-          </Stack>
-          {'border-radius' in componentAttributes ? (
-            <Controller
-              control={control}
-              name="border-radius"
-              render={({ field }) => (
-                <FormControl>
-                  <FormLabel mb="1">Border Radius</FormLabel>
-                  <NumberInput
-                    {...field}
-                    onChange={(value) => field.onChange(value + 'px')}
-                  >
-                    <NumberInputField />
-                    <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
-                    </NumberInputStepper>
-                  </NumberInput>
-                </FormControl>
-              )}
-            />
-          ) : null}
 
+            {'border-radius' in componentAttributes ? (
+              <FormControl>
+                <FormLabel mb="1" fontSize="sm" fontWeight="semibold">
+                  Border Radius
+                </FormLabel>
+                <Controller
+                  control={control}
+                  name="border-radius"
+                  render={({ field }) => (
+                    <NumberInput
+                      {...field}
+                      size="sm"
+                      onChange={(value) => field.onChange(value + 'px')}
+                    >
+                      <NumberInputField />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper>
+                    </NumberInput>
+                  )}
+                />
+                <FormErrorMessage>
+                  {errors['border-radius']?.message}
+                </FormErrorMessage>
+              </FormControl>
+            ) : null}
+          </Stack>
           {/* <Box mt="12">
             {Object.entries(attributeValues).map(([key, val], idx) => {
               switch (key) {
@@ -261,7 +327,7 @@ export default function AttributeList() {
                   return (
                     <FormControl key={`${currentLiveElement.id}-${idx}`} mb="2">
                       <FormLabel>{key}</FormLabel>
-                      <Input
+                      <Input size="sm"
                         type="url"
                         value={val || ''}
                         onChange={(e) =>
@@ -381,7 +447,7 @@ export default function AttributeList() {
                       pl="2"
                     >
                       <FormLabel>{key}</FormLabel>
-                      <Input
+                      <Input size="sm"
                         type="text"
                         value={val || ''}
                         onChange={(e) =>
@@ -489,7 +555,7 @@ export default function AttributeList() {
                   return (
                     <FormControl key={`${currentLiveElement.id}-${idx}`} mb="2">
                       <FormLabel>{key}</FormLabel>
-                      <Input
+                      <Input size="sm"
                         value={val || ''}
                         onChange={(e) =>
                           handleUpdateBodyComponent({ [key]: e.target.value })

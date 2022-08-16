@@ -7,14 +7,7 @@ import {
   PopoverTrigger,
 } from '@chakra-ui/react'
 import { HexColorPicker } from 'react-colorful'
-import debounce from 'lodash/debounce'
-import { useCallback, useState } from 'react'
-
 export default function ColorPicker({ value, onChange }) {
-  const [color, setColor] = useState(value) // This is needed to update the background color for some reason
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const handleChange = useCallback(debounce(onChange, 250), [onChange])
-
   return (
     <Popover>
       <PopoverTrigger>
@@ -25,18 +18,12 @@ export default function ColorPicker({ value, onChange }) {
           w="100%"
           p="1"
         >
-          <Box h="8" w="100%" rounded="md" bg={color} />
+          <Box h="8" w="100%" rounded="md" bg={value} />
         </Button>
       </PopoverTrigger>
       <PopoverContent width="fit-content" p="1">
         <PopoverArrow />
-        <HexColorPicker
-          color={color}
-          onChange={(value) => {
-            setColor(value)
-            handleChange(value)
-          }}
-        />
+        <HexColorPicker color={value} onChange={onChange} />
       </PopoverContent>
     </Popover>
   )

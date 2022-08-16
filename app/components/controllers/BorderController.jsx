@@ -34,7 +34,7 @@ const BorderController = ({ value, onChange }) => {
 
   return (
     <Box as="fieldset">
-      <Heading as="legend" mb="1" fontSize="md" fontWeight="semibold">
+      <Heading as="legend" mb="2" fontSize="sm" fontWeight="semibold">
         Border
       </Heading>
       <SimpleGrid columns="2" rowGap="2" columnGap="4">

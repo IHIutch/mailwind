@@ -372,13 +372,13 @@ export const MjImage = {
   allowedChildren: [],
   attributes: {
     align: { ...Attributes.align, defaultValue: 'center' },
-    alt: { ...Attributes.alt, defaultValue: null },
-    border: { ...Attributes.border, defaultValue: 'none' },
-    'border-top': { ...Attributes['border-top'], defaultValue: 'none' },
-    'border-bottom': { ...Attributes['border-bottom'], defaultValue: 'none' },
-    'border-left': { ...Attributes['border-left'], defaultValue: 'none' },
-    'border-right': { ...Attributes['border-right'], defaultValue: 'none' },
-    'border-radius': { ...Attributes['border-radius'], defaultValue: null },
+    alt: { ...Attributes.alt, defaultValue: '' },
+    // border: { ...Attributes.border, defaultValue: 'none' },
+    'border-top': { ...Attributes['border-top'], defaultValue: 0 },
+    'border-bottom': { ...Attributes['border-bottom'], defaultValue: 0 },
+    'border-left': { ...Attributes['border-left'], defaultValue: 0 },
+    'border-right': { ...Attributes['border-right'], defaultValue: 0 },
+    'border-radius': { ...Attributes['border-radius'], defaultValue: 0 },
     'container-background-color': {
       ...Attributes['container-background-color'],
       defaultValue: null,
@@ -389,8 +389,8 @@ export const MjImage = {
       defaultValue: false,
     },
     height: { ...Attributes.height, defaultValue: 'auto' },
-    href: { ...Attributes.href, defaultValue: null },
-    name: { ...Attributes.name, defaultValue: null },
+    href: { ...Attributes.href, defaultValue: '' },
+    name: { ...Attributes.name, defaultValue: '' },
     padding: { ...Attributes.padding, defaultValue: '10px 25px 10px 25px' },
     // 'padding-bottom': { ...Attributes['padding-bottom'], defaultValue: 0 },
     // 'padding-left': { ...Attributes['padding-left'], defaultValue: 0 },
@@ -398,12 +398,15 @@ export const MjImage = {
     // 'padding-top': { ...Attributes['padding-top'], defaultValue: 0 },
     rel: { ...Attributes.rel, defaultValue: null },
     sizes: { ...Attributes.sizes, defaultValue: null },
-    src: { ...Attributes.src, defaultValue: null },
+    src: {
+      ...Attributes.src,
+      defaultValue: 'https://via.placeholder.com/600x400',
+    },
     srcset: { ...Attributes.srcset, defaultValue: null },
     target: { ...Attributes.target, defaultValue: '_blank' },
     title: { ...Attributes.title, defaultValue: null },
     usemap: { ...Attributes.usemap, defaultValue: null },
-    width: { ...Attributes.width, defaultValue: '100%' },
+    width: { ...Attributes.width, defaultValue: '' },
   },
 }
 
@@ -477,7 +480,7 @@ export const MjColumn = {
   attributes: {
     'background-color': {
       ...Attributes['background-color'],
-      defaultValue: null,
+      defaultValue: '',
     },
     'inner-background-color': {
       ...Attributes['inner-background-color'],
@@ -532,7 +535,7 @@ export const MjSection = {
   attributes: {
     'background-color': {
       ...Attributes['background-color'],
-      defaultValue: null,
+      defaultValue: '',
     },
     'background-position': {
       ...Attributes['background-position'],
@@ -581,7 +584,7 @@ export const MjWrapper = {
   attributes: {
     'background-color': {
       ...Attributes['background-color'],
-      defaultValue: null,
+      defaultValue: '',
     },
     'background-position': {
       ...Attributes['background-position'],
