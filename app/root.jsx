@@ -54,11 +54,13 @@ const Document = withEmotionCache(({ children }, emotionCache) => {
         <ChakraProvider>{children}</ChakraProvider>
         <ScrollRestoration />
 
-        <script
-          src="https://joy-effective.mailwind.app/script.js"
-          data-site="NPSQRRYS"
-          defer
-        />
+        {process.env.NODE_ENV === 'production' ? (
+          <script
+            src="https://joy-effective.mailwind.app/script.js"
+            data-site="NPSQRRYS"
+            defer
+          />
+        ) : null}
         <Scripts />
         <LiveReload />
       </body>
