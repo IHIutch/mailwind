@@ -40,6 +40,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 import getHtml from '~/models/getHtml.client'
+import ComponentList from '~/components/ComponentList'
 
 export default function Index() {
   const isHydrated = useHydrated()
@@ -62,10 +63,12 @@ export default function Index() {
     ],
   })
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const bodyComps = useLiveQuery(
     () => (isHydrated ? db.body.toArray() : []),
     [isHydrated]
   )
+
   const memoBodyComps = useMemo(() => bodyComps || [], [bodyComps])
 
   const getNestedElements = (list, parent) =>
@@ -163,79 +166,6 @@ export default function Index() {
     }
     setCode(newCode)
   }, [memoBodyComps])
-
-  // useEffect(() => {
-  //   try {
-  //     if (code) {
-  //       const html = getHtml(code)
-  //       console.log({ html })
-  //       // fetcher.submit({ json: JSON.stringify(code) }, { method: 'post' })
-  //     }
-  //   } catch (error) {
-  //     if (error instanceof Error) {
-  //       console.error(error.message)
-  //     } else {
-  //       throw error
-  //     }
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [code])
-
-  // useEffect(() => {
-  //   const tempData = { ...data }
-  //   lodash.insert(tempData.body, { ...MjWrapper, parentId: '-1' })
-  //   setData(tempData)
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [])
-
-  const handleAddBodyComponent = (payload) => {
-    const attributes = Object.entries(payload.attributes).reduce(
-      (acc, [key, value]) => ({ ...acc, [key]: value.defaultValue }),
-      {}
-    )
-    db.body.add({
-      ...attributes,
-      tagName: payload.tagName,
-      parentId: payload.parentId,
-    })
-  }
-
-  const handleUpdateBodyComponent = (id, payload) => {
-    console.log({ id, payload })
-    db.body.update(id, {
-      ...payload,
-    })
-  }
-
-  const handleElementClick = (id) => {
-    const found = memoBodyComps.find((el) => el.id === id)
-    dispatch(setActiveElement(found))
-  }
-
-  // const move = (sourceList = [], destinationList = [], source, destination) => {
-  //   const [removed] = sourceList.splice(source.index, 1)
-  //   destinationList.splice(destination.index, 0, removed)
-
-  //   return {
-  //     [source.droppableId]: sourceList,
-  //     [destination.droppableId]: destinationList,
-  //   }
-  // }
-
-  const handleDragEnd = (result) => {
-    const { source, destination, draggableId, type } = result
-    if (!destination) return // dropped outside the list
-
-    const id = parseInt(draggableId.replace('draggable-', ''))
-    const newData = {
-      parentId: parseInt(destination.droppableId.replace('droppable-', '')),
-    }
-
-    handleUpdateBodyComponent(id, newData)
-  }
-  const handleDragStart = (e) => {
-    console.log('dragStart', e)
-  }
 
   const handleSendEmail = () => {
     console.log('send email')
@@ -362,23 +292,7 @@ export default function Index() {
             bg="gray.50"
             pt="12"
           >
-            {nestedElements.length > 0 ? (
-              <>
-                <DragDropContext
-                  onDragEnd={handleDragEnd}
-                  onDragStart={handleDragStart}
-                >
-                  {nestedElements.map((el, idx) => (
-                    <Box key={idx} p="4">
-                      <ComponentListItem
-                        el={el}
-                        handleOnClick={handleAddBodyComponent}
-                      />
-                    </Box>
-                  ))}
-                </DragDropContext>
-              </>
-            ) : null}
+            <ComponentList />
           </Box>
         </Box>
         <Box h="100%" flexGrow="1" bg="gray.50">
@@ -387,7 +301,6 @@ export default function Index() {
               <Preview
                 width={previewSize === 'desktop' ? '100%' : '640px'}
                 html={code}
-                onElementClick={handleElementClick}
               />
             )}
           </ClientOnly>
@@ -445,7 +358,24 @@ export default function Index() {
   )
 }
 
-const Preview = ({ width, html, onElementClick }) => {
+const Preview = ({ width, html }) => {
+  const isHydrated = useHydrated()
+  const bodyComps =
+    useLiveQuery(() => (isHydrated ? db.body.toArray() : []), [isHydrated]) ||
+    []
+
+  const dispatch = useActiveElementDispatch()
+
+  const handleElementClick = (id) => {
+    const found = bodyComps.find((el) => el.id === id)
+    dispatch(
+      setActiveElement({
+        id: found.id,
+        tagName: found.tagName,
+      })
+    )
+  }
+
   const setEventListeners = (e) => {
     var iframe = e.target
     const elements =
@@ -454,7 +384,7 @@ const Preview = ({ width, html, onElementClick }) => {
     elements.forEach((el) => {
       el.addEventListener('click', (e) => {
         e.stopPropagation()
-        onElementClick(parseInt(el.dataset.id))
+        handleElementClick(parseInt(el.dataset.id))
       })
       el.addEventListener('mouseover', (e) => {
         e.stopPropagation()
@@ -482,116 +412,6 @@ const Preview = ({ width, html, onElementClick }) => {
     />
   ) : (
     <p>No data</p>
-  )
-}
-
-const ComponentListItem = ({ el, handleOnClick, children }) => {
-  const { data: activeElement } = useActiveElementState()
-  const dispatch = useActiveElementDispatch()
-
-  return (
-    <Box>
-      <Box
-        w="48"
-        rounded="md"
-        borderWidth="1px"
-        borderColor={activeElement?.id === el.id ? 'blue.500' : 'gray.300'}
-        bg={activeElement?.id === el.id ? 'blue.50' : 'white'}
-        p="2"
-      >
-        <Flex align="center">
-          <Box>{children}</Box>
-          <Button
-            variant="link"
-            onClick={() =>
-              dispatch(
-                setActiveElement({
-                  tagName: el.tagName,
-                  id: el.id,
-                })
-              )
-            }
-          >
-            {getComponentTitle(el.tagName)}
-            {/* <p className="text-xs">{el.id}</p> */}
-          </Button>
-          {getComponentAllowedChildren(el.tagName).length > 0 ? (
-            <Box ml="auto">
-              <Menu placement="bottom-start" strategy="fixed">
-                <IconButton
-                  as={MenuButton}
-                  variant="outline"
-                  size="xs"
-                  lineHeight="0"
-                  icon={<Icon boxSize="4" as={Plus} />}
-                />
-                <MenuList>
-                  {getComponentAllowedChildren(el.tagName).map(
-                    (child, cIdx) => (
-                      <MenuItem
-                        key={cIdx}
-                        onClick={() =>
-                          handleOnClick({
-                            ...child,
-                            parentId: el.id,
-                          })
-                        }
-                      >
-                        {getComponentTitle(child.tagName)}
-                      </MenuItem>
-                    )
-                  )}
-                </MenuList>
-              </Menu>
-            </Box>
-          ) : null}
-        </Flex>
-      </Box>
-      <Droppable droppableId={`droppable-${el.id}`} type={el.tagName}>
-        {(drop, snapshot) => (
-          <Box ref={drop.innerRef} {...drop.droppableProps}>
-            {el.children.length > 0 ? (
-              <Box pt="2">
-                <Stack
-                  direction="column"
-                  borderLeftWidth="2px"
-                  borderLeftColor="gray.200"
-                >
-                  {el.children.map((child, cIdx) => (
-                    <Box key={cIdx} pl="2">
-                      <Draggable
-                        key={`draggable-${child.id}`}
-                        draggableId={`draggable-${child.id}`}
-                        index={cIdx}
-                      >
-                        {(drag, snapshot) => (
-                          <Box ref={drag.innerRef} {...drag.draggableProps}>
-                            <ComponentListItem
-                              el={child}
-                              handleOnClick={handleOnClick}
-                            >
-                              <Center
-                                boxSize="4"
-                                ml="-1"
-                                mr="1"
-                                {...drag.dragHandleProps}
-                              >
-                                <Icon color="gray.600" as={GripVertical} />
-                              </Center>
-                            </ComponentListItem>
-                          </Box>
-                        )}
-                      </Draggable>
-                    </Box>
-                  ))}
-                </Stack>
-              </Box>
-            ) : null}
-            {drop.placeholder}
-          </Box>
-        )}
-      </Droppable>
-    </Box>
   )
 }
 

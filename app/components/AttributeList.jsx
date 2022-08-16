@@ -26,7 +26,7 @@ import debounce from 'lodash/debounce'
 import { getComponentAttributes } from 'utils/functions'
 import { Controller, useForm } from 'react-hook-form'
 
-const AttributeList = () => {
+export default function AttributeList() {
   const isHydrated = useHydrated()
   const { data: activeElement } = useActiveElementState()
   const liveElementData = useLiveQuery(
@@ -43,14 +43,14 @@ const AttributeList = () => {
     reset,
     control,
     watch,
-    formState: { isDirty, errors },
+    formState: { errors },
   } = useForm({
     mode: 'onChange',
   })
 
   useEffect(() => {
     reset(liveElementData || {})
-  }, [liveElementData?.id])
+  }, [liveElementData?.id, reset])
 
   const handleUpdateBodyComponent = useCallback(
     (payload) => {
@@ -61,6 +61,7 @@ const AttributeList = () => {
     [activeElement.id]
   )
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleUpdateDebounce = useCallback(
     debounce(handleUpdateBodyComponent, 250),
     [handleUpdateBodyComponent]
@@ -504,5 +505,3 @@ const AttributeList = () => {
     </Box>
   )
 }
-
-export default AttributeList
