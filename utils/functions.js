@@ -30,3 +30,81 @@ export const getComponentAttributes = (tagName) => {
       }, {})
     : {}
 }
+
+export const formatMjml = (arr) => {
+  return {
+    tagName: 'mjml',
+    attributes: {},
+    children: [
+      {
+        tagName: 'mj-head',
+        children: [
+          {
+            tagName: 'mj-breakpoint',
+            attributes: {
+              width: '640px',
+            },
+          },
+          {
+            tagName: 'mj-html-attributes',
+            attributes: {},
+            children:
+              arr.map((item) => ({
+                tagName: 'mj-selector',
+                attributes: {
+                  path: '.data-' + item.id,
+                },
+                children: [
+                  {
+                    tagName: 'mj-html-attribute',
+                    attributes: {
+                      name: 'data-id',
+                    },
+                    content: item.id,
+                  },
+                ],
+              })) || [],
+          },
+        ],
+      },
+      {
+        tagName: 'mj-body',
+        attributes: {},
+        children: arr
+          .filter((el) => el.parentId === -1)
+          .map((el) => {
+            const getNestedElements = (list, parent) =>
+              list
+                .filter((li) => li.parentId === parent.id)
+                .map((li) => ({
+                  tagName: li.tagName,
+                  attributes: {
+                    ...Object.entries(li).reduce(
+                      (acc, [key, val]) =>
+                        key === 'content' ? acc : { ...acc, [key]: val },
+                      {}
+                    ),
+                    'css-class': 'data-' + li.id,
+                  },
+                  content: li.content,
+                  children: getNestedElements(list, li),
+                }))
+            return {
+              tagName: el.tagName,
+              attributes: {
+                ...Object.entries(el).reduce(
+                  (acc, [key, val]) => ({
+                    ...acc,
+                    [key]: val,
+                  }),
+                  {}
+                ),
+                'css-class': 'data-' + el.id,
+              },
+              children: getNestedElements(arr, el),
+            }
+          }),
+      },
+    ],
+  }
+}

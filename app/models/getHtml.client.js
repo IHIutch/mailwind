@@ -8,6 +8,10 @@ export default function getHtml(json) {
         attributes: {},
         children: [
           {
+            tagName: 'mj-head',
+            children: [],
+          },
+          {
             tagName: 'mj-body',
             attributes: {},
             children: [],

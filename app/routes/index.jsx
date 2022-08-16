@@ -29,7 +29,7 @@ import {
 } from '@chakra-ui/react'
 import getHtml from '~/models/getHtml.client'
 import ComponentList from '~/components/ComponentList'
-import { getComponentTitle } from 'utils/functions'
+import { formatMjml, getComponentTitle } from 'utils/functions'
 
 export default function Index() {
   const { data: activeElement } = useActiveElementState()
@@ -39,21 +39,23 @@ export default function Index() {
     console.log('send email')
   }
 
-  const handleDownload = () => {
-    console.log('download')
-    // if (code) {
-    //   var blob = new Blob([code], {
-    //     type: 'text/html;charset=utf-8',
-    //   })
-    //   var link = document.createElement('a')
-    //   link.href = window.URL.createObjectURL(blob)
-    //   link.download = 'email.html'
+  const handleDownload = async () => {
+    const bodyComps = await db.body.toArray()
+    console.log({ bodyComps })
+    const html = getHtml(formatMjml(bodyComps))
+    if (html) {
+      var blob = new Blob([html], {
+        type: 'text/html;charset=utf-8',
+      })
+      var link = document.createElement('a')
+      link.href = window.URL.createObjectURL(blob)
+      link.download = 'email.html'
 
-    //   document.body.appendChild(link)
-    //   link.click()
+      document.body.appendChild(link)
+      link.click()
 
-    //   document.body.removeChild(link)
-    // }
+      document.body.removeChild(link)
+    }
   }
 
   return (
@@ -103,7 +105,7 @@ export default function Index() {
           <Box ml="4">
             <Popover placement="bottom-end">
               <PopoverTrigger>
-                <Button>Send Test</Button>
+                <Button isDisabled>Send Test</Button>
               </PopoverTrigger>
               <PopoverContent>
                 <PopoverArrow />
@@ -262,101 +264,7 @@ const Preview = ({ width }) => {
   }
 
   const html = useMemo(() => {
-    const code =
-      bodyComps?.length > 0
-        ? {
-            tagName: 'mjml',
-            attributes: {},
-            children: [
-              {
-                tagName: 'mj-head',
-                children: [
-                  {
-                    tagName: 'mj-breakpoint',
-                    attributes: {
-                      width: '640px',
-                    },
-                  },
-                  {
-                    tagName: 'mj-html-attributes',
-                    attributes: {},
-                    children:
-                      bodyComps.map((item) => ({
-                        tagName: 'mj-selector',
-                        attributes: {
-                          path: '.data-' + item.id,
-                        },
-                        children: [
-                          {
-                            tagName: 'mj-html-attribute',
-                            attributes: {
-                              name: 'data-id',
-                            },
-                            content: item.id,
-                          },
-                        ],
-                      })) || [],
-                  },
-                ],
-              },
-              {
-                tagName: 'mj-body',
-                attributes: {},
-                children: bodyComps
-                  .filter((el) => el.parentId === -1)
-                  .map((el) => {
-                    const getNestedElements = (list, parent) =>
-                      list
-                        .filter((li) => li.parentId === parent.id)
-                        .map((li) => ({
-                          tagName: li.tagName,
-                          attributes: {
-                            ...Object.entries(li).reduce(
-                              (acc, [key, val]) =>
-                                key === 'content'
-                                  ? acc
-                                  : { ...acc, [key]: val },
-                              {}
-                            ),
-                            'css-class': 'data-' + li.id,
-                          },
-                          content: li.content,
-                          children: getNestedElements(list, li),
-                        }))
-                    return {
-                      tagName: el.tagName,
-                      attributes: {
-                        ...Object.entries(el).reduce(
-                          (acc, [key, val]) => ({
-                            ...acc,
-                            [key]: val,
-                          }),
-                          {}
-                        ),
-                        'css-class': 'data-' + el.id,
-                      },
-                      children: getNestedElements(bodyComps, el),
-                    }
-                  }),
-              },
-            ],
-          }
-        : {
-            tagName: 'mjml',
-            attributes: {},
-            children: [
-              {
-                tagName: 'mj-head',
-                children: [],
-              },
-              {
-                tagName: 'mj-body',
-                attributes: {},
-                children: [],
-              },
-            ],
-          }
-    return getHtml(code)
+    return getHtml(formatMjml(bodyComps))
   }, [bodyComps])
 
   return html ? (
