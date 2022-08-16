@@ -10,6 +10,7 @@ import {
   MenuItem,
   MenuList,
   Stack,
+  Text,
 } from '@chakra-ui/react'
 import {
   setActiveElement,
@@ -21,7 +22,11 @@ import { GripVertical, Plus } from 'lucide-react'
 import { useCallback, useMemo } from 'react'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 import { useHydrated } from 'remix-utils'
-import { getComponentAllowedChildren, getComponentTitle } from 'utils/functions'
+import {
+  getComponentAllowedChildren,
+  getComponentAttributes,
+  getComponentTitle,
+} from 'utils/functions'
 import { db } from '~/models/db'
 
 export default function ComponentList() {
@@ -30,16 +35,7 @@ export default function ComponentList() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const bodyComps =
     useLiveQuery(
-      () =>
-        isHydrated
-          ? db.body.toArray((arr) =>
-              arr.map((a) => ({
-                id: a.id,
-                tagName: a.tagName,
-                parentId: a.parentId,
-              }))
-            )
-          : [],
+      () => (isHydrated ? db.body.orderBy('position').toArray() : []),
       [isHydrated]
     ) || []
 
@@ -67,37 +63,85 @@ export default function ComponentList() {
     [bodyComps, getNestedElements]
   )
 
-  const handleUpdateBodyComponent = (id, payload) => {
-    db.body.update(id, {
-      ...payload,
-    })
+  const move = (sourceList = [], destinationList = [], source, destination) => {
+    const [removed] = sourceList.splice(source.index, 1)
+    destinationList.splice(destination.index, 0, removed)
+
+    return {
+      sourceList,
+      destinationList,
+    }
   }
 
   const handleDragEnd = (result) => {
-    const { source, destination, draggableId, type } = result
+    const { source, destination, type } = result
     if (!destination) return // dropped outside the list
 
-    const id = parseInt(draggableId.replace('draggable-', ''))
-    const newData = {
-      parentId: parseInt(destination.droppableId.replace('droppable-', '')),
-    }
+    const destinationParentId = parseInt(
+      destination.droppableId.replace('droppable-', '')
+    )
+    const sourceParentId = parseInt(
+      source.droppableId.replace('droppable-', '')
+    )
 
-    handleUpdateBodyComponent(id, newData)
+    if (source.droppableId === destination.droppableId) {
+      // This handles reordering the list
+      const reorderedComps = reorderList(
+        bodyComps
+          .filter((i) => i.parentId === destinationParentId)
+          .sort((a, b) => a.position - b.position),
+        source.index,
+        destination.index
+      )
+
+      db.body.bulkPut(
+        reorderedComps.map((i, idx) => ({
+          ...i,
+          position: idx,
+        }))
+      )
+    } else {
+      // This handles moving an item to another list
+      const sourceList = bodyComps.filter(
+        (bc) => bc.parentId === sourceParentId
+      )
+      const destinationList = bodyComps.filter(
+        (bc) => bc.parentId === destinationParentId
+      )
+      const { sourceList: newSourceList, destinationList: newDestinationList } =
+        move(sourceList, destinationList, source, destination)
+
+      const newSource = newSourceList.map((i, idx) => ({
+        ...i,
+        position: idx,
+        parentId: sourceParentId,
+      }))
+      const newDestination = newDestinationList.map((i, idx) => ({
+        ...i,
+        position: idx,
+        parentId: destinationParentId,
+      }))
+
+      console.log({
+        sourceParentId,
+        destinationParentId,
+        newSource,
+        newDestination,
+      })
+      db.body.bulkPut([...newSource, ...newDestination])
+    }
   }
 
   const handleDragStart = (e) => {
     console.log('dragStart', e)
   }
 
-  // const move = (sourceList = [], destinationList = [], source, destination) => {
-  //   const [removed] = sourceList.splice(source.index, 1)
-  //   destinationList.splice(destination.index, 0, removed)
-
-  //   return {
-  //     [source.droppableId]: sourceList,
-  //     [destination.droppableId]: destinationList,
-  //   }
-  // }
+  const reorderList = (list = [], startIndex, endIndex) => {
+    const temp = [...list]
+    const [removed] = temp.splice(startIndex, 1)
+    temp.splice(endIndex, 0, removed)
+    return temp
+  }
 
   return (
     <Box>
@@ -123,10 +167,12 @@ const ComponentListItem = ({ el, children }) => {
       (acc, [key, value]) => ({ ...acc, [key]: value.defaultValue }),
       {}
     )
+
     db.body.add({
       ...attributes,
       tagName: payload.tagName,
       parentId: payload.parentId,
+      position: payload.position,
     })
   }
 
@@ -178,6 +224,7 @@ const ComponentListItem = ({ el, children }) => {
                           handleAddBodyComponent({
                             ...child,
                             parentId: el.id,
+                            position: el.children.length,
                           })
                         }
                       >
@@ -227,7 +274,20 @@ const ComponentListItem = ({ el, children }) => {
                   ))}
                 </Stack>
               </Box>
-            ) : null}
+            ) : (
+              <Box>
+                {getComponentAllowedChildren(el.tagName).length > 0 ? (
+                  <Text
+                    fontSize="sm"
+                    fontStyle="italic"
+                    color="gray.400"
+                    ml="2"
+                  >
+                    No Children
+                  </Text>
+                ) : null}
+              </Box>
+            )}
             {drop.placeholder}
           </Box>
         )}

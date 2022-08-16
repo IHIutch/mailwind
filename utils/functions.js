@@ -21,6 +21,9 @@ export const getComponentTitle = (tagName) => {
 
 export const getComponentAttributes = (tagName) => {
   const found = bodyComps.find((el) => el.tagName === tagName)
+
+  console.log({ found })
+
   return found
     ? Object.entries(found.attributes).reduce((acc, [key, val]) => {
         return {
@@ -31,7 +34,7 @@ export const getComponentAttributes = (tagName) => {
     : {}
 }
 
-export const formatMjml = (arr) => {
+export const formatMjml = (list) => {
   return {
     tagName: 'mjml',
     attributes: {},
@@ -49,7 +52,7 @@ export const formatMjml = (arr) => {
             tagName: 'mj-html-attributes',
             attributes: {},
             children:
-              arr.map((item) => ({
+              list.map((item) => ({
                 tagName: 'mj-selector',
                 attributes: {
                   path: '.data-' + item.id,
@@ -70,7 +73,7 @@ export const formatMjml = (arr) => {
       {
         tagName: 'mj-body',
         attributes: {},
-        children: arr
+        children: list
           .filter((el) => el.parentId === -1)
           .map((el) => {
             const getNestedElements = (list, parent) =>
@@ -89,6 +92,7 @@ export const formatMjml = (arr) => {
                   content: li.content,
                   children: getNestedElements(list, li),
                 }))
+
             return {
               tagName: el.tagName,
               attributes: {
@@ -101,7 +105,7 @@ export const formatMjml = (arr) => {
                 ),
                 'css-class': 'data-' + el.id,
               },
-              children: getNestedElements(arr, el),
+              children: getNestedElements(list, el),
             }
           }),
       },

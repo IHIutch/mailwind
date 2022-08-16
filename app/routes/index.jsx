@@ -40,8 +40,7 @@ export default function Index() {
   }
 
   const handleDownload = async () => {
-    const bodyComps = await db.body.toArray()
-    console.log({ bodyComps })
+    const bodyComps = await db.body.orderBy('position').toArray()
     const html = getHtml(formatMjml(bodyComps))
     if (html) {
       var blob = new Blob([html], {
@@ -227,8 +226,10 @@ const Preview = ({ width }) => {
   const isHydrated = useHydrated()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const bodyComps =
-    useLiveQuery(() => (isHydrated ? db.body.toArray() : []), [isHydrated]) ||
-    []
+    useLiveQuery(
+      () => (isHydrated ? db.body.orderBy('position').toArray() : []),
+      [isHydrated]
+    ) || []
 
   const dispatch = useActiveElementDispatch()
 

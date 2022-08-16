@@ -3,7 +3,7 @@ import { MjWrapper } from '../components/BodyComponents'
 
 export const db = new Dexie('mailwind')
 db.version(1).stores({
-  body: '++id, parentId', // Primary key and indexed props
+  body: '++id, parentId, position', // Primary key and indexed props
 })
 
 db.on('populate', async () => {
@@ -16,5 +16,6 @@ db.on('populate', async () => {
     tagName: MjWrapper.tagName,
     // 'background-color': '#ffffff',
     parentId: -1,
+    position: 0,
   })
 })
