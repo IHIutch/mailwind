@@ -21,9 +21,6 @@ export const getComponentTitle = (tagName) => {
 
 export const getComponentAttributes = (tagName) => {
   const found = bodyComps.find((el) => el.tagName === tagName)
-
-  console.log({ found })
-
   return found
     ? Object.entries(found.attributes).reduce((acc, [key, val]) => {
         return {

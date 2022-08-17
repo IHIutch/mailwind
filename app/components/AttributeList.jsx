@@ -16,24 +16,18 @@ import {
   Textarea,
 } from '@chakra-ui/react'
 import { useActiveElementState } from 'context/activeElement'
-import { useLiveQuery } from 'dexie-react-hooks'
 import { useCallback, useEffect } from 'react'
-import { useHydrated } from 'remix-utils'
-import { db } from '~/models/db'
 import ColorPicker from './ColorPicker'
 import BorderController from './controllers/BorderController'
 import PaddingController from './controllers/PaddingController'
 import debounce from 'lodash/debounce'
 import { getComponentAttributes } from 'utils/functions'
 import { Controller, useForm } from 'react-hook-form'
+import { useGetBodyItem, useUpdateBodyItem } from 'utils/react-query/bodyItems'
 
 export default function AttributeList() {
-  const isHydrated = useHydrated()
   const { data: activeElement } = useActiveElementState()
-  const liveElementData = useLiveQuery(
-    () => (isHydrated ? db.body.where({ id: activeElement.id }).first() : null),
-    [isHydrated, activeElement.id]
-  )
+  const { data: bodyItem, isLoading } = useGetBodyItem(activeElement.id)
 
   const componentAttributes = activeElement
     ? getComponentAttributes(activeElement.tagName)
@@ -50,35 +44,29 @@ export default function AttributeList() {
   })
 
   useEffect(() => {
-    reset({ ...liveElementData } || {})
-  }, [liveElementData, reset])
+    reset(bodyItem)
+  }, [bodyItem, reset])
 
-  const handleUpdateBodyComponent = useCallback(
-    (payload) => {
-      db.body.update(activeElement.id, {
-        ...payload,
-      })
-    },
-    [activeElement.id]
-  )
+  const { mutate: handleUpdateBodyItem } = useUpdateBodyItem()
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleUpdateDebounce = useCallback(
-    debounce(handleUpdateBodyComponent, 250),
-    [handleUpdateBodyComponent]
+    debounce(handleUpdateBodyItem, 250),
+    [handleUpdateBodyItem]
   )
 
   watch((data, { type }) => {
     if (Object.keys(data).length && type === 'change') {
-      handleUpdateDebounce(data)
+      handleUpdateDebounce({
+        id: activeElement.id,
+        payload: data,
+      })
     }
   })
 
-  console.log('repaint')
-
   return (
     <Box>
-      {liveElementData ? (
+      {bodyItem ? (
         <>
           <Stack spacing="8">
             {'src' in componentAttributes ? (

@@ -162,7 +162,7 @@ export default function Index() {
             bg="gray.50"
             pt="12"
           >
-            <ComponentList />
+            <ClientOnly>{() => <ComponentList />}</ClientOnly>
           </Box>
         </Box>
         <Box h="100%" flexGrow="1" bg="gray.50">
@@ -211,7 +211,7 @@ export default function Index() {
             >
               <Box p="4">
                 <Box mt="4" position="relative" zIndex="1">
-                  <AttributeList />
+                  <ClientOnly>{() => <AttributeList />}</ClientOnly>
                 </Box>
               </Box>
             </Box>

@@ -27,17 +27,17 @@ import {
   getComponentAttributes,
   getComponentTitle,
 } from 'utils/functions'
+import {
+  useBulkUpdateBodyItems,
+  useCreateBodyItem,
+  useGetBodyItems,
+} from 'utils/react-query/bodyItems'
 import { db } from '~/models/db'
 
 export default function ComponentList() {
-  const isHydrated = useHydrated()
-
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const bodyComps =
-    useLiveQuery(
-      () => (isHydrated ? db.body.orderBy('position').toArray() : []),
-      [isHydrated]
-    ) || []
+  const { data: bodyItems = [], isLoading } = useGetBodyItems()
+  const { mutate: handleBulkUpdateBodyItems } = useBulkUpdateBodyItems()
 
   const getNestedElements = useCallback(
     (list, parent) =>
@@ -52,15 +52,15 @@ export default function ComponentList() {
 
   const nestedElements = useMemo(
     () =>
-      bodyComps
+      bodyItems
         .filter((el) => el.parentId === -1)
         .map((el) => {
           return {
             ...el,
-            children: getNestedElements(bodyComps, el),
+            children: getNestedElements(bodyItems, el),
           }
         }),
-    [bodyComps, getNestedElements]
+    [bodyItems, getNestedElements]
   )
 
   const move = (sourceList = [], destinationList = [], source, destination) => {
@@ -87,14 +87,14 @@ export default function ComponentList() {
     if (source.droppableId === destination.droppableId) {
       // This handles reordering the list
       const reorderedComps = reorderList(
-        bodyComps
+        bodyItems
           .filter((i) => i.parentId === destinationParentId)
           .sort((a, b) => a.position - b.position),
         source.index,
         destination.index
       )
 
-      db.body.bulkPut(
+      handleBulkUpdateBodyItems(
         reorderedComps.map((i, idx) => ({
           ...i,
           position: idx,
@@ -102,10 +102,10 @@ export default function ComponentList() {
       )
     } else {
       // This handles moving an item to another list
-      const sourceList = bodyComps.filter(
+      const sourceList = bodyItems.filter(
         (bc) => bc.parentId === sourceParentId
       )
-      const destinationList = bodyComps.filter(
+      const destinationList = (bodyItems || []).filter(
         (bc) => bc.parentId === destinationParentId
       )
       const { sourceList: newSourceList, destinationList: newDestinationList } =
@@ -122,13 +122,13 @@ export default function ComponentList() {
         parentId: destinationParentId,
       }))
 
-      console.log({
-        sourceParentId,
-        destinationParentId,
-        newSource,
-        newDestination,
-      })
-      db.body.bulkPut([...newSource, ...newDestination])
+      // console.log({
+      //   sourceParentId,
+      //   destinationParentId,
+      //   newSource,
+      //   newDestination,
+      // })
+      handleBulkUpdateBodyItems([...newSource, ...newDestination])
     }
   }
 
@@ -162,13 +162,14 @@ export default function ComponentList() {
 }
 
 const ComponentListItem = ({ el, children }) => {
+  const { mutate: handleCreateBodyItem } = useCreateBodyItem()
+
   const handleAddBodyComponent = (payload) => {
     const attributes = Object.entries(payload.attributes).reduce(
       (acc, [key, value]) => ({ ...acc, [key]: value.defaultValue }),
       {}
     )
-
-    db.body.add({
+    handleCreateBodyItem({
       ...attributes,
       tagName: payload.tagName,
       parentId: payload.parentId,
@@ -249,7 +250,7 @@ const ComponentListItem = ({ el, children }) => {
                   borderLeftColor="gray.200"
                 >
                   {el.children.map((child, cIdx) => (
-                    <Box key={cIdx} pl="2">
+                    <Box key={child.id} pl="2">
                       <Draggable
                         key={`draggable-${child.id}`}
                         draggableId={`draggable-${child.id}`}

@@ -69,6 +69,7 @@ const Document = withEmotionCache(({ children }, emotionCache) => {
 })
 
 export default function App() {
+  // const queryClient = new QueryClient()
   return (
     <Document>
       <ActiveElementProvider>
