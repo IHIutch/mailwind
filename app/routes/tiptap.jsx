@@ -1,4 +1,11 @@
-import { Box, Button, ButtonGroup, SimpleGrid, Stack } from '@chakra-ui/react'
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  Flex,
+  SimpleGrid,
+  Stack,
+} from '@chakra-ui/react'
 import TextAlign from '@tiptap/extension-text-align'
 import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
@@ -12,7 +19,7 @@ export default function Tiptap() {
   const [json, setJson] = React.useState(null)
   return (
     <SimpleGrid spacing="0" columns="2" h="100vh">
-      <Box borderWidth="1px" h="100%">
+      <Box h="100%">
         <TipTapEditor onChange={setJson} />
       </Box>
       <Box>
@@ -183,10 +190,12 @@ const TipTapEditor = ({ onChange }) => {
   })
 
   return (
-    <Box>
+    <Flex h="100%" direction="column">
       {editor ? <MenuBar editor={editor} /> : null}
-      <EditorContent style={{ height: '100%' }} editor={editor} />
-    </Box>
+      <Box borderWidth="1px" flexGrow="1">
+        <EditorContent style={{ height: '100%' }} editor={editor} />
+      </Box>
+    </Flex>
   )
 }
 
