@@ -30,6 +30,7 @@ import {
 import getHtml from '~/models/getHtml.client'
 import ComponentList from '~/components/ComponentList'
 import { formatMjml, getComponentTitle } from 'utils/functions'
+import { useGetBodyItems } from 'utils/react-query/bodyItems'
 
 export default function Index() {
   const { data: activeElement } = useActiveElementState()
@@ -223,18 +224,11 @@ export default function Index() {
 }
 
 const Preview = ({ width }) => {
-  const isHydrated = useHydrated()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const bodyComps =
-    useLiveQuery(
-      () => (isHydrated ? db.body.orderBy('position').toArray() : []),
-      [isHydrated]
-    ) || []
-
+  const { data: bodyItems = [], isLoading } = useGetBodyItems()
   const dispatch = useActiveElementDispatch()
 
   const handleElementClick = (id) => {
-    const found = bodyComps.find((el) => el.id === id)
+    const found = bodyItems.find((el) => el.id === id)
     dispatch(
       setActiveElement({
         id: found.id,
@@ -265,8 +259,8 @@ const Preview = ({ width }) => {
   }
 
   const html = useMemo(() => {
-    return getHtml(formatMjml(bodyComps))
-  }, [bodyComps])
+    return getHtml(formatMjml(bodyItems))
+  }, [bodyItems])
 
   return html ? (
     <Box

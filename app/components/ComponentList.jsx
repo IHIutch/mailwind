@@ -17,11 +17,9 @@ import {
   useActiveElementDispatch,
   useActiveElementState,
 } from 'context/activeElement'
-import { useLiveQuery } from 'dexie-react-hooks'
 import { GripVertical, Plus } from 'lucide-react'
 import { useCallback, useMemo } from 'react'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
-import { useHydrated } from 'remix-utils'
 import {
   getComponentAllowedChildren,
   getComponentAttributes,
@@ -32,12 +30,18 @@ import {
   useCreateBodyItem,
   useGetBodyItems,
 } from 'utils/react-query/bodyItems'
-import { db } from '~/models/db'
+import groupBy from 'lodash/groupBy'
 
 export default function ComponentList() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const { data: bodyItems = [], isLoading } = useGetBodyItems()
   const { mutate: handleBulkUpdateBodyItems } = useBulkUpdateBodyItems()
+
+  const groupedBodyItems = groupBy(
+    [...bodyItems].sort((a, b) => a.position - b.position),
+    'parentId'
+  )
+  console.log({ groupedBodyItems })
 
   const getNestedElements = useCallback(
     (list, parent) =>
@@ -122,12 +126,6 @@ export default function ComponentList() {
         parentId: destinationParentId,
       }))
 
-      // console.log({
-      //   sourceParentId,
-      //   destinationParentId,
-      //   newSource,
-      //   newDestination,
-      // })
       handleBulkUpdateBodyItems([...newSource, ...newDestination])
     }
   }
@@ -243,22 +241,17 @@ const ComponentListItem = ({ el, children }) => {
         {(drop, snapshot) => (
           <Box ref={drop.innerRef} {...drop.droppableProps}>
             {el.children.length > 0 ? (
-              <Box pt="2">
-                <Stack
-                  direction="column"
-                  borderLeftWidth="2px"
-                  borderLeftColor="gray.200"
-                >
+              <Box>
+                <Box borderLeftWidth="2px" borderLeftColor="gray.200">
                   {el.children.map((child, cIdx) => (
-                    <Box key={child.id} pl="2">
+                    <Box key={child.id} pl="2" mt="2">
                       <Draggable
-                        key={`draggable-${child.id}`}
                         draggableId={`draggable-${child.id}`}
                         index={cIdx}
                       >
                         {(drag, snapshot) => (
                           <Box ref={drag.innerRef} {...drag.draggableProps}>
-                            <ComponentListItem el={child}>
+                            <ComponentListItem key={cIdx} el={child}>
                               <Center
                                 boxSize="4"
                                 ml="-1"
@@ -273,7 +266,7 @@ const ComponentListItem = ({ el, children }) => {
                       </Draggable>
                     </Box>
                   ))}
-                </Stack>
+                </Box>
               </Box>
             ) : (
               <Box>
