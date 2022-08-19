@@ -20,11 +20,7 @@ import {
 import { GripVertical, Plus } from 'lucide-react'
 import { useCallback, useMemo } from 'react'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
-import {
-  getComponentAllowedChildren,
-  getComponentAttributes,
-  getComponentTitle,
-} from 'utils/functions'
+import { getComponentAllowedChildren, getComponentTitle } from 'utils/functions'
 import {
   useBulkUpdateBodyItems,
   useCreateBodyItem,
@@ -244,10 +240,11 @@ const ComponentListItem = ({ el, children }) => {
               <Box>
                 <Box borderLeftWidth="2px" borderLeftColor="gray.200">
                   {el.children.map((child, cIdx) => (
-                    <Box key={child.id} pl="2" mt="2">
+                    <Box key={cIdx} pl="2" mt="2">
                       <Draggable
                         draggableId={`draggable-${child.id}`}
                         index={cIdx}
+                        key={child.id}
                       >
                         {(drag, snapshot) => (
                           <Box ref={drag.innerRef} {...drag.draggableProps}>

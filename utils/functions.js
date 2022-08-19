@@ -52,7 +52,7 @@ export const formatMjml = (list) => {
               list.map((item) => ({
                 tagName: 'mj-selector',
                 attributes: {
-                  path: '.data-' + item.id,
+                  path: '.data-' + (item?.id || '0'),
                 },
                 children: [
                   {
@@ -60,7 +60,7 @@ export const formatMjml = (list) => {
                     attributes: {
                       name: 'data-id',
                     },
-                    content: item.id,
+                    content: item?.id || '0',
                   },
                 ],
               })) || [],
@@ -84,7 +84,7 @@ export const formatMjml = (list) => {
                         key === 'content' ? acc : { ...acc, [key]: val },
                       {}
                     ),
-                    'css-class': 'data-' + li.id,
+                    'css-class': 'data-' + (li.id || '0'),
                   },
                   content: li.content,
                   children: getNestedElements(list, li),
@@ -100,7 +100,7 @@ export const formatMjml = (list) => {
                   }),
                   {}
                 ),
-                'css-class': 'data-' + el.id,
+                'css-class': 'data-' + (el.id || '0'),
               },
               children: getNestedElements(list, el),
             }

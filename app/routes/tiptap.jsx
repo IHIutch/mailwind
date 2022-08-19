@@ -160,8 +160,6 @@ const MjmlPreview = ({ json }) => {
     [handleGetContent, json]
   )
 
-  // console.log({ html })
-
   const iframe = useRef()
   useEffect(() => {
     let doc = iframe.current.contentDocument

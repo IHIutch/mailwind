@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react'
-import { ClientOnly, useHydrated } from 'remix-utils'
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
+import { ClientOnly } from 'remix-utils'
 import { Send } from 'lucide-react'
 import AttributeList from '../components/AttributeList'
 import {
@@ -8,7 +8,6 @@ import {
   useActiveElementState,
 } from '../../context/activeElement'
 import { db } from '../models/db'
-import { useLiveQuery } from 'dexie-react-hooks'
 import {
   Box,
   Button,
@@ -25,7 +24,6 @@ import {
   PopoverCloseButton,
   PopoverContent,
   PopoverTrigger,
-  Text,
 } from '@chakra-ui/react'
 import getHtml from '~/models/getHtml.client'
 import ComponentList from '~/components/ComponentList'
@@ -227,20 +225,28 @@ const Preview = ({ width }) => {
   const { data: bodyItems = [], isLoading } = useGetBodyItems()
   const dispatch = useActiveElementDispatch()
 
-  const handleElementClick = (id) => {
-    const found = bodyItems.find((el) => el.id === id)
-    dispatch(
-      setActiveElement({
-        id: found.id,
-        tagName: found.tagName,
-      })
-    )
-  }
+  const html = useMemo(() => {
+    return getHtml(formatMjml(bodyItems))
+  }, [bodyItems])
 
-  const setEventListeners = (e) => {
-    var iframe = e.target
+  const iframe = useRef()
+  const handleElementClick = useCallback(
+    (id) => {
+      const found = bodyItems.find((el) => el.id === id)
+      dispatch(
+        setActiveElement({
+          id: found.id,
+          tagName: found.tagName,
+        })
+      )
+    },
+    [bodyItems, dispatch]
+  )
+
+  const setEventListeners = useCallback(() => {
     const elements =
-      iframe?.contentWindow?.document?.querySelectorAll('[data-id]') || []
+      iframe.current?.contentWindow?.document?.querySelectorAll('[data-id]') ||
+      []
 
     elements.forEach((el) => {
       el.addEventListener('click', (e) => {
@@ -256,11 +262,15 @@ const Preview = ({ width }) => {
         el.style.boxShadow = 'none'
       })
     })
-  }
+  }, [handleElementClick])
 
-  const html = useMemo(() => {
-    return getHtml(formatMjml(bodyItems))
-  }, [bodyItems])
+  useEffect(() => {
+    let doc = iframe.current.contentDocument
+    doc.open()
+    doc.write(html)
+    doc.close()
+    setEventListeners()
+  }, [html, setEventListeners])
 
   return html ? (
     <Box
@@ -270,8 +280,7 @@ const Preview = ({ width }) => {
       height="100%"
       width={width}
       title="email"
-      srcDoc={html}
-      onLoad={setEventListeners}
+      ref={iframe}
     />
   ) : (
     <p>No data</p>
