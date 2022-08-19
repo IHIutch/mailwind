@@ -6,11 +6,11 @@ import {
   SimpleGrid,
   Stack,
 } from '@chakra-ui/react'
+import Image from '@tiptap/extension-image'
 import TextAlign from '@tiptap/extension-text-align'
 import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import React, { useMemo } from 'react'
-import { useCallback } from 'react'
+import React, { useMemo, useRef, useEffect, useCallback } from 'react'
 import { ClientOnly } from 'remix-utils'
 import { getComponentAttributes } from 'utils/functions'
 import getHtml from '~/models/getHtml.client'
@@ -30,6 +30,7 @@ export default function Tiptap() {
 }
 
 const MjmlPreview = ({ json }) => {
+  console.log({ json })
   const handleFormatText = (arr, isFormatting = true) => {
     return arr
       .map((a) => {
@@ -74,6 +75,18 @@ const MjmlPreview = ({ json }) => {
                 attributes: {},
               }
 
+        case 'image':
+          return {
+            tagName: 'mj-image',
+            'css-class': 'image',
+            attributes: {
+              ...handleGetAttrs('mj-image'),
+              src: a.attrs.src,
+              alt: a.attrs.alt,
+              title: a.attrs.title,
+            },
+          }
+
         case 'heading':
           return {
             'css-class': 'heading',
@@ -108,8 +121,6 @@ const MjmlPreview = ({ json }) => {
       }
     })
   }, [])
-
-  console.log({ json })
 
   const html = useMemo(
     () =>
@@ -151,18 +162,27 @@ const MjmlPreview = ({ json }) => {
 
   // console.log({ html })
 
-  return <Box boxSize="100%" as="iframe" title="email" srcDoc={html} />
+  const iframe = useRef()
+  useEffect(() => {
+    let doc = iframe.current.contentDocument
+    doc.open()
+    doc.write(html)
+    doc.close()
+  }, [html])
+
+  return <Box boxSize="100%" as="iframe" ref={iframe} />
 }
 
 const TipTapEditor = ({ onChange }) => {
   const editor = useEditor({
     editorProps: {
       attributes: {
-        style: 'height: 100%;',
+        style: 'height: 100%;padding:1rem;',
       },
     },
     extensions: [
       StarterKit,
+      Image,
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),
@@ -200,6 +220,14 @@ const TipTapEditor = ({ onChange }) => {
 }
 
 const MenuBar = ({ editor }) => {
+  const addImage = useCallback(() => {
+    const url = window.prompt('URL')
+
+    if (url) {
+      editor.chain().focus().setImage({ src: url }).run()
+    }
+  }, [editor])
+
   return (
     <Box>
       <Stack direction="row">
@@ -301,6 +329,9 @@ const MenuBar = ({ editor }) => {
             justify
           </Button>
         </ButtonGroup>
+        <Button size="sm" onClick={addImage}>
+          image
+        </Button>
       </Stack>
     </Box>
   )
