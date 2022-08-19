@@ -1,13 +1,22 @@
 import {
   MjButton,
   MjColumn,
+  MjDivider,
   MjImage,
   MjSection,
   MjText,
   MjWrapper,
 } from '../app/components/BodyComponents'
 
-const bodyComps = [MjSection, MjWrapper, MjColumn, MjText, MjImage, MjButton]
+const bodyComps = [
+  MjSection,
+  MjWrapper,
+  MjColumn,
+  MjText,
+  MjImage,
+  MjButton,
+  MjDivider,
+]
 
 export const getComponentAllowedChildren = (tagName) => {
   const found = bodyComps.find((el) => el.tagName === tagName)

@@ -625,3 +625,42 @@ export const MjWrapper = {
   isEndingTag: false,
   allowedChildren: [MjSection],
 }
+
+export const MjDivider = {
+  title: 'Divider',
+  tagName: 'mj-divider',
+  attributes: {
+    align: { ...Attributes.align, defaultValue: 'center' },
+    'border-color': {
+      unit: 'color',
+      description: 'divider color',
+      defaultValue: '#000000',
+    },
+    'border-style': {
+      unit: 'string',
+      description: 'dashed/dotted/solid',
+      defaultValue: 'solid',
+    },
+    'border-width': {
+      unit: 'px',
+      description: "divider's border width",
+      defaultValue: '2px',
+    },
+    'container-background-color': {
+      ...Attributes['container-background-color'],
+      defaultValue: null,
+    },
+    'css-class': { ...Attributes['css-class'], defaultValue: '' },
+    padding: { ...Attributes.padding, defaultValue: '20px 0 20px 0' },
+    // 'padding-bottom': { ...Attributes['padding-bottom'], defaultValue: 0 },
+    // 'padding-left': { ...Attributes['padding-left'], defaultValue: 0 },
+    // 'padding-right': { ...Attributes['padding-right'], defaultValue: 0 },
+    // 'padding-top': { ...Attributes['padding-top'], defaultValue: 0 },
+    width: {
+      ...Attributes.width,
+      defaultValue: '100%',
+    },
+  },
+  isEndingTag: false,
+  allowedChildren: [],
+}

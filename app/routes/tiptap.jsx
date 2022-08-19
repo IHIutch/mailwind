@@ -7,6 +7,7 @@ import {
   Stack,
 } from '@chakra-ui/react'
 import Image from '@tiptap/extension-image'
+import Link from '@tiptap/extension-link'
 import TextAlign from '@tiptap/extension-text-align'
 import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
@@ -35,15 +36,22 @@ const MjmlPreview = ({ json }) => {
     return arr
       .map((a) => {
         const types = isFormatting && a?.marks ? a.marks.map((m) => m.type) : []
-        return `<span
-            style="
-            ${types.includes('bold') ? 'font-weight:bold;' : ''}
-            ${types.includes('italic') ? 'font-style:italic;' : ''}
-            ${types.includes('strike') ? 'text-decoration:line-through;' : ''}
-            "
-          >
-            ${a.text}
-          </span>`
+        const linkAttrs = types.includes('link')
+          ? a.marks.find((m) => m.type === 'link').attrs
+          : {}
+        return types.includes('link')
+          ? `<a
+              href="${linkAttrs.href}"
+              target="${linkAttrs.target}"
+              rel="noopener noreferrer nofollow"
+            >${a.text}</a>`
+          : `<span
+              style="
+              ${types.includes('bold') ? 'font-weight:bold;' : ''}
+              ${types.includes('italic') ? 'font-style:italic;' : ''}
+              ${types.includes('strike') ? 'text-decoration:line-through;' : ''}
+              "
+            >${a.text}</span>`
       })
       .join('')
   }
@@ -104,6 +112,15 @@ const MjmlPreview = ({ json }) => {
                 : {}),
             },
             content: a?.content ? handleFormatText(a.content, false) : '',
+          }
+
+        case 'horizontalRule':
+          return {
+            tagName: 'mj-divider',
+            'css-class': 'divider',
+            attributes: {
+              ...handleGetAttrs('mj-divider'),
+            },
           }
 
         case 'text':
@@ -184,6 +201,9 @@ const TipTapEditor = ({ onChange }) => {
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),
+      Link.configure({
+        openOnClick: false,
+      }),
     ],
     onUpdate: (json) => {
       onChange(json.editor?.getJSON())
@@ -224,6 +244,39 @@ const MenuBar = ({ editor }) => {
     if (url) {
       editor.chain().focus().setImage({ src: url }).run()
     }
+  }, [editor])
+
+  const addLink = useCallback(() => {
+    const previousUrl = editor.getAttributes('link').href
+    const url = window.prompt('URL', previousUrl)
+
+    // cancelled
+    if (url === null) {
+      return
+    }
+
+    // empty
+    if (url === '') {
+      editor.chain().focus().extendMarkRange('link').unsetLink().run()
+
+      return
+    }
+
+    // function to automatically add protocol if missing
+    const addProtocol = (url) => {
+      if (!/^(?:f|ht)tps?:\/\//.test(url)) {
+        url = 'http://' + url
+      }
+      return url
+    }
+
+    // update link
+    editor
+      .chain()
+      .focus()
+      .extendMarkRange('link')
+      .setLink({ href: addProtocol(url) })
+      .run()
   }, [editor])
 
   return (
@@ -327,9 +380,10 @@ const MenuBar = ({ editor }) => {
             justify
           </Button>
         </ButtonGroup>
-        <Button size="sm" onClick={addImage}>
-          image
-        </Button>
+        <ButtonGroup size="sm" isAttached>
+          <Button onClick={addImage}>image</Button>
+          <Button onClick={addLink}>link</Button>
+        </ButtonGroup>
       </Stack>
     </Box>
   )
