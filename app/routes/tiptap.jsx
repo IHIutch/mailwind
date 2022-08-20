@@ -1,32 +1,144 @@
-import {
-  Box,
-  Button,
-  ButtonGroup,
-  Flex,
-  SimpleGrid,
-  Stack,
-} from '@chakra-ui/react'
-import Image from '@tiptap/extension-image'
-import Link from '@tiptap/extension-link'
-import TextAlign from '@tiptap/extension-text-align'
-import { EditorContent, useEditor } from '@tiptap/react'
-import StarterKit from '@tiptap/starter-kit'
-import React, { useMemo, useRef, useEffect, useCallback } from 'react'
+import { useMemo, useRef, useEffect, useCallback, useState } from 'react'
+import { Box, Heading, SimpleGrid } from '@chakra-ui/react'
 import { ClientOnly } from 'remix-utils'
-import { getComponentAttributes } from 'utils/functions'
+import { getComponentAttributes, getNanoId } from 'utils/functions'
 import getHtml from '~/models/getHtml.client'
+import { BlockType } from 'utils/types'
+import { useLoaderData } from '@remix-run/react'
+import Block from '~/components/Block'
+
+export const loader = async () => {
+  const blocks = [
+    {
+      id: getNanoId(),
+      type: BlockType.H1,
+      details: {
+        value: '<p>Get Started</p>',
+      },
+    },
+    {
+      id: getNanoId(),
+      type: BlockType.Divider,
+      details: {},
+    },
+    {
+      id: getNanoId(),
+      type: BlockType.Text,
+      details: {
+        value:
+          '<p>👋 Welcome! This is a private page for you to play around with.</p>',
+      },
+    },
+    {
+      id: getNanoId(),
+      type: BlockType.Text,
+      details: {
+        value: '<p>Give these things a try:</p>',
+      },
+    },
+    {
+      id: getNanoId(),
+      type: BlockType.Text,
+      details: {
+        value: '<p>1. Hover on the left of each line for quick actions</p>',
+      },
+    },
+    {
+      id: getNanoId(),
+      type: BlockType.Text,
+      details: {
+        value: '<p>2. Click on the + button to add a new line</p>',
+      },
+    },
+    {
+      id: getNanoId(),
+      type: BlockType.Text,
+      details: {
+        value: '<p>3. Drag the ⋮⋮ button to reorder</p>',
+      },
+    },
+    {
+      id: getNanoId(),
+      type: BlockType.Text,
+      details: {
+        value: '<p>4. Click the trash icon to delete this block</p>',
+      },
+    },
+    {
+      id: getNanoId(),
+      type: BlockType.Text,
+      details: {
+        value:
+          '<p>5. <strong>Bold</strong> and <em>italicize</em> using markdown e.g. *italic* or **bold**</p>',
+      },
+    },
+    {
+      id: getNanoId(),
+      type: BlockType.Text,
+      details: {
+        value:
+          "<p>6. Add headers and dividers with '#', '##' or '---' followed by a space</p>",
+      },
+    },
+    {
+      id: getNanoId(),
+      type: BlockType.Text,
+      details: {
+        value:
+          "<p>7. Type '/' for a menu to quickly switch blocks and search by typing</p>",
+      },
+    },
+  ]
+
+  return {
+    blocks,
+  }
+}
 
 export default function Tiptap() {
-  const [json, setJson] = React.useState(null)
+  const { blocks: loaderBlocks } = useLoaderData()
+  const [blocks, setBlocks] = useState(loaderBlocks)
   return (
     <SimpleGrid spacing="0" columns="2" h="100vh">
       <Box h="100%">
-        <TipTapEditor onChange={setJson} />
+        <EditView onChange={setBlocks} value={blocks} />
       </Box>
       <Box>
-        <ClientOnly>{() => <MjmlPreview json={json} />}</ClientOnly>
+        <code>
+          <pre>{JSON.stringify(blocks, null, 2)}</pre>
+        </code>
+        {/* <ClientOnly>{() => <MjmlPreview json={blocks} />}</ClientOnly> */}
       </Box>
     </SimpleGrid>
+  )
+}
+
+const EditView = ({ value, onChange }) => {
+  const handleOnChange = (idx, val) => {
+    const newBlocks = [...value]
+    newBlocks[idx] = {
+      ...newBlocks[idx],
+      details: val,
+    }
+    onChange(newBlocks)
+  }
+
+  return (
+    <Box>
+      <Heading>Edit View</Heading>
+      <Box>
+        {value.map((v, idx) => (
+          <Box key={idx}>
+            {/* {JSON.stringify(v)} */}
+            <Block
+              type={v.type}
+              details={v.details}
+              onChange={(val) => handleOnChange(idx, val)}
+            />
+          </Box>
+        ))}
+      </Box>
+    </Box>
   )
 }
 
@@ -186,205 +298,4 @@ const MjmlPreview = ({ json }) => {
   }, [html])
 
   return <Box boxSize="100%" as="iframe" ref={iframe} />
-}
-
-const TipTapEditor = ({ onChange }) => {
-  const editor = useEditor({
-    editorProps: {
-      attributes: {
-        style: 'height: 100%;padding:1rem;',
-      },
-    },
-    extensions: [
-      StarterKit,
-      Image,
-      TextAlign.configure({
-        types: ['heading', 'paragraph'],
-      }),
-      Link.configure({
-        openOnClick: false,
-      }),
-    ],
-    onUpdate: (json) => {
-      onChange(json.editor?.getJSON())
-    },
-    onCreate: (json) => {
-      onChange(json.editor?.getJSON())
-    },
-    content: {
-      type: 'doc',
-      content: [
-        {
-          type: 'paragraph',
-          content: [
-            {
-              type: 'text',
-              text: 'Wow, this editor instance exports its content as JSON.',
-            },
-          ],
-        },
-      ],
-    },
-  })
-
-  return (
-    <Flex h="100%" direction="column">
-      {editor ? <MenuBar editor={editor} /> : null}
-      <Box borderWidth="1px" flexGrow="1">
-        <EditorContent style={{ height: '100%' }} editor={editor} />
-      </Box>
-    </Flex>
-  )
-}
-
-const MenuBar = ({ editor }) => {
-  const addImage = useCallback(() => {
-    const url = window.prompt('URL')
-
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run()
-    }
-  }, [editor])
-
-  const addLink = useCallback(() => {
-    const previousUrl = editor.getAttributes('link').href
-    const url = window.prompt('URL', previousUrl)
-
-    // cancelled
-    if (url === null) {
-      return
-    }
-
-    // empty
-    if (url === '') {
-      editor.chain().focus().extendMarkRange('link').unsetLink().run()
-
-      return
-    }
-
-    // function to automatically add protocol if missing
-    const addProtocol = (url) => {
-      if (!/^(?:f|ht)tps?:\/\//.test(url)) {
-        url = 'http://' + url
-      }
-      return url
-    }
-
-    // update link
-    editor
-      .chain()
-      .focus()
-      .extendMarkRange('link')
-      .setLink({ href: addProtocol(url) })
-      .run()
-  }, [editor])
-
-  return (
-    <Box>
-      <Stack direction="row">
-        <ButtonGroup size="sm" isAttached>
-          <Button
-            onClick={() =>
-              editor.chain().focus().toggleHeading({ level: 1 }).run()
-            }
-            colorScheme={
-              editor.isActive('heading', { level: 1 }) ? 'blue' : 'gray'
-            }
-          >
-            h1
-          </Button>
-          <Button
-            onClick={() =>
-              editor.chain().focus().toggleHeading({ level: 2 }).run()
-            }
-            colorScheme={
-              editor.isActive('heading', { level: 2 }) ? 'blue' : 'gray'
-            }
-          >
-            h2
-          </Button>
-          <Button
-            onClick={() =>
-              editor.chain().focus().toggleHeading({ level: 3 }).run()
-            }
-            colorScheme={
-              editor.isActive('heading', { level: 3 }) ? 'blue' : 'gray'
-            }
-          >
-            h3
-          </Button>
-          <Button
-            onClick={() => editor.chain().focus().setParagraph().run()}
-            colorScheme={editor.isActive('paragraph') ? 'blue' : 'gray'}
-          >
-            paragraph
-          </Button>
-        </ButtonGroup>
-        <ButtonGroup size="sm" isAttached>
-          <Button
-            onClick={() => editor.chain().focus().toggleBold().run()}
-            colorScheme={editor.isActive('bold') ? 'blue' : 'gray'}
-          >
-            bold
-          </Button>
-          <Button
-            onClick={() => editor.chain().focus().toggleItalic().run()}
-            colorScheme={editor.isActive('italic') ? 'blue' : 'gray'}
-          >
-            italic
-          </Button>
-          <Button
-            onClick={() => editor.chain().focus().toggleStrike().run()}
-            colorScheme={editor.isActive('strike') ? 'blue' : 'gray'}
-          >
-            strike
-          </Button>
-          <Button
-            onClick={() => editor.chain().focus().toggleHighlight().run()}
-            colorScheme={editor.isActive('highlight') ? 'blue' : 'gray'}
-          >
-            highlight
-          </Button>
-        </ButtonGroup>
-        <ButtonGroup size="sm" isAttached>
-          <Button
-            onClick={() => editor.chain().focus().setTextAlign('left').run()}
-            colorScheme={
-              editor.isActive({ textAlign: 'left' }) ? 'blue' : 'gray'
-            }
-          >
-            left
-          </Button>
-          <Button
-            onClick={() => editor.chain().focus().setTextAlign('center').run()}
-            colorScheme={
-              editor.isActive({ textAlign: 'center' }) ? 'blue' : 'gray'
-            }
-          >
-            center
-          </Button>
-          <Button
-            onClick={() => editor.chain().focus().setTextAlign('right').run()}
-            colorScheme={
-              editor.isActive({ textAlign: 'right' }) ? 'blue' : 'gray'
-            }
-          >
-            right
-          </Button>
-          <Button
-            onClick={() => editor.chain().focus().setTextAlign('justify').run()}
-            colorScheme={
-              editor.isActive({ textAlign: 'justify' }) ? 'blue' : 'gray'
-            }
-          >
-            justify
-          </Button>
-        </ButtonGroup>
-        <ButtonGroup size="sm" isAttached>
-          <Button onClick={addImage}>image</Button>
-          <Button onClick={addLink}>link</Button>
-        </ButtonGroup>
-      </Stack>
-    </Box>
-  )
 }

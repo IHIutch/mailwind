@@ -1,3 +1,6 @@
+import { nanoid } from 'nanoid-good'
+import en from 'nanoid-good/locale/en'
+
 import {
   MjButton,
   MjColumn,
@@ -117,4 +120,9 @@ export const formatMjml = (list) => {
       },
     ],
   }
+}
+
+export const getNanoId = () => {
+  const handleGetNanoId = nanoid(en)
+  return handleGetNanoId(12)
 }
