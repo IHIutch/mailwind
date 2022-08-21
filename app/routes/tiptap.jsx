@@ -3,9 +3,16 @@ import {
   Box,
   Flex,
   Heading,
+  Icon,
+  IconButton,
   List,
   ListItem,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   SimpleGrid,
+  Stack,
 } from '@chakra-ui/react'
 import { ClientOnly } from 'remix-utils'
 import { getComponentAttributes, getNanoId } from 'utils/functions'
@@ -32,6 +39,7 @@ import {
   SortableItem,
   SortOverlay,
 } from '~/components/sortable/SortableItem'
+import { Plus, Trash2 } from 'lucide-react'
 
 export const loader = async () => {
   const blocks = [
@@ -199,8 +207,24 @@ const EditView = ({ value, onChange }) => {
     useSensor(TouchSensor)
   )
 
-  function handleDragStart({ active: { id } }) {
+  const handleDragStart = ({ active: { id } }) => {
     setActiveItem(value.find((v) => v.id === id))
+  }
+
+  const handleAddItem = (idx, payload) => {
+    onChange(() => {
+      const newBlocks = [...value]
+      newBlocks.splice(idx, 0, payload)
+      return newBlocks
+    })
+  }
+
+  const handleRemoveItem = (idx) => {
+    onChange(() => {
+      const newBlocks = [...value]
+      newBlocks.splice(idx, 1)
+      return newBlocks
+    })
   }
 
   return (
@@ -224,6 +248,8 @@ const EditView = ({ value, onChange }) => {
                     <ItemBlock
                       v={v}
                       onChange={(val) => handleOnChange(idx, val)}
+                      addItem={(value) => handleAddItem(idx + 1, value)}
+                      removeItem={() => handleRemoveItem(idx)}
                     />
                   </SortableItem>
                 </ListItem>
@@ -239,11 +265,46 @@ const EditView = ({ value, onChange }) => {
   )
 }
 
-const ItemBlock = ({ v, onChange }) => {
+const ItemBlock = ({ v, onChange, addItem, removeItem }) => {
   return (
     <Flex>
-      <Box>
-        <DragHandle />
+      <Box pt="2">
+        <Stack direction="row" spacing="0">
+          <IconButton
+            size="xs"
+            variant="ghost"
+            icon={<Icon color="gray.500" boxSize="3.5" as={Trash2} />}
+            onClick={removeItem}
+          />
+          <Menu>
+            <IconButton
+              as={MenuButton}
+              size="xs"
+              variant="ghost"
+              icon={<Icon color="gray.500" boxSize="3.5" as={Plus} />}
+            />
+            <MenuList>
+              {Object.entries(BlockType).map(([key, value], idx) => (
+                <MenuItem
+                  key={idx}
+                  fontSize="sm"
+                  onClick={() =>
+                    addItem({
+                      id: getNanoId(),
+                      type: value,
+                      details: {
+                        value: '',
+                      },
+                    })
+                  }
+                >
+                  Add New {key}
+                </MenuItem>
+              ))}
+            </MenuList>
+          </Menu>
+          <DragHandle />
+        </Stack>
       </Box>
       <Box flexGrow="1" p="2">
         <Block type={v.type} details={v.details} onChange={onChange} />

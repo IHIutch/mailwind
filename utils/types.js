@@ -1,5 +1,6 @@
-import { Box } from '@chakra-ui/react'
+import { AspectRatio, Box } from '@chakra-ui/react'
 import Editor from '~/components/Editor'
+import ImageDropzone from '~/components/ImageDropzone'
 
 const TextBlock = ({ details, onChange }) => {
   return <Editor value={details.value} onChange={onChange} />
@@ -52,6 +53,20 @@ const QuoteBlock = ({ details }) => {
   // return <div>{details?.value}</div>
 }
 
+const ImageBlock = ({ details, onChange }) => {
+  const handleChange = (value) => {
+    onChange({
+      ...details,
+      value,
+    })
+  }
+  return (
+    <AspectRatio ratio={16 / 9} w="72">
+      <ImageDropzone value={details.value} onChange={handleChange} />
+    </AspectRatio>
+  )
+}
+
 export const BlockType = {
   Text: 'TEXT',
   H1: 'H1',
@@ -59,6 +74,7 @@ export const BlockType = {
   H3: 'H3',
   Divider: 'DIVIDER',
   Quote: 'QUOTE',
+  Image: 'IMAGE',
 }
 
 export const components = {
@@ -68,4 +84,5 @@ export const components = {
   [BlockType.H3]: HeadingBlock,
   [BlockType.Divider]: DividerBlock,
   [BlockType.Quote]: QuoteBlock,
+  [BlockType.Image]: ImageBlock,
 }

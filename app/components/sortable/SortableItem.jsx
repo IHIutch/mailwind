@@ -54,16 +54,14 @@ export function SortableItem({ id, children }) {
 export function DragHandle() {
   const { attributes, listeners, ref } = useContext(SortableItemContext)
   return (
-    <Box p="1">
-      <IconButton
-        size="xs"
-        variant="ghost"
-        icon={<Icon boxSize="3.5" as={GripVertical} />}
-        {...attributes}
-        {...listeners}
-        ref={ref}
-      />
-    </Box>
+    <IconButton
+      size="xs"
+      variant="ghost"
+      icon={<Icon color="gray.500" boxSize="3.5" as={GripVertical} />}
+      {...attributes}
+      {...listeners}
+      ref={ref}
+    />
   )
 }
 
