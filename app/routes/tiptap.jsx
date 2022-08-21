@@ -1,5 +1,12 @@
 import { useMemo, useRef, useEffect, useCallback, useState } from 'react'
-import { Box, Center, Flex, Heading, Icon, SimpleGrid } from '@chakra-ui/react'
+import {
+  Box,
+  Flex,
+  Heading,
+  List,
+  ListItem,
+  SimpleGrid,
+} from '@chakra-ui/react'
 import { ClientOnly } from 'remix-utils'
 import { getComponentAttributes, getNanoId } from 'utils/functions'
 import getHtml from '~/models/getHtml.client'
@@ -7,12 +14,24 @@ import { BlockType } from 'utils/types'
 import { useLoaderData } from '@remix-run/react'
 import Block from '~/components/Block'
 import {
-  DragDropContext,
-  Draggable,
-  Droppable,
-  resetServerContext,
-} from 'react-beautiful-dnd'
-import { GripVertical } from 'lucide-react'
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
+import {
+  DragHandle,
+  SortableItem,
+  SortOverlay,
+} from '~/components/sortable/SortableItem'
 
 export const loader = async () => {
   const blocks = [
@@ -148,6 +167,8 @@ export default function Tiptap() {
 }
 
 const EditView = ({ value, onChange }) => {
+  const [activeItem, setActiveItem] = useState(null)
+
   const handleOnChange = (idx, val) => {
     const newBlocks = [...value]
     newBlocks[idx] = {
@@ -157,69 +178,77 @@ const EditView = ({ value, onChange }) => {
     onChange(newBlocks)
   }
 
-  const reorder = (list, startIndex, endIndex) => {
-    const result = [...list]
-    const [removed] = result.splice(startIndex, 1)
-    result.splice(endIndex, 0, removed)
+  const handleDragEnd = ({ active, over }) => {
+    if (over && active.id !== over?.id) {
+      onChange(() => {
+        const oldIndex = value.findIndex(({ id }) => id === active.id)
+        const newIndex = value.findIndex(({ id }) => id === over.id)
 
-    return result
-  }
-
-  const handleDragEnd = (result) => {
-    if (!result.destination) {
-      return
+        const newList = arrayMove(value, oldIndex, newIndex)
+        return newList
+      })
     }
-
-    const newItems = reorder(
-      value,
-      result.source.index,
-      result.destination.index
-    )
-
-    onChange(newItems)
+    setActiveItem(null)
   }
 
-  resetServerContext()
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+    useSensor(TouchSensor)
+  )
+
+  function handleDragStart({ active: { id } }) {
+    setActiveItem(value.find((v) => v.id === id))
+  }
 
   return (
     <Box>
       <Heading>Edit View</Heading>
       <Box>
-        <DragDropContext onDragEnd={handleDragEnd}>
-          <Droppable droppableId="droppable">
-            {(provided, snapshot) => (
-              <Box {...provided.droppableProps} ref={provided.innerRef}>
-                {value.map((v, idx) => (
-                  <Draggable key={v.id} draggableId={v.id} index={idx}>
-                    {(provided, snapshot) => (
-                      <Box ref={provided.innerRef} {...provided.draggableProps}>
-                        <Flex>
-                          <Center
-                            p="2"
-                            color="gray.500"
-                            {...provided.dragHandleProps}
-                          >
-                            <Icon boxSize="4" as={GripVertical} />
-                          </Center>
-                          <Box flexGrow="1" p="2">
-                            <Block
-                              type={v.type}
-                              details={v.details}
-                              onChange={(val) => handleOnChange(idx, val)}
-                            />
-                          </Box>
-                        </Flex>
-                      </Box>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </Box>
-            )}
-          </Droppable>
-        </DragDropContext>
+        <DndContext
+          id="dnd"
+          sensors={sensors}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+          onDragCancel={() => {
+            setActiveItem(null)
+          }}
+        >
+          <SortableContext items={value} strategy={verticalListSortingStrategy}>
+            <List>
+              {value.map((v, idx) => (
+                <ListItem key={v.id}>
+                  <SortableItem id={v.id}>
+                    <ItemBlock
+                      v={v}
+                      onChange={(val) => handleOnChange(idx, val)}
+                    />
+                  </SortableItem>
+                </ListItem>
+              ))}
+            </List>
+          </SortableContext>
+          <SortOverlay>
+            {activeItem ? <ItemBlock v={activeItem} /> : null}
+          </SortOverlay>
+        </DndContext>
       </Box>
     </Box>
+  )
+}
+
+const ItemBlock = ({ v, onChange }) => {
+  return (
+    <Flex>
+      <Box>
+        <DragHandle />
+      </Box>
+      <Box flexGrow="1" p="2">
+        <Block type={v.type} details={v.details} onChange={onChange} />
+      </Box>
+    </Flex>
   )
 }
 
