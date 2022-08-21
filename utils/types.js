@@ -1,4 +1,4 @@
-import { Box, StackDivider } from '@chakra-ui/react'
+import { Box } from '@chakra-ui/react'
 import Editor from '~/components/Editor'
 
 const TextBlock = ({ details, onChange }) => {

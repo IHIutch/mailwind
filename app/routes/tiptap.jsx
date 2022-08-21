@@ -1,11 +1,18 @@
 import { useMemo, useRef, useEffect, useCallback, useState } from 'react'
-import { Box, Heading, SimpleGrid } from '@chakra-ui/react'
+import { Box, Center, Flex, Heading, Icon, SimpleGrid } from '@chakra-ui/react'
 import { ClientOnly } from 'remix-utils'
 import { getComponentAttributes, getNanoId } from 'utils/functions'
 import getHtml from '~/models/getHtml.client'
 import { BlockType } from 'utils/types'
 import { useLoaderData } from '@remix-run/react'
 import Block from '~/components/Block'
+import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  resetServerContext,
+} from 'react-beautiful-dnd'
+import { GripVertical } from 'lucide-react'
 
 export const loader = async () => {
   const blocks = [
@@ -105,7 +112,34 @@ export default function Tiptap() {
       </Box>
       <Box>
         <code>
-          <pre>{JSON.stringify(blocks, null, 2)}</pre>
+          <pre>
+            {JSON.stringify(
+              blocks.map((b) => {
+                return [
+                  BlockType.Text,
+                  BlockType.H1,
+                  BlockType.H2,
+                  BlockType.H3,
+                ].includes(b.type)
+                  ? {
+                      ...b,
+                      details: {
+                        value: b.details.value,
+                        // .replaceAll('<p>', '')
+                        // .replaceAll('</p>', '')
+                        // .replaceAll('<strong>', '**')
+                        // .replaceAll('</strong>', '**')
+                        // .replaceAll('<em>', '*')
+                        // .replaceAll('</em>', '*')
+                        // .replaceAll(/<br.*?>/g, ''),
+                      },
+                    }
+                  : b
+              }),
+              null,
+              2
+            )}
+          </pre>
         </code>
         {/* <ClientOnly>{() => <MjmlPreview json={blocks} />}</ClientOnly> */}
       </Box>
@@ -123,20 +157,67 @@ const EditView = ({ value, onChange }) => {
     onChange(newBlocks)
   }
 
+  const reorder = (list, startIndex, endIndex) => {
+    const result = [...list]
+    const [removed] = result.splice(startIndex, 1)
+    result.splice(endIndex, 0, removed)
+
+    return result
+  }
+
+  const handleDragEnd = (result) => {
+    if (!result.destination) {
+      return
+    }
+
+    const newItems = reorder(
+      value,
+      result.source.index,
+      result.destination.index
+    )
+
+    onChange(newItems)
+  }
+
+  resetServerContext()
+
   return (
     <Box>
       <Heading>Edit View</Heading>
       <Box>
-        {value.map((v, idx) => (
-          <Box key={idx}>
-            {/* {JSON.stringify(v)} */}
-            <Block
-              type={v.type}
-              details={v.details}
-              onChange={(val) => handleOnChange(idx, val)}
-            />
-          </Box>
-        ))}
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Droppable droppableId="droppable">
+            {(provided, snapshot) => (
+              <Box {...provided.droppableProps} ref={provided.innerRef}>
+                {value.map((v, idx) => (
+                  <Draggable key={v.id} draggableId={v.id} index={idx}>
+                    {(provided, snapshot) => (
+                      <Box ref={provided.innerRef} {...provided.draggableProps}>
+                        <Flex>
+                          <Center
+                            p="2"
+                            color="gray.500"
+                            {...provided.dragHandleProps}
+                          >
+                            <Icon boxSize="4" as={GripVertical} />
+                          </Center>
+                          <Box flexGrow="1" p="2">
+                            <Block
+                              type={v.type}
+                              details={v.details}
+                              onChange={(val) => handleOnChange(idx, val)}
+                            />
+                          </Box>
+                        </Flex>
+                      </Box>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </Box>
+            )}
+          </Droppable>
+        </DragDropContext>
       </Box>
     </Box>
   )
