@@ -71,7 +71,7 @@ export const DragHandle = forwardRef((props, ref) => {
       variant="ghost"
       icon={<Icon color="gray.500" boxSize="3.5" as={GripVertical} />}
       {...attributes}
-      {...(props.isdragdisabled ? {} : listeners)}
+      {...(props.isDragDisabled ? {} : listeners)}
       ref={refs}
       {...props}
     />

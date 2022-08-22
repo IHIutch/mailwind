@@ -135,42 +135,43 @@ export const loader = async () => {
 export default function Tiptap() {
   const { blocks: loaderBlocks } = useLoaderData()
   const [blocks, setBlocks] = useState(loaderBlocks)
+
+  console.log({ blocks })
+
   return (
     <SimpleGrid spacing="0" columns="2" h="100vh">
       <Box h="100%">
         <EditView onChange={setBlocks} value={blocks} />
       </Box>
       <Box>
-        <code>
-          <pre>
-            {JSON.stringify(
-              blocks.map((b) => {
-                return [
-                  BlockType.Text,
-                  BlockType.H1,
-                  BlockType.H2,
-                  BlockType.H3,
-                ].includes(b.type)
-                  ? {
-                      ...b,
-                      details: {
-                        value: b.details.value,
-                        // .replaceAll('<p>', '')
-                        // .replaceAll('</p>', '')
-                        // .replaceAll('<strong>', '**')
-                        // .replaceAll('</strong>', '**')
-                        // .replaceAll('<em>', '*')
-                        // .replaceAll('</em>', '*')
-                        // .replaceAll(/<br.*?>/g, ''),
-                      },
-                    }
-                  : b
-              }),
-              null,
-              2
-            )}
-          </pre>
-        </code>
+        <pre>
+          {JSON.stringify(
+            blocks.map((b) => {
+              return [
+                BlockType.Text,
+                BlockType.H1,
+                BlockType.H2,
+                BlockType.H3,
+              ].includes(b.type)
+                ? {
+                    ...b,
+                    details: {
+                      value: b.details.value,
+                      // .replaceAll('<p>', '')
+                      // .replaceAll('</p>', '')
+                      // .replaceAll('<strong>', '**')
+                      // .replaceAll('</strong>', '**')
+                      // .replaceAll('<em>', '*')
+                      // .replaceAll('</em>', '*')
+                      // .replaceAll(/<br.*?>/g, ''),
+                    },
+                  }
+                : b
+            }),
+            null,
+            2
+          )}
+        </pre>
         {/* <ClientOnly>{() => <MjmlPreview json={blocks} />}</ClientOnly> */}
       </Box>
     </SimpleGrid>
@@ -179,28 +180,6 @@ export default function Tiptap() {
 
 const EditView = ({ value, onChange }) => {
   const [activeItem, setActiveItem] = useState(null)
-
-  const handleOnChange = (idx, val) => {
-    const newBlocks = [...value]
-    newBlocks[idx] = {
-      ...newBlocks[idx],
-      details: val,
-    }
-    onChange(newBlocks)
-  }
-
-  const handleDragEnd = ({ active, over }) => {
-    if (over && active.id !== over?.id) {
-      onChange(() => {
-        const oldIndex = value.findIndex(({ id }) => id === active.id)
-        const newIndex = value.findIndex(({ id }) => id === over.id)
-
-        const newList = arrayMove(value, oldIndex, newIndex)
-        return newList
-      })
-    }
-    setActiveItem(null)
-  }
 
   const sensors = useSensors(
     useSensor(KeyboardSensor, {
@@ -214,29 +193,53 @@ const EditView = ({ value, onChange }) => {
     // useSensor(TouchSensor)
   )
 
+  const handleOnChange = (idx, val) => {
+    onChange((oldValue) => {
+      const newBlocks = [...oldValue]
+      newBlocks[idx] = {
+        ...newBlocks[idx],
+        details: val,
+      }
+      return newBlocks
+    })
+  }
+
+  const handleDragEnd = ({ active, over }) => {
+    if (over && active.id !== over?.id) {
+      onChange((oldValue) => {
+        const oldIndex = oldValue.findIndex(({ id }) => id === active.id)
+        const newIndex = oldValue.findIndex(({ id }) => id === over.id)
+
+        const newList = arrayMove(oldValue, oldIndex, newIndex)
+        return newList
+      })
+    }
+    setActiveItem(null)
+  }
+
   const handleDragStart = ({ active: { id } }) => {
     setActiveItem(value.find((v) => v.id === id))
   }
 
   const handleAddItem = (idx, payload) => {
-    onChange(() => {
-      const newBlocks = [...value]
+    onChange((oldValue) => {
+      const newBlocks = [...oldValue]
       newBlocks.splice(idx, 0, payload)
       return newBlocks
     })
   }
 
   const handleRemoveItem = (idx) => {
-    onChange(() => {
-      const newBlocks = [...value]
+    onChange((oldValue) => {
+      const newBlocks = [...oldValue]
       newBlocks.splice(idx, 1)
       return newBlocks
     })
   }
 
   const handleDuplicateItem = (idx) => {
-    onChange(() => {
-      const newBlocks = [...value]
+    onChange((oldValue) => {
+      const newBlocks = [...oldValue]
       newBlocks.splice(idx + 1, 0, {
         ...newBlocks[idx],
         id: getNanoId(),

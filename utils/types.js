@@ -3,7 +3,13 @@ import Editor from '~/components/Editor'
 import ImageDropzone from '~/components/ImageDropzone'
 
 const TextBlock = ({ details, onChange }) => {
-  return <Editor value={details.value} onChange={onChange} />
+  const handleChange = (value) => {
+    onChange({
+      ...details,
+      value,
+    })
+  }
+  return <Editor value={details.value} onChange={handleChange} />
 }
 
 const HeadingBlock = ({ type, details, onChange }) => {
