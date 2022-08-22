@@ -1,4 +1,3 @@
-import { Box } from '@chakra-ui/react'
 import Editor from '../Editor'
 
 export default function CodeBlock({ details, onChange }) {
@@ -12,12 +11,11 @@ export default function CodeBlock({ details, onChange }) {
       value: replaceHtml(value),
     })
   }
+
   return (
-    <Box rounded="md" bg="blackAlpha.50" p="2">
-      <Editor
-        value={`<code><pre>${replaceHtml(details.value)}</code></pre>`}
-        onChange={handleChange}
-      />
-    </Box>
+    <Editor
+      value={`<pre><code>${details.value}</code></pre>`}
+      onChange={handleChange}
+    />
   )
 }

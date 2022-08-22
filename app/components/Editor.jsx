@@ -1,15 +1,19 @@
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 import Link from '@tiptap/extension-link'
 import TextAlign from '@tiptap/extension-text-align'
 import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
+import { lowlight } from 'lowlight'
 
-export default function Editor({ onChange, value }) {
+export default function Editor({ onChange, value, isCode = false }) {
   const editor = useEditor({
     editorProps: {
       handleDrop: () => true,
     },
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        codeBlock: false,
+      }),
       // Image,
       TextAlign.configure({
         types: ['heading', 'paragraph'],
@@ -17,9 +21,15 @@ export default function Editor({ onChange, value }) {
       Link.configure({
         openOnClick: false,
       }),
+      // PrismCodeBlock,
+      CodeBlockLowlight.configure({
+        lowlight,
+      }),
     ],
     onUpdate: (value) => {
-      onChange(value.editor?.getHTML().replaceAll(/<br.*?>/g, ''))
+      isCode
+        ? onChange(value.editor?.getHTML())
+        : onChange(value.editor?.getHTML().replaceAll(/<br.*?>/g, ''))
     },
     content: value,
   })
