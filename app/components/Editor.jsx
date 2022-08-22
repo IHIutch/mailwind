@@ -5,7 +5,7 @@ import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { lowlight } from 'lowlight'
 
-export default function Editor({ onChange, value, isCode = false }) {
+export default function Editor({ onChange, value }) {
   const editor = useEditor({
     editorProps: {
       handleDrop: () => true,
@@ -27,9 +27,7 @@ export default function Editor({ onChange, value, isCode = false }) {
       }),
     ],
     onUpdate: (value) => {
-      isCode
-        ? onChange(value.editor?.getHTML())
-        : onChange(value.editor?.getHTML().replaceAll(/<br.*?>/g, ''))
+      onChange(value.editor?.getHTML().replaceAll(/<br.*?>/g, ''))
     },
     content: value,
   })

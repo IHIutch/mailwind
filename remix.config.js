@@ -10,5 +10,20 @@ module.exports = {
   // assetsBuildDirectory: "public/build",
   // serverBuildPath: "api/index.js",
   // publicPath: "/build/",s
-  serverDependenciesToBundle: ['lowlight', 'fault'],
+  serverDependenciesToBundle: [
+    'lowlight',
+    'fault',
+    'hast-util-to-html',
+    'property-information',
+    'html-void-elements',
+    'hast-util-is-element',
+    'unist-util-is',
+    'hast-util-whitespace',
+    'space-separated-tokens',
+    'comma-separated-tokens',
+    'stringify-entities',
+    'character-entities-legacy',
+    'character-entities-html4',
+    'ccount',
+  ],
 }
