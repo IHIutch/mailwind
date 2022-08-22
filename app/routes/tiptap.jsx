@@ -234,6 +234,17 @@ const EditView = ({ value, onChange }) => {
     })
   }
 
+  const handleDuplicateItem = (idx) => {
+    onChange(() => {
+      const newBlocks = [...value]
+      newBlocks.splice(idx + 1, 0, {
+        ...newBlocks[idx],
+        id: getNanoId(),
+      })
+      return newBlocks
+    })
+  }
+
   return (
     <Box>
       <Heading>Edit View</Heading>
@@ -262,6 +273,7 @@ const EditView = ({ value, onChange }) => {
                         onChange={(val) => handleOnChange(idx, val)}
                         addItem={(value) => handleAddItem(idx + 1, value)}
                         removeItem={() => handleRemoveItem(idx)}
+                        duplicateItem={() => handleDuplicateItem(idx)}
                       />
                     </Box>
                   </SortableItem>
@@ -278,7 +290,7 @@ const EditView = ({ value, onChange }) => {
   )
 }
 
-const ItemBlock = ({ v, onChange, addItem, removeItem }) => {
+const ItemBlock = ({ v, onChange, addItem, removeItem, duplicateItem }) => {
   const [isActive, setIsActive] = useState(false)
   const [isMenuActive, setIsMenuActive] = useState(false)
 
@@ -380,6 +392,7 @@ const ItemBlock = ({ v, onChange, addItem, removeItem }) => {
                     fontSize="sm"
                     fontWeight="medium"
                     alignItems="center"
+                    onClick={duplicateItem}
                   >
                     <Stack direction="row" align="center">
                       <Icon boxSize="3.5" as={Copy} />
