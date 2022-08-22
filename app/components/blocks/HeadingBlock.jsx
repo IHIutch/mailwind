@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box } from '@chakra-ui/react'
-import { BlockType } from 'utils/types'
+import { BlockType } from '~/utils/types'
 import Editor from '../Editor'
 
 export default function HeadingBlock({ type, details, onChange }) {

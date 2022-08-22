@@ -1,4 +1,4 @@
-import { components } from 'utils/types'
+import { components } from '~/utils/types'
 
 export default function Block({ type, details, onChange }) {
   const Component = components[type]

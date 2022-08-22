@@ -21,9 +21,12 @@ import ColorPicker from './ColorPicker'
 import BorderController from './controllers/BorderController'
 import PaddingController from './controllers/PaddingController'
 import debounce from 'lodash/debounce'
-import { getComponentAttributes } from 'utils/functions'
+import { getComponentAttributes } from '~/utils/functions'
 import { Controller, useForm } from 'react-hook-form'
-import { useGetBodyItem, useUpdateBodyItem } from 'utils/react-query/bodyItems'
+import {
+  useGetBodyItem,
+  useUpdateBodyItem,
+} from '~/utils/react-query/bodyItems'
 
 export default function AttributeList() {
   const { data: activeElement } = useActiveElementState()

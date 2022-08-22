@@ -9,7 +9,7 @@ import {
   MjSection,
   MjText,
   MjWrapper,
-} from '../app/components/BodyComponents'
+} from '../components/BodyComponents'
 
 const bodyComps = [
   MjSection,

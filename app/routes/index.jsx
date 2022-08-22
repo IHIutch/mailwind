@@ -27,8 +27,8 @@ import {
 } from '@chakra-ui/react'
 import getHtml from '~/models/getHtml.client'
 import ComponentList from '~/components/ComponentList'
-import { formatMjml, getComponentTitle } from 'utils/functions'
-import { useGetBodyItems } from 'utils/react-query/bodyItems'
+import { formatMjml, getComponentTitle } from '~/utils/functions'
+import { useGetBodyItems } from '~/utils/react-query/bodyItems'
 
 export default function Index() {
   const { data: activeElement } = useActiveElementState()

@@ -20,12 +20,15 @@ import {
 import { GripVertical, Plus } from 'lucide-react'
 import { useCallback, useMemo } from 'react'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
-import { getComponentAllowedChildren, getComponentTitle } from 'utils/functions'
+import {
+  getComponentAllowedChildren,
+  getComponentTitle,
+} from '~/utils/functions'
 import {
   useBulkUpdateBodyItems,
   useCreateBodyItem,
   useGetBodyItems,
-} from 'utils/react-query/bodyItems'
+} from '~/utils/react-query/bodyItems'
 import groupBy from 'lodash/groupBy'
 
 export default function ComponentList() {

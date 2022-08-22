@@ -2,7 +2,6 @@ import { useMemo, useRef, useEffect, useCallback, useState } from 'react'
 import {
   Box,
   Flex,
-  Heading,
   Icon,
   IconButton,
   List,
@@ -18,9 +17,9 @@ import {
   useOutsideClick,
 } from '@chakra-ui/react'
 import { ClientOnly } from 'remix-utils'
-import { getComponentAttributes, getNanoId } from 'utils/functions'
+import { getComponentAttributes, getNanoId } from '~/utils/functions'
 import getHtml from '~/models/getHtml.client'
-import { BlockType } from 'utils/types'
+import { BlockType } from '~/utils/types'
 import { useLoaderData } from '@remix-run/react'
 import Block from '~/components/Block'
 import {
@@ -139,7 +138,11 @@ export default function Tiptap() {
   return (
     <SimpleGrid spacing="0" columns="2" h="100vh">
       <Box h="100%">
-        <EditView onChange={setBlocks} value={blocks} />
+        <Box maxW="648px" mx="auto" py="12">
+          <Box ml="-48px">
+            <EditView onChange={setBlocks} value={blocks} />
+          </Box>
+        </Box>
       </Box>
       <Box>
         <pre>
@@ -248,45 +251,42 @@ const EditView = ({ value, onChange }) => {
 
   return (
     <Box>
-      <Heading>Edit View</Heading>
-      <Box>
-        <DndContext
-          id="dnd"
-          sensors={sensors}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
-          onDragCancel={() => {
-            setActiveItem(null)
-          }}
-        >
-          <SortableContext items={value} strategy={verticalListSortingStrategy}>
-            <List>
-              {value.map((v, idx) => (
-                <ListItem key={v.id}>
-                  <SortableItem id={v.id}>
-                    <Box
-                      bg={activeItem?.id === v.id ? 'gray.200' : 'white'}
-                      borderRadius="lg"
-                      overflow="hidden"
-                    >
-                      <ItemBlock
-                        v={v}
-                        onChange={(val) => handleOnChange(idx, val)}
-                        addItem={(value) => handleAddItem(idx + 1, value)}
-                        removeItem={() => handleRemoveItem(idx)}
-                        duplicateItem={() => handleDuplicateItem(idx)}
-                      />
-                    </Box>
-                  </SortableItem>
-                </ListItem>
-              ))}
-            </List>
-          </SortableContext>
-          <SortOverlay>
-            {activeItem ? <ItemBlock v={activeItem} /> : null}
-          </SortOverlay>
-        </DndContext>
-      </Box>
+      <DndContext
+        id="dnd"
+        sensors={sensors}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        onDragCancel={() => {
+          setActiveItem(null)
+        }}
+      >
+        <SortableContext items={value} strategy={verticalListSortingStrategy}>
+          <List>
+            {value.map((v, idx) => (
+              <ListItem key={v.id}>
+                <SortableItem id={v.id}>
+                  <Box
+                    bg={activeItem?.id === v.id ? 'gray.200' : 'white'}
+                    borderRadius="lg"
+                    overflow="hidden"
+                  >
+                    <ItemBlock
+                      v={v}
+                      onChange={(val) => handleOnChange(idx, val)}
+                      addItem={(value) => handleAddItem(idx + 1, value)}
+                      removeItem={() => handleRemoveItem(idx)}
+                      duplicateItem={() => handleDuplicateItem(idx)}
+                    />
+                  </Box>
+                </SortableItem>
+              </ListItem>
+            ))}
+          </List>
+        </SortableContext>
+        <SortOverlay>
+          {activeItem ? <ItemBlock v={activeItem} /> : null}
+        </SortOverlay>
+      </DndContext>
     </Box>
   )
 }
