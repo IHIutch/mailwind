@@ -41,7 +41,7 @@ const HeadingBlock = ({ type, details, onChange }) => {
 
 const DividerBlock = ({ details }) => {
   return (
-    <Box p="4">
+    <Box py="3">
       <Box borderTopWidth="1px" borderColor="gray.200" />
     </Box>
   )

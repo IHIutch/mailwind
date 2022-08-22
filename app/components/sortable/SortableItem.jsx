@@ -77,8 +77,6 @@ export const SortOverlay = ({ children }) => {
   }
 
   return (
-    <DragOverlay dropAnimation={dropAnimationConfig}>
-      <Box bg="white">{children}</Box>
-    </DragOverlay>
+    <DragOverlay dropAnimation={dropAnimationConfig}>{children}</DragOverlay>
   )
 }

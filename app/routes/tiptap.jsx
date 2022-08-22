@@ -245,12 +245,18 @@ const EditView = ({ value, onChange }) => {
               {value.map((v, idx) => (
                 <ListItem key={v.id}>
                   <SortableItem id={v.id}>
-                    <ItemBlock
-                      v={v}
-                      onChange={(val) => handleOnChange(idx, val)}
-                      addItem={(value) => handleAddItem(idx + 1, value)}
-                      removeItem={() => handleRemoveItem(idx)}
-                    />
+                    <Box
+                      bg={activeItem?.id === v.id ? 'gray.200' : 'white'}
+                      borderRadius="lg"
+                      overflow="hidden"
+                    >
+                      <ItemBlock
+                        v={v}
+                        onChange={(val) => handleOnChange(idx, val)}
+                        addItem={(value) => handleAddItem(idx + 1, value)}
+                        removeItem={() => handleRemoveItem(idx)}
+                      />
+                    </Box>
                   </SortableItem>
                 </ListItem>
               ))}
@@ -266,10 +272,20 @@ const EditView = ({ value, onChange }) => {
 }
 
 const ItemBlock = ({ v, onChange, addItem, removeItem }) => {
+  const [isHovering, setIsHovering] = useState(false)
+
   return (
-    <Flex>
+    <Flex
+      px="6"
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+    >
       <Box pt="2">
-        <Stack direction="row" spacing="0">
+        <Stack
+          direction="row"
+          spacing="0"
+          visibility={isHovering ? 'visible' : 'hidden'}
+        >
           <IconButton
             size="xs"
             variant="ghost"
