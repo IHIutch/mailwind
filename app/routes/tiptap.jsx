@@ -9,10 +9,13 @@ import {
   ListItem,
   Menu,
   MenuButton,
+  MenuGroup,
   MenuItem,
   MenuList,
   SimpleGrid,
   Stack,
+  Text,
+  useOutsideClick,
 } from '@chakra-ui/react'
 import { ClientOnly } from 'remix-utils'
 import { getComponentAttributes, getNanoId } from 'utils/functions'
@@ -39,7 +42,7 @@ import {
   SortableItem,
   SortOverlay,
 } from '~/components/sortable/SortableItem'
-import { Plus, Trash2 } from 'lucide-react'
+import { Copy, Plus, Trash2 } from 'lucide-react'
 
 export const loader = async () => {
   const blocks = [
@@ -200,11 +203,15 @@ const EditView = ({ value, onChange }) => {
   }
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
-    useSensor(TouchSensor)
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 10,
+      },
+    })
+    // useSensor(TouchSensor)
   )
 
   const handleDragStart = ({ active: { id } }) => {
@@ -272,54 +279,131 @@ const EditView = ({ value, onChange }) => {
 }
 
 const ItemBlock = ({ v, onChange, addItem, removeItem }) => {
-  const [isHovering, setIsHovering] = useState(false)
+  const [isActive, setIsActive] = useState(false)
+  const [isMenuActive, setIsMenuActive] = useState(false)
+
+  const ref = useRef()
+  useOutsideClick({
+    ref: ref,
+    handler: () => setIsActive(false),
+  })
 
   return (
     <Flex
+      ref={ref}
       px="6"
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
+      onMouseEnter={() => setIsActive(true)}
+      onMouseLeave={() => {
+        !isMenuActive && setIsActive(false)
+      }}
     >
       <Box pt="2">
         <Stack
           direction="row"
           spacing="0"
-          visibility={isHovering ? 'visible' : 'hidden'}
+          visibility={isActive ? 'visible' : 'hidden'}
         >
-          <IconButton
+          {/* <IconButton
             size="xs"
             variant="ghost"
             icon={<Icon color="gray.500" boxSize="3.5" as={Trash2} />}
             onClick={removeItem}
-          />
-          <Menu>
-            <IconButton
-              as={MenuButton}
+          /> */}
+          <Menu
+            onOpen={() => setIsMenuActive(true)}
+            onClose={() => setIsMenuActive(false)}
+          >
+            <MenuButton
+              as={IconButton}
               size="xs"
               variant="ghost"
               icon={<Icon color="gray.500" boxSize="3.5" as={Plus} />}
             />
-            <MenuList>
-              {Object.entries(BlockType).map(([key, value], idx) => (
-                <MenuItem
-                  key={idx}
-                  fontSize="sm"
-                  onClick={() =>
-                    addItem({
-                      id: getNanoId(),
-                      type: value,
-                      details: {
-                        value: '',
-                      },
-                    })
-                  }
-                >
-                  Add New {key}
-                </MenuItem>
-              ))}
+
+            <MenuList pt="0" pb="1">
+              <MenuGroup
+                title="Add Item"
+                py="1"
+                px="3"
+                m="0"
+                bg="gray.50"
+                borderBottomWidth="1px"
+                borderColor="gray.200"
+              >
+                {Object.entries(BlockType).map(([key, value], idx) => (
+                  <MenuItem
+                    key={idx}
+                    py="1"
+                    fontSize="sm"
+                    fontWeight="medium"
+                    onClick={() =>
+                      addItem({
+                        id: getNanoId(),
+                        type: value,
+                        details: {
+                          value: '',
+                        },
+                      })
+                    }
+                  >
+                    {key}
+                  </MenuItem>
+                ))}
+              </MenuGroup>
             </MenuList>
           </Menu>
-          <DragHandle />
+          <Menu
+            onOpen={() => setIsMenuActive(true)}
+            onClose={() => setIsMenuActive(false)}
+          >
+            {({ isOpen }) => (
+              <>
+                <MenuButton
+                  as={DragHandle}
+                  isDragDisabled={isOpen}
+                  // size="xs"
+                  // variant="ghost"
+                  // icon={<Icon color="gray.500" boxSize="3.5" as={Plus} />}
+                />
+                <MenuList>
+                  {/* <MenuGroup
+                    title="Convert Into"
+                    py="1"
+                    px="3"
+                    m="0"
+                    bg="gray.50"
+                    borderBottomWidth="1px"
+                    borderColor="gray.200"
+                  > */}
+                  <MenuItem
+                    py="1"
+                    fontSize="sm"
+                    fontWeight="medium"
+                    alignItems="center"
+                  >
+                    <Stack direction="row" align="center">
+                      <Icon boxSize="3.5" as={Copy} />
+                      <Text as="span">Duplicate Item</Text>
+                    </Stack>
+                  </MenuItem>
+                  <MenuItem
+                    py="1"
+                    fontSize="sm"
+                    fontWeight="medium"
+                    alignItems="center"
+                    onClick={removeItem}
+                  >
+                    <Stack direction="row" align="center">
+                      <Icon boxSize="3.5" as={Trash2} />
+                      <Text as="span">Delete Item</Text>
+                    </Stack>
+                  </MenuItem>
+                  {/* </MenuGroup> */}
+                </MenuList>
+              </>
+            )}
+          </Menu>
+          {/* <DragHandle /> */}
         </Stack>
       </Box>
       <Box flexGrow="1" p="2">

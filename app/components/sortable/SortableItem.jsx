@@ -1,5 +1,11 @@
 import { createContext, useContext, useMemo, useState } from 'react'
-import { Box, Icon, IconButton } from '@chakra-ui/react'
+import {
+  Box,
+  forwardRef,
+  Icon,
+  IconButton,
+  useMergeRefs,
+} from '@chakra-ui/react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { GripVertical } from 'lucide-react'
@@ -51,19 +57,26 @@ export function SortableItem({ id, children }) {
   )
 }
 
-export function DragHandle() {
-  const { attributes, listeners, ref } = useContext(SortableItemContext)
+export const DragHandle = forwardRef((props, ref) => {
+  const {
+    attributes,
+    listeners,
+    ref: innerRef,
+  } = useContext(SortableItemContext)
+  const refs = useMergeRefs(innerRef, ref)
+
   return (
     <IconButton
       size="xs"
       variant="ghost"
       icon={<Icon color="gray.500" boxSize="3.5" as={GripVertical} />}
       {...attributes}
-      {...listeners}
-      ref={ref}
+      {...(props.isDragDisabled ? {} : listeners)}
+      ref={refs}
+      {...props}
     />
   )
-}
+})
 
 export const SortOverlay = ({ children }) => {
   const dropAnimationConfig = {
