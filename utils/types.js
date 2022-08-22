@@ -73,6 +73,27 @@ const ImageBlock = ({ details, onChange }) => {
   )
 }
 
+const CodeBlock = ({ details, onChange }) => {
+  const replaceHtml = (value) => {
+    return value.replace(/(<([^>]+)>)/gi, '')
+  }
+
+  const handleChange = (value) => {
+    onChange({
+      ...details,
+      value: replaceHtml(value),
+    })
+  }
+  return (
+    <Box rounded="md" bg="blackAlpha.50" p="2">
+      <Editor
+        value={`<code><pre>${replaceHtml(details.value)}</code></pre>`}
+        onChange={handleChange}
+      />
+    </Box>
+  )
+}
+
 export const BlockType = {
   Text: 'TEXT',
   H1: 'H1',
@@ -81,6 +102,7 @@ export const BlockType = {
   Divider: 'DIVIDER',
   Quote: 'QUOTE',
   Image: 'IMAGE',
+  Code: 'CODE',
 }
 
 export const components = {
@@ -91,4 +113,5 @@ export const components = {
   [BlockType.Divider]: DividerBlock,
   [BlockType.Quote]: QuoteBlock,
   [BlockType.Image]: ImageBlock,
+  [BlockType.Code]: CodeBlock,
 }

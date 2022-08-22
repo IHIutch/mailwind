@@ -136,8 +136,6 @@ export default function Tiptap() {
   const { blocks: loaderBlocks } = useLoaderData()
   const [blocks, setBlocks] = useState(loaderBlocks)
 
-  console.log({ blocks })
-
   return (
     <SimpleGrid spacing="0" columns="2" h="100vh">
       <Box h="100%">
