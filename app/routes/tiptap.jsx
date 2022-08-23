@@ -43,12 +43,6 @@ import {
 } from '~/components/sortable/SortableItem'
 import { Copy, Plus, Trash2 } from 'lucide-react'
 
-import styles from '~/styles/lowlight.css'
-
-export function links() {
-  return [{ rel: 'stylesheet', href: styles }]
-}
-
 export const loader = async () => {
   const blocks = [
     {

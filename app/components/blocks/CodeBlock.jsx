@@ -1,27 +1,35 @@
-import { toHtml } from 'hast-util-to-html'
-import { lowlight } from 'lowlight'
-import Editor from '../Editor'
+import { Box } from '@chakra-ui/react'
+import { javascript } from '@codemirror/lang-javascript'
+import { okaidia } from '@uiw/codemirror-theme-okaidia'
+import CodeMirror from '@uiw/react-codemirror'
+import { useState } from 'react'
 
 export default function CodeBlock({ details, onChange }) {
-  const replaceHtml = (value) => {
-    return value.replace(/(<([^>]+)>)/gi, '')
-  }
+  const [innerHTML, setInnerHTML] = useState('')
 
   const handleChange = (value) => {
-    console.log({ value })
     onChange({
       ...details,
-      value: replaceHtml(value),
+      value: value,
     })
   }
 
-  const code = toHtml(lowlight.highlightAuto(details.value))
-  console.log({ code })
-
   return (
-    <Editor
-      value={`<pre><code>${details.value}</code></pre>`}
-      onChange={handleChange}
-    />
+    <Box rounded="md" overflow="hidden">
+      <CodeMirror
+        value={details.value}
+        theme={okaidia}
+        extensions={[javascript({ jsx: true })]}
+        onChange={(value, { view }) => {
+          handleChange(value)
+          setInnerHTML(view.contentDOM.innerHTML)
+        }}
+        basicSetup={{
+          lineNumbers: false,
+          foldGutter: false,
+        }}
+        spellCheck="false"
+      />
+    </Box>
   )
 }

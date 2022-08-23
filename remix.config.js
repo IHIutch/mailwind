@@ -11,7 +11,6 @@ module.exports = {
   // serverBuildPath: "api/index.js",
   // publicPath: "/build/",s
   serverDependenciesToBundle: [
-    'lowlight',
     'fault',
     'hast-util-to-html',
     'property-information',
