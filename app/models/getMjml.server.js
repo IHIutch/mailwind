@@ -12,14 +12,28 @@ import {
   render,
   MjmlDivider,
   MjmlSpacer,
+  MjmlStyle,
 } from 'mjml-react'
+import { minify } from 'html-minifier'
+
+import styles from '~/styles/lowlight.css'
+import { readFileSync } from 'fs'
+import pretty from 'pretty'
+import { toHtml } from 'hast-util-to-html'
+import { lowlight } from 'lowlight'
 
 export default function getMjMl(json) {
-  return render(
+  const lowlightCss = readFileSync(
+    __dirname + styles.replace('/build', ''),
+    'utf-8'
+  )
+
+  const { html, errors } = render(
     <Mjml>
       <MjmlHead>
         <MjmlTitle>Last Minute Offer</MjmlTitle>
         <MjmlPreview>Last Minute Offer...</MjmlPreview>
+        <MjmlStyle>{lowlightCss}</MjmlStyle>
       </MjmlHead>
       <MjmlBody width={600}>
         <MjmlSection fullWidth>
@@ -38,8 +52,26 @@ export default function getMjMl(json) {
         </MjmlSection>
       </MjmlBody>
     </Mjml>,
-    { validationLevel: 'soft' }
+    {
+      validationLevel: 'strict',
+    }
   )
+
+  const minified = html
+    ? minify(
+        pretty(html, {
+          ocd: true,
+        }),
+        {
+          minifyCSS: true,
+        }
+      )
+    : ''
+
+  return {
+    html: minified,
+    errors,
+  }
 }
 
 const BlockType = {
@@ -57,6 +89,16 @@ const TextBlock = ({ id, attributes, content }) => {
   return (
     <MjmlText cssClass={`data-${id}`}>
       <div dangerouslySetInnerHTML={{ __html: content }} />
+    </MjmlText>
+  )
+}
+
+const CodeBlock = ({ id, attributes, content }) => {
+  const code =
+    '<pre><code>' + toHtml(lowlight.highlightAuto(content)) + '</code></pre>'
+  return (
+    <MjmlText cssClass={`data-${id} ProseMirror`}>
+      <div dangerouslySetInnerHTML={{ __html: code }} />
     </MjmlText>
   )
 }
@@ -98,14 +140,14 @@ const components = {
   [BlockType.H2]: HeadingBlock,
   [BlockType.H3]: HeadingBlock,
   [BlockType.Divider]: DividerBlock,
+  [BlockType.Code]: CodeBlock,
   //
   [BlockType.Quote]: SpacerBlock,
   [BlockType.Image]: SpacerBlock,
-  [BlockType.Code]: SpacerBlock,
 }
 
 const DynamicMjmlComponent = ({ id, type, details }) => {
-  const Component = components['NLAH']
+  const Component = components[type]
   return (
     <Component
       id={id}
