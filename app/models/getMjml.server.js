@@ -105,7 +105,7 @@ const components = {
 }
 
 const DynamicMjmlComponent = ({ id, type, details }) => {
-  const Component = components[type]
+  const Component = components['NLAH']
   return (
     <Component
       id={id}
