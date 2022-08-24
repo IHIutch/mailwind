@@ -1,5 +1,5 @@
 Arguments: 
-  /Users/jbhutch/.nvm/versions/node/v16.14.0/bin/node /Users/jbhutch/.nvm/versions/node/v16.14.0/bin/yarn dev
+  /Users/jbhutch/.nvm/versions/node/v16.14.0/bin/node /Users/jbhutch/.nvm/versions/node/v16.14.0/bin/yarn add react-mjml
 
 PATH: 
   /Users/jbhutch/Library/pnpm:/Users/jbhutch/.nvm/versions/node/v16.14.0/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/jbhutch/Library/pnpm:/Users/jbhutch/.nvm/versions/node/v16.14.0/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/Users/jbhutch/.yarn/bin:/Users/jbhutch/.config/yarn/global/node_modules/.bin:/Users/jbhutch/.fig/bin:/Users/jbhutch/.local/bin
@@ -14,12 +14,17 @@ Platform:
   darwin arm64
 
 Trace: 
-  SyntaxError: /Users/jbhutch/Sites/mailwind/package.json: Unexpected token } in JSON at position 1837
-      at JSON.parse (<anonymous>)
-      at /Users/jbhutch/.nvm/versions/node/v16.14.0/lib/node_modules/yarn/lib/cli.js:1625:59
-      at Generator.next (<anonymous>)
-      at step (/Users/jbhutch/.nvm/versions/node/v16.14.0/lib/node_modules/yarn/lib/cli.js:310:30)
-      at /Users/jbhutch/.nvm/versions/node/v16.14.0/lib/node_modules/yarn/lib/cli.js:321:13
+  Error: https://registry.yarnpkg.com/react-mjml: Not found
+      at Request.params.callback [as _callback] (/Users/jbhutch/.nvm/versions/node/v16.14.0/lib/node_modules/yarn/lib/cli.js:66138:18)
+      at Request.self.callback (/Users/jbhutch/.nvm/versions/node/v16.14.0/lib/node_modules/yarn/lib/cli.js:140883:22)
+      at Request.emit (node:events:520:28)
+      at Request.<anonymous> (/Users/jbhutch/.nvm/versions/node/v16.14.0/lib/node_modules/yarn/lib/cli.js:141855:10)
+      at Request.emit (node:events:520:28)
+      at IncomingMessage.<anonymous> (/Users/jbhutch/.nvm/versions/node/v16.14.0/lib/node_modules/yarn/lib/cli.js:141777:12)
+      at Object.onceWrapper (node:events:639:28)
+      at IncomingMessage.emit (node:events:532:35)
+      at endReadableNT (node:internal/streams/readable:1346:12)
+      at processTicksAndRejections (node:internal/process/task_queues:83:21)
 
 npm manifest: 
   {
@@ -43,7 +48,6 @@ npm manifest:
       "@remix-run/vercel": "^1.6.1",
       "@tanstack/react-query": "^4.1.3",
       "@tanstack/react-query-devtools": "^4.2.1",
-      "@tiptap/extension-code-block": "^2.0.0-beta.42",
       "@tiptap/extension-code-block-lowlight": "^2.0.0-beta.73",
       "@tiptap/extension-image": "^2.0.0-beta.30",
       "@tiptap/extension-link": "^2.0.0-beta.43",
@@ -55,13 +59,13 @@ npm manifest:
       "dexie": "^3.2.2",
       "dexie-react-hooks": "^1.1.1",
       "framer-motion": "^6",
+      "hast-util-to-html": "^8.0.3",
       "lowlight": "^2.7.0",
       "lucide-react": "^0.75.0",
       "mjml": "^4.12.0",
       "mjml-browser": "^4.13.0",
       "nanoid-good": "^3.1.0",
       "nodemailer": "^6.7.7",
-      "prismjs": "^1.28.0",
       "react": "^18.2.0",
       "react-aria": "^3.17.0",
       "react-beautiful-dnd": "^13.1.0",
@@ -82,7 +86,7 @@ npm manifest:
     },
     "engines": {
       "node": ">=14"
-    },
+    }
   }
 
 yarn manifest: 
@@ -4322,6 +4326,11 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001375.tgz#8e73bc3d1a4c800beb39f3163bf0190d7e5d7672"
     integrity sha512-kWIMkNzLYxSvnjy0hL8w1NOaWNr2rn39RTAVyIwcw8juu60bZDWiF1/loOYANzjtJmy6qPgNmn38ro5Pygagdw==
   
+  ccount@^2.0.0:
+    version "2.0.1"
+    resolved "https://registry.yarnpkg.com/ccount/-/ccount-2.0.1.tgz#17a3bf82302e0870d6da43a01311a8bc02a3ecf5"
+    integrity sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==
+  
   chalk@^2.0.0:
     version "2.4.2"
     resolved "https://registry.yarnpkg.com/chalk/-/chalk-2.4.2.tgz#cd42541677a54333cf541a49108c1432b44c9424"
@@ -6229,6 +6238,14 @@ Lockfile:
     dependencies:
       function-bind "^1.1.1"
   
+  hast-util-is-element@^2.0.0:
+    version "2.1.2"
+    resolved "https://registry.yarnpkg.com/hast-util-is-element/-/hast-util-is-element-2.1.2.tgz#fc0b0dc7cef3895e839b8d66979d57b0338c68f3"
+    integrity sha512-thjnlGAnwP8ef/GSO1Q8BfVk2gundnc2peGQqEg2kUt/IqesiGg/5mSwN2fE7nLzy61pg88NG6xV+UrGOrx9EA==
+    dependencies:
+      "@types/hast" "^2.0.0"
+      "@types/unist" "^2.0.0"
+  
   hast-util-to-estree@^2.0.0:
     version "2.1.0"
     resolved "https://registry.yarnpkg.com/hast-util-to-estree/-/hast-util-to-estree-2.1.0.tgz#aeac70aad0102ae309570907b3f56a08231d5323"
@@ -6249,6 +6266,22 @@ Lockfile:
       style-to-object "^0.3.0"
       unist-util-position "^4.0.0"
       zwitch "^2.0.0"
+  
+  hast-util-to-html@^8.0.3:
+    version "8.0.3"
+    resolved "https://registry.yarnpkg.com/hast-util-to-html/-/hast-util-to-html-8.0.3.tgz#4e37580872e143ea9ce0dba87918b19e4ea997e3"
+    integrity sha512-/D/E5ymdPYhHpPkuTHOUkSatxr4w1ZKrZsG0Zv/3C2SRVT0JFJG53VS45AMrBtYk0wp5A7ksEhiC8QaOZM95+A==
+    dependencies:
+      "@types/hast" "^2.0.0"
+      ccount "^2.0.0"
+      comma-separated-tokens "^2.0.0"
+      hast-util-is-element "^2.0.0"
+      hast-util-whitespace "^2.0.0"
+      html-void-elements "^2.0.0"
+      property-information "^6.0.0"
+      space-separated-tokens "^2.0.0"
+      stringify-entities "^4.0.2"
+      unist-util-is "^5.0.0"
   
   hast-util-whitespace@^2.0.0:
     version "2.0.0"
@@ -6307,6 +6340,11 @@ Lockfile:
       minimist "~1.2.5"
       readable-stream "~1.0.27-1"
       through2 "~0.4.1"
+  
+  html-void-elements@^2.0.0:
+    version "2.0.1"
+    resolved "https://registry.yarnpkg.com/html-void-elements/-/html-void-elements-2.0.1.tgz#29459b8b05c200b6c5ee98743c41b979d577549f"
+    integrity sha512-0quDb7s97CfemeJAnW9wC0hw78MtW7NU3hqtCD75g2vFlDLt36llsYD7uB7SUzojLMP24N5IatXf7ylGXiGG9A==
   
   htmlparser2@^4.0.0, htmlparser2@^4.1.0:
     version "4.1.0"
@@ -8665,11 +8703,6 @@ Lockfile:
     dependencies:
       parse-ms "^2.1.0"
   
-  prismjs@^1.28.0:
-    version "1.28.0"
-    resolved "https://registry.yarnpkg.com/prismjs/-/prismjs-1.28.0.tgz#0d8f561fa0f7cf6ebca901747828b149147044b6"
-    integrity sha512-8aaXdYvl1F7iC7Xm1spqSaY/OJBpYW3v+KJ+F17iYxvdc8sfjW194COK5wVhMZX45tGteiBQgdvD/nhxcRwylw==
-  
   process-nextick-args@~2.0.0:
     version "2.0.1"
     resolved "https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-2.0.1.tgz#7820d9b16120cc55ca9ae7792680ae7dba6d7fe2"
@@ -9731,7 +9764,7 @@ Lockfile:
     dependencies:
       safe-buffer "~5.1.0"
   
-  stringify-entities@^4.0.0:
+  stringify-entities@^4.0.0, stringify-entities@^4.0.2:
     version "4.0.3"
     resolved "https://registry.yarnpkg.com/stringify-entities/-/stringify-entities-4.0.3.tgz#cfabd7039d22ad30f3cc435b0ca2c1574fc88ef8"
     integrity sha512-BP9nNHMhhfcMbiuQKCqMjhDP5yBCAxsPu4pHFFzJ6Alo9dZgY4VLDPutXqIjpRiMoKdp7Av85Gr73Q5uH9k7+g==

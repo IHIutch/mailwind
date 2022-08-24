@@ -8,7 +8,6 @@ export default function CodeBlock({ details, onChange }) {
   }
 
   const handleChange = (value) => {
-    console.log({ value })
     onChange({
       ...details,
       value: replaceHtml(value),

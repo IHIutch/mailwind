@@ -1,7 +1,22 @@
 import mjml2html from 'mjml-browser'
 
+const textBlock = {
+  tagName: 'mj-text',
+  attributes: {},
+  content: '',
+  'css-class': `data-`,
+}
+
+const blocks = {
+  TEXT: textBlock,
+}
+
 export default function getHtml(json) {
   try {
+    const mappedAttrs = json.map((j) => {
+      return blocks[j.type]
+    })
+
     const { html } = mjml2html(
       json || {
         tagName: 'mjml',
@@ -14,7 +29,7 @@ export default function getHtml(json) {
           {
             tagName: 'mj-body',
             attributes: {},
-            children: [],
+            children: mappedAttrs,
           },
         ],
       },

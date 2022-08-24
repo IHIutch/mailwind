@@ -17,8 +17,7 @@ import {
   useOutsideClick,
 } from '@chakra-ui/react'
 import { ClientOnly } from 'remix-utils'
-import { getComponentAttributes, getNanoId } from '~/utils/functions'
-import getHtml from '~/models/getHtml.client'
+import { getNanoId } from '~/utils/functions'
 import { BlockType } from '~/utils/types'
 import { useLoaderData } from '@remix-run/react'
 import Block from '~/components/Block'
@@ -44,6 +43,7 @@ import {
 import { Copy, Plus, Trash2 } from 'lucide-react'
 
 import styles from '~/styles/lowlight.css'
+import Navbar from '~/components/Navbar'
 
 export function links() {
   return [{ rel: 'stylesheet', href: styles }]
@@ -52,19 +52,16 @@ export function links() {
 export const loader = async () => {
   const blocks = [
     {
-      id: getNanoId(),
       type: BlockType.H1,
       details: {
         value: '<p>Get Started</p>',
       },
     },
     {
-      id: getNanoId(),
       type: BlockType.Divider,
       details: {},
     },
     {
-      id: getNanoId(),
       type: BlockType.Text,
       details: {
         value:
@@ -72,42 +69,36 @@ export const loader = async () => {
       },
     },
     {
-      id: getNanoId(),
       type: BlockType.Text,
       details: {
         value: '<p>Give these things a try:</p>',
       },
     },
     {
-      id: getNanoId(),
       type: BlockType.Text,
       details: {
         value: '<p>1. Hover on the left of each line for quick actions</p>',
       },
     },
     {
-      id: getNanoId(),
       type: BlockType.Text,
       details: {
         value: '<p>2. Click on the + button to add a new line</p>',
       },
     },
     {
-      id: getNanoId(),
       type: BlockType.Text,
       details: {
         value: '<p>3. Drag the ⋮⋮ button to reorder</p>',
       },
     },
     {
-      id: getNanoId(),
       type: BlockType.Text,
       details: {
         value: '<p>4. Click the trash icon to delete this block</p>',
       },
     },
     {
-      id: getNanoId(),
       type: BlockType.Text,
       details: {
         value:
@@ -115,7 +106,6 @@ export const loader = async () => {
       },
     },
     {
-      id: getNanoId(),
       type: BlockType.Text,
       details: {
         value:
@@ -123,7 +113,6 @@ export const loader = async () => {
       },
     },
     {
-      id: getNanoId(),
       type: BlockType.Text,
       details: {
         value:
@@ -133,7 +122,7 @@ export const loader = async () => {
   ]
 
   return {
-    blocks,
+    blocks: blocks.map((b) => ({ ...b, id: getNanoId() })),
   }
 }
 
@@ -141,47 +130,56 @@ export default function Tiptap() {
   const { blocks: loaderBlocks } = useLoaderData()
   const [blocks, setBlocks] = useState(loaderBlocks)
 
+  const [previewSize, setPreviewSize] = useState('desktop')
+
   return (
-    <SimpleGrid spacing="0" columns="2" h="100vh">
-      <Box h="100%">
-        <Box maxW="648px" mx="auto" py="12">
-          <Box ml="-48px">
-            <EditView onChange={setBlocks} value={blocks} />
+    <Box>
+      <Navbar
+        json={blocks}
+        previewSize={previewSize}
+        setPreviewSize={setPreviewSize}
+      />
+      <SimpleGrid spacing="0" columns="2" h="100vh" pt="16">
+        <Box h="100%">
+          <Box maxW="648px" mx="auto" py="12">
+            <Box ml="-48px">
+              <EditView onChange={setBlocks} value={blocks} />
+            </Box>
           </Box>
         </Box>
-      </Box>
-      <Box>
-        <pre>
-          {JSON.stringify(
-            blocks.map((b) => {
-              return [
-                BlockType.Text,
-                BlockType.H1,
-                BlockType.H2,
-                BlockType.H3,
-              ].includes(b.type)
-                ? {
-                    ...b,
-                    details: {
-                      value: b.details.value,
-                      // .replaceAll('<p>', '')
-                      // .replaceAll('</p>', '')
-                      // .replaceAll('<strong>', '**')
-                      // .replaceAll('</strong>', '**')
-                      // .replaceAll('<em>', '*')
-                      // .replaceAll('</em>', '*')
-                      // .replaceAll(/<br.*?>/g, ''),
-                    },
-                  }
-                : b
-            }),
-            null,
-            2
-          )}
-        </pre>
-        {/* <ClientOnly>{() => <MjmlPreview json={blocks} />}</ClientOnly> */}
-      </Box>
-    </SimpleGrid>
+        <Box>
+          <pre>
+            {JSON.stringify(
+              blocks.map((b) => {
+                return [
+                  BlockType.Text,
+                  BlockType.H1,
+                  BlockType.H2,
+                  BlockType.H3,
+                ].includes(b.type)
+                  ? {
+                      ...b,
+                      details: {
+                        value: b.details.value,
+                        // .replaceAll('<p>', '')
+                        // .replaceAll('</p>', '')
+                        // .replaceAll('<strong>', '**')
+                        // .replaceAll('</strong>', '**')
+                        // .replaceAll('<em>', '*')
+                        // .replaceAll('</em>', '*')
+                        // .replaceAll(/<br.*?>/g, ''),
+                      },
+                    }
+                  : b
+              }),
+              null,
+              2
+            )}
+          </pre>
+          {/* <ClientOnly>{() => <MjmlPreview json={blocks} />}</ClientOnly> */}
+        </Box>
+      </SimpleGrid>
+    </Box>
   )
 }
 
@@ -431,162 +429,4 @@ const ItemBlock = ({ v, onChange, addItem, removeItem, duplicateItem }) => {
       </Box>
     </Flex>
   )
-}
-
-const MjmlPreview = ({ json }) => {
-  console.log({ json })
-  const handleFormatText = (arr, isFormatting = true) => {
-    return arr
-      .map((a) => {
-        const types = isFormatting && a?.marks ? a.marks.map((m) => m.type) : []
-        const linkAttrs = types.includes('link')
-          ? a.marks.find((m) => m.type === 'link').attrs
-          : {}
-        return types.includes('link')
-          ? `<a
-              href="${linkAttrs.href}"
-              target="${linkAttrs.target}"
-              rel="noopener noreferrer nofollow"
-            >${a.text}</a>`
-          : `<span
-              style="
-              ${types.includes('bold') ? 'font-weight:bold;' : ''}
-              ${types.includes('italic') ? 'font-style:italic;' : ''}
-              ${types.includes('strike') ? 'text-decoration:line-through;' : ''}
-              "
-            >${a.text}</span>`
-      })
-      .join('')
-  }
-
-  const handleGetAttrs = (tagName) => {
-    return Object.entries(getComponentAttributes(tagName)).reduce(
-      (acc, [key, val]) =>
-        key === 'content' ? acc : { ...acc, [key]: val.defaultValue },
-      {}
-    )
-  }
-
-  const handleGetContent = useCallback((arr) => {
-    return arr.map((a) => {
-      switch (a.type) {
-        case 'paragraph':
-          return a?.content
-            ? {
-                'css-class': 'paragraph',
-                tagName: 'mj-text',
-                attributes: {
-                  ...handleGetAttrs('mj-text'),
-                  ...(a?.attrs.textAlign ? { align: a?.attrs.textAlign } : {}),
-                },
-                content: handleFormatText(a.content),
-              }
-            : {
-                tagName: 'mj-spacer',
-                attributes: {},
-              }
-
-        case 'image':
-          return {
-            tagName: 'mj-image',
-            'css-class': 'image',
-            attributes: {
-              ...handleGetAttrs('mj-image'),
-              src: a.attrs.src,
-              alt: a.attrs.alt,
-              title: a.attrs.title,
-            },
-          }
-
-        case 'heading':
-          return {
-            'css-class': 'heading',
-            tagName: 'mj-text',
-            attributes: {
-              ...handleGetAttrs('mj-text'),
-              ...(a?.attrs.textAlign ? { align: a?.attrs.textAlign } : {}),
-              ...(a?.attrs.level
-                ? {
-                    'font-size': ['16px', '24px', '20px', '16px'][
-                      a?.attrs.level
-                    ],
-                    'font-weight': 'bold',
-                  }
-                : {}),
-            },
-            content: a?.content ? handleFormatText(a.content, false) : '',
-          }
-
-        case 'horizontalRule':
-          return {
-            tagName: 'mj-divider',
-            'css-class': 'divider',
-            attributes: {
-              ...handleGetAttrs('mj-divider'),
-            },
-          }
-
-        case 'text':
-          return {
-            'css-class': 'mj-text',
-            tagName: 'mj-text',
-            content: a.text,
-          }
-
-        case 'content':
-          return handleGetContent(a.content)
-
-        default:
-          return {}
-      }
-    })
-  }, [])
-
-  const html = useMemo(
-    () =>
-      getHtml({
-        tagName: 'mjml',
-        attributes: {},
-        children: [
-          {
-            tagName: 'mj-head',
-            children: [],
-          },
-          {
-            tagName: 'mj-body',
-            attributes: {},
-            children: [
-              {
-                tagName: 'mj-wrapper',
-                attributes: {},
-                children: [
-                  {
-                    tagName: 'mj-section',
-                    attributes: {},
-                    children: [
-                      {
-                        tagName: 'mj-column',
-                        attributes: {},
-                        children: json ? handleGetContent(json?.content) : '',
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      }),
-    [handleGetContent, json]
-  )
-
-  const iframe = useRef()
-  useEffect(() => {
-    let doc = iframe.current.contentDocument
-    doc.open()
-    doc.write(html)
-    doc.close()
-  }, [html])
-
-  return <Box boxSize="100%" as="iframe" ref={iframe} />
 }
