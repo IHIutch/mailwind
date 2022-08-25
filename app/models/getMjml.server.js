@@ -25,7 +25,7 @@ import styles from '~/styles/lowlight.css'
 export default function getMjMl(json) {
   const stylePath = __dirname + styles.replace('/build/_assets', '/styles')
   console.log({ stylePath })
-  const lowlightCss = readFileSync(stylePath, 'utf-8')
+  const lowlightCss = readFileSync(`${__dirname}/styles/lowlight.css`, 'utf-8')
 
   const { html, errors } = render(
     <Mjml>
