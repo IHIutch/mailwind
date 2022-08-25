@@ -53,25 +53,25 @@ export default function getMjMl(json) {
       </MjmlBody>
     </Mjml>,
     {
+      fonts: {
+        Ubuntu: 'https://fonts.bunny.net/css?family=ubuntu:300,400,500,700',
+      },
       validationLevel: 'strict',
     }
   )
 
-  const minified = html
-    ? minify(
-        pretty(html, {
-          ocd: true,
-        }),
-        {
-          minifyCSS: true,
-        }
-      )
-    : ''
-
-  return {
-    html: minified,
-    errors,
+  if (errors.length) {
+    throw new Error(errors[0])
   }
+
+  return minify(
+    pretty(html, {
+      ocd: true,
+    }),
+    {
+      minifyCSS: true,
+    }
+  )
 }
 
 const BlockType = {
