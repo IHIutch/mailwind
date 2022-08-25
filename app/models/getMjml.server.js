@@ -16,17 +16,16 @@ import {
 } from 'mjml-react'
 import { minify } from 'html-minifier'
 
-import styles from '~/styles/lowlight.css'
 import { readFileSync } from 'fs'
 import pretty from 'pretty'
 import { toHtml } from 'hast-util-to-html'
 import { lowlight } from 'lowlight'
+import styles from '~/styles/lowlight.css'
 
 export default function getMjMl(json) {
-  const lowlightCss = readFileSync(
-    __dirname + styles.replace('/build', ''),
-    'utf-8'
-  )
+  const stylePath = __dirname + styles.replace('/build/_assets', '/styles')
+  console.log({ stylePath })
+  const lowlightCss = readFileSync(stylePath, 'utf-8')
 
   const { html, errors } = render(
     <Mjml>
