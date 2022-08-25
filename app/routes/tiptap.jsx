@@ -24,7 +24,7 @@ import Block from '~/components/Block'
 import {
   DndContext,
   KeyboardSensor,
-  PointerSensor,
+  MouseSensor,
   TouchSensor,
   useSensor,
   useSensors,
@@ -190,12 +190,12 @@ const EditView = ({ value, onChange }) => {
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
-    useSensor(PointerSensor, {
+    useSensor(MouseSensor, {
       activationConstraint: {
         distance: 10,
       },
-    })
-    // useSensor(TouchSensor)
+    }),
+    useSensor(TouchSensor)
   )
 
   const handleOnChange = (idx, val) => {
