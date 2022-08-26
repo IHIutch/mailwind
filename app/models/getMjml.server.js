@@ -27,7 +27,6 @@ export default function getMjMl(json) {
       ? __dirname + '/../public' + styles
       : './public' + styles
 
-  console.log({ stylePath, styles, __dirname, cwd: process.cwd() })
   const lowlightCss = readFileSync(stylePath, 'utf-8')
 
   const { html, errors } = render(
@@ -35,7 +34,7 @@ export default function getMjMl(json) {
       <MjmlHead>
         <MjmlTitle>Last Minute Offer</MjmlTitle>
         <MjmlPreview>Last Minute Offer...</MjmlPreview>
-        <MjmlStyle>{lowlightCss}</MjmlStyle>
+        <MjmlStyle inline>{lowlightCss}</MjmlStyle>
       </MjmlHead>
       <MjmlBody width={600}>
         <MjmlSection fullWidth>

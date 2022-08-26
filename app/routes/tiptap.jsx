@@ -1,4 +1,4 @@
-import { useMemo, useRef, useEffect, useCallback, useState } from 'react'
+import { useRef, useState } from 'react'
 import {
   Box,
   Flex,
@@ -40,7 +40,18 @@ import {
   SortableItem,
   SortOverlay,
 } from '~/components/sortable/SortableItem'
-import { Copy, Plus, Trash2 } from 'lucide-react'
+import {
+  Code2,
+  Copy,
+  FlipVertical,
+  Image,
+  Plus,
+  PlusCircle,
+  PlusSquare,
+  Quote,
+  Trash2,
+  Type,
+} from 'lucide-react'
 
 import styles from '~/styles/lowlight.css'
 import Navbar from '~/components/Navbar'
@@ -305,6 +316,25 @@ const ItemBlock = ({ v, onChange, addItem, removeItem, duplicateItem }) => {
     handler: () => setIsActive(false),
   })
 
+  const getIcon = (value) => {
+    switch (value) {
+      case BlockType['Text']:
+        return Type
+      case BlockType['Divider']:
+        return FlipVertical
+      case BlockType['Code']:
+        return Code2
+      case BlockType['Image']:
+        return Image
+      case BlockType['Quote']:
+        return Quote
+      case BlockType['H1']:
+        return PlusCircle
+      default:
+        return PlusSquare
+    }
+  }
+
   return (
     <Flex
       ref={ref}
@@ -363,7 +393,10 @@ const ItemBlock = ({ v, onChange, addItem, removeItem, duplicateItem }) => {
                       })
                     }
                   >
-                    {key}
+                    <Stack direction="row" align="center">
+                      <Icon boxSize="3.5" as={getIcon(value)} />
+                      <Text as="span">{key}</Text>
+                    </Stack>
                   </MenuItem>
                 ))}
               </MenuGroup>
