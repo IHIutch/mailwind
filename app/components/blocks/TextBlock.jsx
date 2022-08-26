@@ -1,4 +1,4 @@
-import React from 'react'
+import { Box } from '@chakra-ui/react'
 import Editor from '../Editor'
 
 export default function TextBlock({ details, onChange }) {
@@ -8,5 +8,9 @@ export default function TextBlock({ details, onChange }) {
       value,
     })
   }
-  return <Editor value={details.value} onChange={handleChange} />
+  return (
+    <Box>
+      <Editor value={details.value} onChange={handleChange} />
+    </Box>
+  )
 }

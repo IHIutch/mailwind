@@ -1,5 +1,4 @@
-import { toHtml } from 'hast-util-to-html'
-import { lowlight } from 'lowlight'
+import { Box } from '@chakra-ui/react'
 import Editor from '../Editor'
 
 export default function CodeBlock({ details, onChange }) {
@@ -14,13 +13,12 @@ export default function CodeBlock({ details, onChange }) {
     })
   }
 
-  const code = toHtml(lowlight.highlightAuto(details.value))
-  console.log({ code })
-
   return (
-    <Editor
-      value={`<pre><code>${details.value}</code></pre>`}
-      onChange={handleChange}
-    />
+    <Box>
+      <Editor
+        value={`<pre><code>${details.value}</code></pre>`}
+        onChange={handleChange}
+      />
+    </Box>
   )
 }

@@ -362,12 +362,23 @@ const ItemBlock = ({ v, onChange, addItem, removeItem, duplicateItem }) => {
       onMouseLeave={() => {
         !isMenuActive && setIsActive(false)
       }}
+      py="2"
     >
-      <Box pt="2">
+      <Box
+        pt={
+          v.type === BlockType['H1'] ||
+          v.type === BlockType['H2'] ||
+          v.type === BlockType['H3']
+            ? 3
+            : 0
+        }
+      >
         <Stack
           direction="row"
           spacing="0"
           visibility={isActive ? 'visible' : 'hidden'}
+          opacity={isActive ? '1' : '0'}
+          transition="all 0.2s cubic-bezier(0, 0, 0.2, 1)"
         >
           <Menu
             onOpen={() => setIsMenuActive(true)}
@@ -473,7 +484,7 @@ const ItemBlock = ({ v, onChange, addItem, removeItem, duplicateItem }) => {
           </Popover>
         </Stack>
       </Box>
-      <Box flexGrow="1">
+      <Box flexGrow="1" px="2">
         <Block type={v.type} details={v.details} onChange={onChange} />
       </Box>
     </Flex>

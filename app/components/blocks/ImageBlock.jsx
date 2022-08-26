@@ -9,7 +9,7 @@ export default function ImageBlock({ details, onChange }) {
     })
   }
   return (
-    <AspectRatio ratio={16 / 9} w="72">
+    <AspectRatio height="200px">
       <ImageDropzone value={details.value} onChange={handleChange} />
     </AspectRatio>
   )

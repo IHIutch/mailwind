@@ -90,7 +90,7 @@ const TextBlock = ({ id, attributes, content }) => {
   return (
     <MjmlText
       cssClass={`data-${id}`}
-      fontFamily="Inter, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif',"
+      // fontFamily="Inter, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif',"
     >
       <div dangerouslySetInnerHTML={{ __html: content }} />
     </MjmlText>
