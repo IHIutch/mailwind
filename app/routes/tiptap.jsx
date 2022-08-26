@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import {
   Box,
+  Button,
   Flex,
   Icon,
   IconButton,
@@ -11,6 +12,11 @@ import {
   MenuGroup,
   MenuItem,
   MenuList,
+  Popover,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverTrigger,
   SimpleGrid,
   Stack,
   Text,
@@ -49,12 +55,14 @@ import {
   PlusCircle,
   PlusSquare,
   Quote,
+  Settings,
   Trash2,
   Type,
 } from 'lucide-react'
 
 import styles from '~/styles/lowlight.css'
 import Navbar from '~/components/Navbar'
+import PaddingController from '~/components/controllers/PaddingController'
 
 export function links() {
   return [{ rel: 'stylesheet', href: styles }]
@@ -143,6 +151,10 @@ export default function Tiptap() {
 
   const [previewSize, setPreviewSize] = useState('desktop')
 
+  const offset = 72
+  const desktopSize = 600
+  const mobileSize = 480
+
   return (
     <Box>
       <Navbar
@@ -150,15 +162,25 @@ export default function Tiptap() {
         previewSize={previewSize}
         setPreviewSize={setPreviewSize}
       />
-      <SimpleGrid spacing="0" columns="2" h="100vh" pt="16">
-        <Box h="100%">
-          <Box maxW="648px" mx="auto" py="12">
-            <Box ml="-48px">
+      <Box h="100%">
+        <Box py="12" mt="16">
+          <Box px="6">
+            <Box
+              position="relative"
+              left={(offset * -1) / 2 + 'px'}
+              mx="auto"
+              w={
+                previewSize === 'desktop'
+                  ? desktopSize + offset + 'px'
+                  : mobileSize + offset + 'px'
+              }
+            >
               <EditView onChange={setBlocks} value={blocks} />
             </Box>
           </Box>
         </Box>
-        <Box>
+      </Box>
+      {/* <Box>
           <pre>
             {JSON.stringify(
               blocks.map((b) => {
@@ -187,9 +209,7 @@ export default function Tiptap() {
               2
             )}
           </pre>
-          {/* <ClientOnly>{() => <MjmlPreview json={blocks} />}</ClientOnly> */}
-        </Box>
-      </SimpleGrid>
+        </Box> */}
     </Box>
   )
 }
@@ -338,7 +358,6 @@ const ItemBlock = ({ v, onChange, addItem, removeItem, duplicateItem }) => {
   return (
     <Flex
       ref={ref}
-      px="6"
       onMouseEnter={() => setIsActive(true)}
       onMouseLeave={() => {
         !isMenuActive && setIsActive(false)
@@ -350,12 +369,6 @@ const ItemBlock = ({ v, onChange, addItem, removeItem, duplicateItem }) => {
           spacing="0"
           visibility={isActive ? 'visible' : 'hidden'}
         >
-          {/* <IconButton
-            size="xs"
-            variant="ghost"
-            icon={<Icon color="gray.500" boxSize="3.5" as={Trash2} />}
-            onClick={removeItem}
-          /> */}
           <Menu
             onOpen={() => setIsMenuActive(true)}
             onClose={() => setIsMenuActive(false)}
@@ -408,23 +421,8 @@ const ItemBlock = ({ v, onChange, addItem, removeItem, duplicateItem }) => {
           >
             {({ isOpen }) => (
               <>
-                <MenuButton
-                  as={DragHandle}
-                  isDragDisabled={isOpen}
-                  // size="xs"
-                  // variant="ghost"
-                  // icon={<Icon color="gray.500" boxSize="3.5" as={Plus} />}
-                />
+                <MenuButton as={DragHandle} isDragDisabled={isOpen} />
                 <MenuList>
-                  {/* <MenuGroup
-                    title="Convert Into"
-                    py="1"
-                    px="3"
-                    m="0"
-                    bg="gray.50"
-                    borderBottomWidth="1px"
-                    borderColor="gray.200"
-                  > */}
                   <MenuItem
                     py="1"
                     fontSize="sm"
@@ -449,15 +447,33 @@ const ItemBlock = ({ v, onChange, addItem, removeItem, duplicateItem }) => {
                       <Text as="span">Delete Item</Text>
                     </Stack>
                   </MenuItem>
-                  {/* </MenuGroup> */}
                 </MenuList>
               </>
             )}
           </Menu>
-          {/* <DragHandle /> */}
+          <Popover
+            onOpen={() => setIsMenuActive(true)}
+            onClose={() => setIsMenuActive(false)}
+            placement="bottom-start"
+          >
+            <PopoverTrigger>
+              <IconButton
+                size="xs"
+                variant="ghost"
+                icon={<Icon color="gray.500" boxSize="3.5" as={Settings} />}
+              />
+            </PopoverTrigger>
+            <PopoverContent>
+              <PopoverBody>
+                <Box>
+                  <PaddingController label="Padding" onChange={console.log} />
+                </Box>
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
         </Stack>
       </Box>
-      <Box flexGrow="1" p="2">
+      <Box flexGrow="1">
         <Block type={v.type} details={v.details} onChange={onChange} />
       </Box>
     </Flex>

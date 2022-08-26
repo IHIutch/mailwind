@@ -63,6 +63,7 @@ export default function Navbar({ json, previewSize, setPreviewSize }) {
       borderBottomColor="gray.100"
       display="flex"
       px="8"
+      zIndex="1"
     >
       <Flex
         position="absolute"

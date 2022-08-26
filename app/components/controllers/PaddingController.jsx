@@ -11,7 +11,7 @@ import {
   SimpleGrid,
 } from '@chakra-ui/react'
 
-const PaddingController = ({ value, onChange, label }) => {
+const PaddingController = ({ value = '0 0 0 0', onChange, label }) => {
   const top = value.split(' ')[0] || '0'
   const right = value.split(' ')[1] || '0'
   const bottom = value.split(' ')[2] || '0'
@@ -49,7 +49,7 @@ const PaddingController = ({ value, onChange, label }) => {
           <NumberInput
             display="block"
             onChange={(value) => handleChange(0, value)}
-            value={top}
+            defaultValue={top}
             w="20"
             ml="auto"
             size="sm"
@@ -73,7 +73,7 @@ const PaddingController = ({ value, onChange, label }) => {
           <NumberInput
             display="block"
             onChange={(value) => handleChange(1, value)}
-            value={right}
+            defaultValue={right}
             w="20"
             ml="auto"
             size="sm"
@@ -97,7 +97,7 @@ const PaddingController = ({ value, onChange, label }) => {
           <NumberInput
             display="block"
             onChange={(value) => handleChange(2, value)}
-            value={bottom}
+            defaultValue={bottom}
             w="20"
             ml="auto"
             size="sm"
@@ -121,7 +121,7 @@ const PaddingController = ({ value, onChange, label }) => {
           <NumberInput
             display="block"
             onChange={(value) => handleChange(3, value)}
-            value={left}
+            defaultValue={left}
             w="20"
             ml="auto"
             size="sm"
