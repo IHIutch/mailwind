@@ -22,10 +22,13 @@ import { minify } from 'html-minifier'
 import styles from '~/styles/lowlight.css'
 
 export default function getMjMl(json) {
-  const lowlightCss = readFileSync(
-    './public' + styles.replace('/api', '/build'),
-    'utf-8'
-  )
+  const stylePath =
+    process.env.NODE_ENV === 'production'
+      ? __dirname + '/../public' + styles
+      : './public' + styles
+
+  console.log({ stylePath, styles, __dirname, cwd: process.cwd() })
+  const lowlightCss = readFileSync(stylePath, 'utf-8')
 
   const { html, errors } = render(
     <Mjml>
@@ -86,7 +89,10 @@ const BlockType = {
 
 const TextBlock = ({ id, attributes, content }) => {
   return (
-    <MjmlText cssClass={`data-${id}`}>
+    <MjmlText
+      cssClass={`data-${id}`}
+      fontFamily="Inter, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif',"
+    >
       <div dangerouslySetInnerHTML={{ __html: content }} />
     </MjmlText>
   )
