@@ -1,5 +1,6 @@
 import { nanoid } from 'nanoid-good'
 import en from 'nanoid-good/locale/en'
+import { getHighlighter } from 'shiki'
 
 import {
   MjButton,
@@ -125,4 +126,17 @@ export const formatMjml = (list) => {
 export const getNanoId = () => {
   const handleGetNanoId = nanoid(en)
   return handleGetNanoId(12)
+}
+
+export const handleGetHighlighter = async (theme) => {
+  const hl = await getHighlighter({ theme: 'nord' })
+  console.log({ hl })
+  return hl
+}
+
+export const highlightCode = async (code, theme) => {
+  const highlighter = await handleGetHighlighter()
+  const codeContent = highlighter?.codeToHtml(code, { lang: 'js' }) || 'blah'
+  console.log({ codeContent })
+  return codeContent
 }
