@@ -60,9 +60,9 @@ import {
   Type,
 } from 'lucide-react'
 
-import styles from '~/styles/lowlight.css'
 import Navbar from '~/components/Navbar'
 import PaddingController from '~/components/controllers/PaddingController'
+import styles from 'prismjs/themes/prism.css' //Example style, you can use another
 
 export function links() {
   return [{ rel: 'stylesheet', href: styles }]
