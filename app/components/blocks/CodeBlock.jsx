@@ -3,12 +3,10 @@ import prismjs from 'prismjs'
 import Editor from 'react-simple-code-editor'
 import hljs from 'highlight.js'
 
-// import 'prismjs/components/prism-clike'
-// import 'prismjs/components/prism-javascript'
-// import 'prismjs/components/prism-css'
-
 import { useCallback, useState } from 'react'
 import debounce from 'lodash/debounce'
+import Highlight, { defaultProps } from 'prism-react-renderer'
+import theme from 'prism-react-renderer/themes/nightOwl'
 
 export default function CodeBlock({ details, onChange = () => null }) {
   const [code, setCode] = useState(details.value)
@@ -42,12 +40,30 @@ export default function CodeBlock({ details, onChange = () => null }) {
   }
 
   return (
-    <Box bg="gray.50" rounded="md" overflow="hidden" p="1">
+    <Box rounded="md" overflow="hidden" p="1" style={theme.plain}>
       <Editor
         value={code}
         onValueChange={handleChange}
-        highlight={(code) => handleHighlight(code)}
+        highlight={(code) => <PrismaHighlight code={code} language="jsx" />}
       />
     </Box>
+  )
+}
+
+const PrismaHighlight = ({ code, language }) => {
+  return (
+    <Highlight {...defaultProps} theme={theme} code={code} language={language}>
+      {({ className, style, tokens, getLineProps, getTokenProps }) => (
+        <>
+          {tokens.map((line, i) => (
+            <div key={i} {...getLineProps({ line, key: i })}>
+              {line.map((token, key) => (
+                <span key={key} {...getTokenProps({ token, key })} />
+              ))}
+            </div>
+          ))}
+        </>
+      )}
+    </Highlight>
   )
 }
