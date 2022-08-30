@@ -14,27 +14,25 @@ import {
   MjmlSpacer,
   MjmlStyle,
 } from 'mjml-react'
-import { lowlight } from 'lowlight'
-import { toHtml } from 'hast-util-to-html'
-import { readFileSync } from 'fs'
 import pretty from 'pretty'
 import { minify } from 'html-minifier'
-import styles from '~/styles/lowlight.css'
+import Highlight, { defaultProps } from 'prism-react-renderer'
+import theme from 'prism-react-renderer/themes/nightOwl'
 
 export default function getMjMl(json) {
-  const stylePath =
-    process.env.NODE_ENV === 'production'
-      ? __dirname + '/../public' + styles
-      : './public' + styles
+  // const stylePath =
+  //   process.env.NODE_ENV === 'production'
+  //     ? __dirname + '/../public' + styles
+  //     : './public' + styles
 
-  const lowlightCss = readFileSync(stylePath, 'utf-8')
+  // const codeCss = readFileSync(stylePath, 'utf-8')
 
   const { html, errors } = render(
     <Mjml>
       <MjmlHead>
         <MjmlTitle>Last Minute Offer</MjmlTitle>
         <MjmlPreview>Last Minute Offer...</MjmlPreview>
-        <MjmlStyle inline>{lowlightCss}</MjmlStyle>
+        {/* <MjmlStyle inline>{codeCss}</MjmlStyle> */}
       </MjmlHead>
       <MjmlBody width={600}>
         <MjmlSection fullWidth>
@@ -98,11 +96,33 @@ const TextBlock = ({ id, attributes, content }) => {
 }
 
 const CodeBlock = ({ id, attributes, content }) => {
-  const code =
-    '<pre><code>' + toHtml(lowlight.highlightAuto(content)) + '</code></pre>'
   return (
-    <MjmlText cssClass={`data-${id} ProseMirror`}>
-      <div dangerouslySetInnerHTML={{ __html: code }} />
+    <MjmlText cssClass={`data-${id}`}>
+      <pre
+        style={{
+          padding: '8px',
+          ...theme.plain,
+        }}
+      >
+        <Highlight
+          {...defaultProps}
+          theme={theme}
+          code={content}
+          language={'jsx'}
+        >
+          {({ className, style, tokens, getLineProps, getTokenProps }) => (
+            <>
+              {tokens.map((line, i) => (
+                <div key={i} {...getLineProps({ line, key: i })}>
+                  {line.map((token, key) => (
+                    <span key={key} {...getTokenProps({ token, key })} />
+                  ))}
+                </div>
+              ))}
+            </>
+          )}
+        </Highlight>
+      </pre>
     </MjmlText>
   )
 }

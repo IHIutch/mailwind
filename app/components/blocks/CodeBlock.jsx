@@ -1,5 +1,5 @@
 import { Box } from '@chakra-ui/react'
-import prismjs from 'prismjs'
+import { highlight, languages } from 'prismjs'
 import Editor from 'react-simple-code-editor'
 import hljs from 'highlight.js'
 
@@ -36,11 +36,11 @@ export default function CodeBlock({ details, onChange = () => null }) {
 
   const handleHighlight = () => {
     // if (code) handleDetectLanguageDebounce(code)
-    return prismjs.highlight(code, prismjs.languages[language], language)
+    return highlight(code, languages[language], language)
   }
 
   return (
-    <Box rounded="md" overflow="hidden" p="1" style={theme.plain}>
+    <Box rounded="md" overflow="hidden" p="2" style={theme.plain}>
       <Editor
         value={code}
         onValueChange={handleChange}

@@ -62,11 +62,6 @@ import {
 
 import Navbar from '~/components/Navbar'
 import PaddingController from '~/components/controllers/PaddingController'
-import styles from 'prismjs/themes/prism.css' //Example style, you can use another
-
-export function links() {
-  return [{ rel: 'stylesheet', href: styles }]
-}
 
 export const loader = async () => {
   const blocks = [
