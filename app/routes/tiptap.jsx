@@ -75,71 +75,51 @@ export const loader = async () => {
   const blocks = [
     {
       type: BlockType.H1,
-      details: {
-        value: '<p>Get Started</p>',
-      },
+      value: '<p>Get Started</p>',
     },
     {
       type: BlockType.Divider,
-      details: {},
     },
     {
       type: BlockType.Text,
-      details: {
-        value:
-          '<p>👋 Welcome! This is a private page for you to play around with.</p>',
-      },
+      value:
+        '<p>👋 Welcome! This is a private page for you to play around with.</p>',
     },
     {
       type: BlockType.Text,
-      details: {
-        value: '<p>Give these things a try:</p>',
-      },
+      value: '<p>Give these things a try:</p>',
     },
     {
       type: BlockType.Text,
-      details: {
-        value: '<p>1. Hover on the left of each line for quick actions</p>',
-      },
+      value: '<p>1. Hover on the left of each line for quick actions</p>',
+    },
+
+    {
+      type: BlockType.Text,
+      value: '<p>2. Click on the + button to add a new line</p>',
     },
     {
       type: BlockType.Text,
-      details: {
-        value: '<p>2. Click on the + button to add a new line</p>',
-      },
+      value: '<p>3. Drag the ⋮⋮ button to reorder</p>',
     },
     {
       type: BlockType.Text,
-      details: {
-        value: '<p>3. Drag the ⋮⋮ button to reorder</p>',
-      },
+      value: '<p>4. Click the trash icon to delete this block</p>',
     },
     {
       type: BlockType.Text,
-      details: {
-        value: '<p>4. Click the trash icon to delete this block</p>',
-      },
+      value:
+        '<p>5. <strong>Bold</strong> and <em>italicize</em> using markdown e.g. *italic* or **bold**</p>',
     },
     {
       type: BlockType.Text,
-      details: {
-        value:
-          '<p>5. <strong>Bold</strong> and <em>italicize</em> using markdown e.g. *italic* or **bold**</p>',
-      },
+      value:
+        "<p>6. Add headers and dividers with '#', '##' or '---' followed by a space</p>",
     },
     {
       type: BlockType.Text,
-      details: {
-        value:
-          "<p>6. Add headers and dividers with '#', '##' or '---' followed by a space</p>",
-      },
-    },
-    {
-      type: BlockType.Text,
-      details: {
-        value:
-          "<p>7. Type '/' for a menu to quickly switch blocks and search by typing</p>",
-      },
+      value:
+        "<p>7. Type '/' for a menu to quickly switch blocks and search by typing</p>",
     },
   ]
 
@@ -234,7 +214,7 @@ const EditView = () => {
     }),
     useSensor(MouseSensor, {
       activationConstraint: {
-        distance: 10,
+        distance: 6,
       },
     }),
     useSensor(TouchSensor)
@@ -259,9 +239,9 @@ const EditView = () => {
   }
 
   const handleDuplicateItem = (idx) => {
-    const value = getValues(`items.${idx}`)
+    const item = getValues(`items.${idx}`)
     insert(idx + 1, {
-      ...value,
+      ...item,
       id: getNanoId(),
     })
   }
@@ -289,12 +269,12 @@ const EditView = () => {
                   >
                     <ItemBlock
                       itemType={getValues(`items.${idx}.type`)}
-                      addItem={(value) => insert(idx + 1, value)}
+                      addItem={(payload) => insert(idx + 1, payload)}
                       removeItem={() => remove(idx)}
                       duplicateItem={() => handleDuplicateItem(idx)}
                     >
                       <Controller
-                        name={`items.${idx}.details.value`}
+                        name={`items.${idx}.value`}
                         control={control}
                         render={({ field: { value, onChange } }) => (
                           <Block
@@ -314,7 +294,7 @@ const EditView = () => {
         <SortOverlay>
           {activeItem ? (
             <ItemBlock>
-              <Block type={activeItem.type} value={activeItem.details.value} />
+              <Block type={activeItem.type} value={activeItem.value} />
             </ItemBlock>
           ) : null}
         </SortOverlay>
@@ -414,9 +394,7 @@ const ItemBlock = ({
                       addItem({
                         id: getNanoId(),
                         type: value,
-                        details: {
-                          value: '',
-                        },
+                        value: '',
                       })
                     }
                   >
