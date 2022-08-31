@@ -14,38 +14,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@chakra-ui/react'
-import { useFetcher } from '@remix-run/react'
 import { Send } from 'lucide-react'
-import React, { useEffect } from 'react'
 
-export default function Navbar({ json, previewSize, setPreviewSize }) {
-  const htmlFetcher = useFetcher()
-
-  const handleDownload = async () => {
-    htmlFetcher.submit(
-      {
-        json: JSON.stringify(json),
-      },
-      { method: 'post', action: '/download' }
-    )
-  }
-
-  useEffect(() => {
-    if (htmlFetcher.data?.html) {
-      var blob = new Blob([htmlFetcher.data.html], {
-        type: 'text/html;charset=utf-8',
-      })
-      var link = document.createElement('a')
-      link.href = window.URL.createObjectURL(blob)
-      link.download = 'email.html'
-
-      document.body.appendChild(link)
-      link.click()
-
-      document.body.removeChild(link)
-    }
-  }, [htmlFetcher.data?.html])
-
+export default function Navbar({
+  handleDownload,
+  previewSize,
+  setPreviewSize,
+}) {
   const handleSendEmail = () => {
     console.log('send email')
   }

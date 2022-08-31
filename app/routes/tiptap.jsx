@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   Box,
   Button,
@@ -25,7 +25,7 @@ import {
 import { ClientOnly } from 'remix-utils'
 import { getNanoId } from '~/utils/functions'
 import { BlockType } from '~/utils/types'
-import { useLoaderData } from '@remix-run/react'
+import { useFetcher, useLoaderData } from '@remix-run/react'
 import Block from '~/components/Block'
 import {
   DndContext,
@@ -136,6 +136,7 @@ export const loader = async () => {
 
 export default function Tiptap() {
   const { blocks: loaderBlocks } = useLoaderData()
+  const htmlFetcher = useFetcher()
 
   const [previewSize, setPreviewSize] = useState('desktop')
 
@@ -145,14 +146,43 @@ export default function Tiptap() {
 
   const formMethods = useForm({
     defaultValues: {
-      items: loaderBlocks,
+      blocks: loaderBlocks,
     },
   })
+
+  const handleDownload = async (formData) => {
+    htmlFetcher.submit(
+      {
+        json: JSON.stringify(formData.blocks),
+      },
+      { method: 'post', action: '/download' }
+    )
+  }
+
+  useEffect(() => {
+    if (htmlFetcher.data?.html) {
+      var blob = new Blob([htmlFetcher.data.html], {
+        type: 'text/html;charset=utf-8',
+      })
+      var link = document.createElement('a')
+      link.href = window.URL.createObjectURL(blob)
+      link.download = 'email.html'
+
+      document.body.appendChild(link)
+      link.click()
+
+      document.body.removeChild(link)
+    }
+  }, [htmlFetcher.data?.html])
 
   return (
     <Box>
       <FormProvider {...formMethods}>
-        <Navbar previewSize={previewSize} setPreviewSize={setPreviewSize} />
+        <Navbar
+          previewSize={previewSize}
+          setPreviewSize={setPreviewSize}
+          handleDownload={formMethods.handleSubmit(handleDownload)}
+        />
         <Box h="100%">
           <Box py="12" mt="16">
             <Box px="6">
@@ -212,7 +242,7 @@ const EditView = () => {
   const { fields, remove, move, insert } = useFieldArray({
     keyName: 'uuid', // Prevent overwriting "id" key
     control,
-    name: 'items',
+    name: 'blocks',
   })
 
   const sensors = useSensors(
@@ -241,12 +271,12 @@ const EditView = () => {
 
   const handleDragStart = ({ active: { data: activeData } }) => {
     const activeIdx = activeData?.current?.sortable?.index
-    const item = getValues(`items.${activeIdx}`)
+    const item = getValues(`blocks.${activeIdx}`)
     setActiveItem(item)
   }
 
   const handleDuplicateItem = (idx) => {
-    const item = getValues(`items.${idx}`)
+    const item = getValues(`blocks.${idx}`)
     insert(idx + 1, {
       ...item,
       id: getNanoId(),
@@ -281,7 +311,7 @@ const EditView = () => {
                       duplicateItem={() => handleDuplicateItem(idx)}
                     >
                       <Controller
-                        name={`items.${idx}`}
+                        name={`blocks.${idx}`}
                         control={control}
                         render={({ field: { value, onChange } }) => (
                           <Block
@@ -348,12 +378,12 @@ const ItemBlock = ({
 
   const { control } = useFormContext()
   const itemType = useWatch({
-    name: `items.${itemIndex}.type`,
+    name: `blocks.${itemIndex}.type`,
     control,
   })
 
   const itemPadding = useWatch({
-    name: `items.${itemIndex}.attributes.padding`,
+    name: `blocks.${itemIndex}.attributes.padding`,
     control,
   })
 
@@ -481,7 +511,7 @@ const ItemBlock = ({
               <PopoverBody>
                 <Box>
                   <Controller
-                    name={`items.${itemIndex}.attributes.padding`}
+                    name={`blocks.${itemIndex}.attributes.padding`}
                     control={control}
                     render={({ field: { value, onChange } }) => (
                       <PaddingController value={value} onChange={onChange} />

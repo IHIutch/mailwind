@@ -32,7 +32,12 @@ export default function getMjMl(json) {
       <MjmlHead>
         <MjmlTitle>Last Minute Offer</MjmlTitle>
         <MjmlPreview>Last Minute Offer...</MjmlPreview>
-        {/* <MjmlStyle inline>{codeCss}</MjmlStyle> */}
+        <MjmlStyle inline>{`
+          p {
+            padding: 0;
+            margin: 0;
+          }
+        `}</MjmlStyle>
       </MjmlHead>
       <MjmlBody width={600}>
         <MjmlSection fullWidth>
@@ -42,7 +47,8 @@ export default function getMjMl(json) {
                   <DynamicMjmlComponent
                     key={idx}
                     id={data.id}
-                    details={data.details}
+                    attributes={data.attributes}
+                    value={data.value}
                     type={data.type}
                   />
                 ))
@@ -84,20 +90,23 @@ const BlockType = {
   Code: 'CODE',
 }
 
-const TextBlock = ({ id, attributes, content }) => {
+const TextBlock = ({ id, attributes, value }) => {
+  const padding = attributes?.padding || ['12px', '0', '12px', '0']
   return (
     <MjmlText
+      padding={padding.join(' ')}
       cssClass={`data-${id}`}
       // fontFamily="Inter, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif',"
     >
-      <div dangerouslySetInnerHTML={{ __html: content }} />
+      <div dangerouslySetInnerHTML={{ __html: value }} />
     </MjmlText>
   )
 }
 
-const CodeBlock = ({ id, attributes, content }) => {
+const CodeBlock = ({ id, attributes, value }) => {
+  const padding = attributes?.padding || ['12px', '0', '12px', '0']
   return (
-    <MjmlText cssClass={`data-${id}`}>
+    <MjmlText padding={padding.join(' ')} cssClass={`data-${id}`}>
       <pre
         style={{
           padding: '8px',
@@ -107,7 +116,7 @@ const CodeBlock = ({ id, attributes, content }) => {
         <Highlight
           {...defaultProps}
           theme={theme}
-          code={content}
+          code={value}
           language={'jsx'}
         >
           {({ className, style, tokens, getLineProps, getTokenProps }) => (
@@ -127,7 +136,8 @@ const CodeBlock = ({ id, attributes, content }) => {
   )
 }
 
-const HeadingBlock = ({ id, type, attributes, content }) => {
+const HeadingBlock = ({ id, type, attributes, value }) => {
+  const padding = attributes?.padding || ['12px', '0', '12px', '0']
   const styles = {
     H1: {
       fontSize: '24px',
@@ -144,14 +154,19 @@ const HeadingBlock = ({ id, type, attributes, content }) => {
   }
 
   return (
-    <MjmlText cssClass={`data-${id}`} {...styles[type]}>
-      <div dangerouslySetInnerHTML={{ __html: content }} />
+    <MjmlText
+      padding={padding.join(' ')}
+      cssClass={`data-${id}`}
+      {...styles[type]}
+    >
+      <div dangerouslySetInnerHTML={{ __html: value }} />
     </MjmlText>
   )
 }
 
-const DividerBlock = ({ id, attributes, content }) => {
-  return <MjmlDivider cssClass={`data-${id}`} />
+const DividerBlock = ({ id, attributes, value }) => {
+  const padding = attributes?.padding || ['12px', '0', '12px', '0']
+  return <MjmlDivider padding={padding.join(' ')} cssClass={`data-${id}`} />
 }
 
 const SpacerBlock = () => {
@@ -170,14 +185,7 @@ const components = {
   [BlockType.Image]: SpacerBlock,
 }
 
-const DynamicMjmlComponent = ({ id, type, details }) => {
+const DynamicMjmlComponent = ({ id, type, attributes, value }) => {
   const Component = components[type]
-  return (
-    <Component
-      id={id}
-      type={type}
-      attributes={details.attributes}
-      content={details.value}
-    />
-  )
+  return <Component id={id} type={type} attributes={attributes} value={value} />
 }

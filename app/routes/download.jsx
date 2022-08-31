@@ -6,6 +6,8 @@ export async function action({ request }) {
     const formData = await request.formData()
     const data = formData.get('json')
 
+    console.log({ data })
+
     const html = getMjMl(JSON.parse(data))
 
     return json({ html }, 200)
