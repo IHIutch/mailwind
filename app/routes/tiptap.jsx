@@ -204,6 +204,7 @@ const EditView = () => {
   const [activeItem, setActiveItem] = useState(null)
   const { control, getValues } = useFormContext()
   const { fields, remove, move, insert } = useFieldArray({
+    keyName: 'uuid', // Prevent overwriting "id" key
     control,
     name: 'items',
   })
@@ -348,13 +349,13 @@ const ItemBlock = ({
       py="2"
     >
       <Box
-      // pt={
-      //   itemType === BlockType['H1'] ||
-      //   itemType === BlockType['H2'] ||
-      //   itemType === BlockType['H3']
-      //     ? 3
-      //     : 0
-      // }
+        pt={
+          itemType === BlockType['H1'] ||
+          itemType === BlockType['H2'] ||
+          itemType === BlockType['H3']
+            ? 3
+            : 0
+        }
       >
         <Stack
           direction="row"
