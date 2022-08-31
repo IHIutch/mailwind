@@ -24,7 +24,7 @@ import {
 } from '@chakra-ui/react'
 import { ClientOnly } from 'remix-utils'
 import { getNanoId } from '~/utils/functions'
-import { BlockType } from '~/utils/types'
+import { BlockType, defaultAttributes } from '~/utils/types'
 import { useFetcher, useLoaderData } from '@remix-run/react'
 import Block from '~/components/Block'
 import {
@@ -311,13 +311,13 @@ const EditView = () => {
                       duplicateItem={() => handleDuplicateItem(idx)}
                     >
                       <Controller
-                        name={`blocks.${idx}`}
+                        name={`blocks.${idx}.value`}
                         control={control}
                         render={({ field: { value, onChange } }) => (
                           <Block
-                            attributes={value.attributes}
-                            type={value.type}
-                            value={value.value}
+                            attributes={watch(`blocks.${idx}.attributes`)}
+                            type={getValues(`blocks.${idx}.type`)}
+                            value={value}
                             onChange={onChange}
                           />
                         )}
@@ -447,6 +447,9 @@ const ItemBlock = ({
                         id: getNanoId(),
                         type: value,
                         value: '',
+                        attributes: {
+                          ...defaultAttributes,
+                        },
                       })
                     }
                   >

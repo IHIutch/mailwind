@@ -18,6 +18,7 @@ import pretty from 'pretty'
 import { minify } from 'html-minifier'
 import Highlight, { defaultProps } from 'prism-react-renderer'
 import theme from 'prism-react-renderer/themes/nightOwl'
+import { defaultAttributes } from '~/utils/types'
 
 export default function getMjMl(json) {
   // const stylePath =
@@ -91,7 +92,7 @@ const BlockType = {
 }
 
 const TextBlock = ({ id, attributes, value }) => {
-  const padding = attributes?.padding || ['12px', '0', '12px', '0']
+  const padding = attributes?.padding || defaultAttributes.padding
   return (
     <MjmlText
       padding={padding.join(' ')}
@@ -104,7 +105,7 @@ const TextBlock = ({ id, attributes, value }) => {
 }
 
 const CodeBlock = ({ id, attributes, value }) => {
-  const padding = attributes?.padding || ['12px', '0', '12px', '0']
+  const padding = attributes?.padding || defaultAttributes.padding
   return (
     <MjmlText padding={padding.join(' ')} cssClass={`data-${id}`}>
       <pre
@@ -137,7 +138,7 @@ const CodeBlock = ({ id, attributes, value }) => {
 }
 
 const HeadingBlock = ({ id, type, attributes, value }) => {
-  const padding = attributes?.padding || ['12px', '0', '12px', '0']
+  const padding = attributes?.padding || defaultAttributes.padding
   const styles = {
     H1: {
       fontSize: '24px',
@@ -165,7 +166,7 @@ const HeadingBlock = ({ id, type, attributes, value }) => {
 }
 
 const DividerBlock = ({ id, attributes, value }) => {
-  const padding = attributes?.padding || ['12px', '0', '12px', '0']
+  const padding = attributes?.padding || defaultAttributes.padding
   return <MjmlDivider padding={padding.join(' ')} cssClass={`data-${id}`} />
 }
 

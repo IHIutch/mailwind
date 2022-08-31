@@ -26,3 +26,7 @@ export const components = {
   [BlockType.Image]: ImageBlock,
   [BlockType.Code]: CodeBlock,
 }
+
+export const defaultAttributes = {
+  padding: ['8px', '0', '8px', '0'],
+}
