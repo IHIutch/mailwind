@@ -3,7 +3,7 @@ import TextAlign from '@tiptap/extension-text-align'
 import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 
-export default function Editor({ onChange, value }) {
+export default function Editor({ value, onChange }) {
   const editor = useEditor({
     editorProps: {
       handleDrop: () => true,

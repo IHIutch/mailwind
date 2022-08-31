@@ -1,8 +1,8 @@
 import { components } from '~/utils/types'
 
-export default function Block({ type, details, onChange }) {
+export default function Block({ type, value, onChange }) {
   const Component = components[type]
-  return <Component type={type} details={details} onChange={onChange} />
+  return <Component type={type} value={value} onChange={onChange} />
 }
 
 // function keyDownHandler(event) {

@@ -2,14 +2,7 @@ import { Box } from '@chakra-ui/react'
 import { BlockType } from '~/utils/types'
 import Editor from '../Editor'
 
-export default function HeadingBlock({ type, details, onChange }) {
-  const handleChange = (value) => {
-    onChange({
-      ...details,
-      value,
-    })
-  }
-
+export default function HeadingBlock({ type, value, onChange }) {
   const headingConfig = {
     [BlockType.H1]: {
       // placeholder: 'Heading 1',
@@ -29,7 +22,7 @@ export default function HeadingBlock({ type, details, onChange }) {
   }
   return (
     <Box {...headingConfig[type]}>
-      <Editor value={details.value} onChange={handleChange} />
+      <Editor value={value} onChange={onChange} />
     </Box>
   )
 }

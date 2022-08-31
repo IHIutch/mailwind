@@ -62,6 +62,14 @@ import {
 
 import Navbar from '~/components/Navbar'
 import PaddingController from '~/components/controllers/PaddingController'
+import {
+  Controller,
+  FormProvider,
+  useFieldArray,
+  useForm,
+  useFormContext,
+  useWatch,
+} from 'react-hook-form'
 
 export const loader = async () => {
   const blocks = [
@@ -142,7 +150,6 @@ export const loader = async () => {
 
 export default function Tiptap() {
   const { blocks: loaderBlocks } = useLoaderData()
-  const [blocks, setBlocks] = useState(loaderBlocks)
 
   const [previewSize, setPreviewSize] = useState('desktop')
 
@@ -150,31 +157,35 @@ export default function Tiptap() {
   const desktopSize = 600
   const mobileSize = 480
 
+  const formMethods = useForm({
+    defaultValues: {
+      items: loaderBlocks,
+    },
+  })
+
   return (
     <Box>
-      <Navbar
-        json={blocks}
-        previewSize={previewSize}
-        setPreviewSize={setPreviewSize}
-      />
-      <Box h="100%">
-        <Box py="12" mt="16">
-          <Box px="6">
-            <Box
-              position="relative"
-              left={(offset * -1) / 2 + 'px'}
-              mx="auto"
-              w={
-                previewSize === 'desktop'
-                  ? desktopSize + offset + 'px'
-                  : mobileSize + offset + 'px'
-              }
-            >
-              <EditView onChange={setBlocks} value={blocks} />
+      <FormProvider {...formMethods}>
+        <Navbar previewSize={previewSize} setPreviewSize={setPreviewSize} />
+        <Box h="100%">
+          <Box py="12" mt="16">
+            <Box px="6">
+              <Box
+                position="relative"
+                left={(offset * -1) / 2 + 'px'}
+                mx="auto"
+                w={
+                  previewSize === 'desktop'
+                    ? desktopSize + offset + 'px'
+                    : mobileSize + offset + 'px'
+                }
+              >
+                <EditView />
+              </Box>
             </Box>
           </Box>
         </Box>
-      </Box>
+      </FormProvider>
       {/* <Box>
           <pre>
             {JSON.stringify(
@@ -209,8 +220,13 @@ export default function Tiptap() {
   )
 }
 
-const EditView = ({ value, onChange }) => {
+const EditView = () => {
   const [activeItem, setActiveItem] = useState(null)
+  const { control, getValues } = useFormContext()
+  const { fields, remove, move, insert } = useFieldArray({
+    control,
+    name: 'items',
+  })
 
   const sensors = useSensors(
     useSensor(KeyboardSensor, {
@@ -224,58 +240,29 @@ const EditView = ({ value, onChange }) => {
     useSensor(TouchSensor)
   )
 
-  const handleOnChange = (idx, val) => {
-    onChange((oldValue) => {
-      const newBlocks = [...oldValue]
-      newBlocks[idx] = {
-        ...newBlocks[idx],
-        details: val,
-      }
-      return newBlocks
-    })
-  }
-
-  const handleDragEnd = ({ active, over }) => {
-    if (over && active.id !== over?.id) {
-      onChange((oldValue) => {
-        const oldIndex = oldValue.findIndex(({ id }) => id === active.id)
-        const newIndex = oldValue.findIndex(({ id }) => id === over.id)
-
-        const newList = arrayMove(oldValue, oldIndex, newIndex)
-        return newList
-      })
+  const handleDragEnd = ({
+    active: { data: activeData },
+    over: { data: overData },
+  }) => {
+    const activeIdx = activeData?.current?.sortable?.index
+    const overIdx = overData?.current?.sortable?.index
+    if (overIdx && activeIdx !== overIdx) {
+      move(activeIdx, overIdx)
     }
     setActiveItem(null)
   }
 
-  const handleDragStart = ({ active: { id } }) => {
-    setActiveItem(value.find((v) => v.id === id))
-  }
-
-  const handleAddItem = (idx, payload) => {
-    onChange((oldValue) => {
-      const newBlocks = [...oldValue]
-      newBlocks.splice(idx, 0, payload)
-      return newBlocks
-    })
-  }
-
-  const handleRemoveItem = (idx) => {
-    onChange((oldValue) => {
-      const newBlocks = [...oldValue]
-      newBlocks.splice(idx, 1)
-      return newBlocks
-    })
+  const handleDragStart = ({ active: { data: activeData } }) => {
+    const activeIdx = activeData?.current?.sortable?.index
+    const item = getValues(`items.${activeIdx}`)
+    setActiveItem(item)
   }
 
   const handleDuplicateItem = (idx) => {
-    onChange((oldValue) => {
-      const newBlocks = [...oldValue]
-      newBlocks.splice(idx + 1, 0, {
-        ...newBlocks[idx],
-        id: getNanoId(),
-      })
-      return newBlocks
+    const value = getValues(`items.${idx}`)
+    insert(idx + 1, {
+      ...value,
+      id: getNanoId(),
     })
   }
 
@@ -290,9 +277,9 @@ const EditView = ({ value, onChange }) => {
           setActiveItem(null)
         }}
       >
-        <SortableContext items={value} strategy={verticalListSortingStrategy}>
+        <SortableContext items={fields} strategy={verticalListSortingStrategy}>
           <List>
-            {value.map((v, idx) => (
+            {fields.map((v, idx) => (
               <ListItem key={v.id}>
                 <SortableItem id={v.id}>
                   <Box
@@ -301,12 +288,23 @@ const EditView = ({ value, onChange }) => {
                     overflow="hidden"
                   >
                     <ItemBlock
-                      v={v}
-                      onChange={(val) => handleOnChange(idx, val)}
-                      addItem={(value) => handleAddItem(idx + 1, value)}
-                      removeItem={() => handleRemoveItem(idx)}
+                      itemType={getValues(`items.${idx}.type`)}
+                      addItem={(value) => insert(idx + 1, value)}
+                      removeItem={() => remove(idx)}
                       duplicateItem={() => handleDuplicateItem(idx)}
-                    />
+                    >
+                      <Controller
+                        name={`items.${idx}.details.value`}
+                        control={control}
+                        render={({ field: { value, onChange } }) => (
+                          <Block
+                            type={getValues(`items.${idx}.type`)}
+                            value={value}
+                            onChange={onChange}
+                          />
+                        )}
+                      />
+                    </ItemBlock>
                   </Box>
                 </SortableItem>
               </ListItem>
@@ -314,14 +312,24 @@ const EditView = ({ value, onChange }) => {
           </List>
         </SortableContext>
         <SortOverlay>
-          {activeItem ? <ItemBlock v={activeItem} /> : null}
+          {activeItem ? (
+            <ItemBlock>
+              <Block type={activeItem.type} value={activeItem.details.value} />
+            </ItemBlock>
+          ) : null}
         </SortOverlay>
       </DndContext>
     </Box>
   )
 }
 
-const ItemBlock = ({ v, onChange, addItem, removeItem, duplicateItem }) => {
+const ItemBlock = ({
+  itemType,
+  addItem,
+  removeItem,
+  duplicateItem,
+  children,
+}) => {
   const [isActive, setIsActive] = useState(false)
   const [isMenuActive, setIsMenuActive] = useState(false)
 
@@ -360,13 +368,13 @@ const ItemBlock = ({ v, onChange, addItem, removeItem, duplicateItem }) => {
       py="2"
     >
       <Box
-        pt={
-          v.type === BlockType['H1'] ||
-          v.type === BlockType['H2'] ||
-          v.type === BlockType['H3']
-            ? 3
-            : 0
-        }
+      // pt={
+      //   itemType === BlockType['H1'] ||
+      //   itemType === BlockType['H2'] ||
+      //   itemType === BlockType['H3']
+      //     ? 3
+      //     : 0
+      // }
       >
         <Stack
           direction="row"
@@ -472,7 +480,7 @@ const ItemBlock = ({ v, onChange, addItem, removeItem, duplicateItem }) => {
             <PopoverContent>
               <PopoverBody>
                 <Box>
-                  <PaddingController label="Padding" onChange={console.log} />
+                  <PaddingController onChange={console.log} />
                 </Box>
               </PopoverBody>
             </PopoverContent>
@@ -480,7 +488,7 @@ const ItemBlock = ({ v, onChange, addItem, removeItem, duplicateItem }) => {
         </Stack>
       </Box>
       <Box flexGrow="1" px="2">
-        <Block type={v.type} details={v.details} onChange={onChange} />
+        {children}
       </Box>
     </Flex>
   )

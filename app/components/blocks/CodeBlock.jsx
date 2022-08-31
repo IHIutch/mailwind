@@ -8,8 +8,8 @@ import debounce from 'lodash/debounce'
 import Highlight, { defaultProps } from 'prism-react-renderer'
 import theme from 'prism-react-renderer/themes/nightOwl'
 
-export default function CodeBlock({ details, onChange = () => null }) {
-  const [code, setCode] = useState(details.value)
+export default function CodeBlock({ value, onChange = () => null }) {
+  const [code, setCode] = useState(value)
   const [language, setLanguage] = useState('javascript')
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -26,12 +26,9 @@ export default function CodeBlock({ details, onChange = () => null }) {
   //   [handleDetectLanguage]
   // )
 
-  const handleChange = (value) => {
-    setCode(value)
-    handleUpdateDebounce({
-      ...details,
-      value: value,
-    })
+  const handleChange = (payload) => {
+    setCode(payload)
+    handleUpdateDebounce(payload)
   }
 
   const handleHighlight = () => {
