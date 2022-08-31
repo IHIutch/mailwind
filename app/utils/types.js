@@ -29,4 +29,8 @@ export const components = {
 
 export const defaultAttributes = {
   padding: ['8px', '0', '8px', '0'],
+  fontFamily:
+    '-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol',
+  fontSize: '16px',
+  lineHeight: '1.5',
 }

@@ -34,6 +34,9 @@ export default function getMjMl(json) {
         <MjmlTitle>Last Minute Offer</MjmlTitle>
         <MjmlPreview>Last Minute Offer...</MjmlPreview>
         <MjmlStyle inline>{`
+          html {
+            line-height: 1.5;
+          }
           p {
             padding: 0;
             margin: 0;
@@ -97,7 +100,9 @@ const TextBlock = ({ id, attributes, value }) => {
     <MjmlText
       padding={padding.join(' ')}
       cssClass={`data-${id}`}
-      // fontFamily="Inter, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif',"
+      fontFamily={defaultAttributes.fontFamily}
+      fontSize={defaultAttributes.fontSize}
+      lineHeight={defaultAttributes.lineHeight}
     >
       <div dangerouslySetInnerHTML={{ __html: value }} />
     </MjmlText>
@@ -142,15 +147,15 @@ const HeadingBlock = ({ id, type, attributes, value }) => {
   const styles = {
     H1: {
       fontSize: '24px',
-      fontWeight: 'bold',
+      // fontWeight: 'bold',
     },
     H2: {
       fontSize: '20px',
-      fontWeight: 'bold',
+      // fontWeight: 'bold',
     },
     H3: {
       fontSize: '18px',
-      fontWeight: 'bold',
+      // fontWeight: 'bold',
     },
   }
 
@@ -158,6 +163,8 @@ const HeadingBlock = ({ id, type, attributes, value }) => {
     <MjmlText
       padding={padding.join(' ')}
       cssClass={`data-${id}`}
+      fontFamily={defaultAttributes.fontFamily}
+      lineHeight={defaultAttributes.lineHeight}
       {...styles[type]}
     >
       <div dangerouslySetInnerHTML={{ __html: value }} />
@@ -167,7 +174,14 @@ const HeadingBlock = ({ id, type, attributes, value }) => {
 
 const DividerBlock = ({ id, attributes, value }) => {
   const padding = attributes?.padding || defaultAttributes.padding
-  return <MjmlDivider padding={padding.join(' ')} cssClass={`data-${id}`} />
+  return (
+    <MjmlDivider
+      padding={padding.join(' ')}
+      borderWidth="1px"
+      borderColor="#E2E8F0"
+      cssClass={`data-${id}`}
+    />
+  )
 }
 
 const SpacerBlock = () => {
