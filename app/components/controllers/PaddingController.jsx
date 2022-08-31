@@ -10,45 +10,43 @@ import {
   NumberInputStepper,
   SimpleGrid,
 } from '@chakra-ui/react'
+import debounce from 'lodash/debounce'
+import { useCallback } from 'react'
 
-const PaddingController = ({ value = '0 0 0 0', onChange, label }) => {
-  const top = value.split(' ')[0] || '0'
-  const right = value.split(' ')[1] || '0'
-  const bottom = value.split(' ')[2] || '0'
-  const left = value.split(' ')[3] || '0'
-
-  const handleBorderChange = (value) => {
-    return value == '0' ? '0' : value + 'px'
-  }
+const PaddingController = ({ value = ['0', '0', '0', '0'], onChange }) => {
+  const top = value?.[0] || '0'
+  const right = value?.[1] || '0'
+  const bottom = value?.[2] || '0'
+  const left = value?.[3] || '0'
 
   const handleChange = (idx, payload) => {
-    const newValue = value.split(' ')
-    newValue[idx] = handleBorderChange(payload)
-
-    if (newValue.every((v) => v == '0')) {
-      onChange('none')
-    } else {
-      onChange(newValue.join(' '))
-    }
+    const newValue = [...value]
+    newValue[idx] = payload === '0' ? payload : payload + 'px'
+    onChange(newValue)
   }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleUpdateDebounce = useCallback(debounce(handleChange, 250), [
+    handleChange,
+  ])
 
   return (
     <Box as="fieldset">
       <Heading as="legend" mb="2" fontSize="sm" fontWeight="semibold">
-        {label}
+        Padding
       </Heading>
       <SimpleGrid columns="2" rowGap="2" columnGap="4">
         <FormControl
           display="flex"
           alignItems="center"
-          // justifyContent="flex-end"
+          justifyContent="flex-end"
         >
           <FormLabel mb="0" mr="1" fontSize="sm">
             Top
           </FormLabel>
           <NumberInput
             display="block"
-            onChange={(value) => handleChange(0, value)}
+            onChange={(value) => handleUpdateDebounce(0, value)}
             defaultValue={top}
             w="20"
             ml="auto"
@@ -72,7 +70,7 @@ const PaddingController = ({ value = '0 0 0 0', onChange, label }) => {
           </FormLabel>
           <NumberInput
             display="block"
-            onChange={(value) => handleChange(1, value)}
+            onChange={(value) => handleUpdateDebounce(1, value)}
             defaultValue={right}
             w="20"
             ml="auto"
@@ -96,7 +94,7 @@ const PaddingController = ({ value = '0 0 0 0', onChange, label }) => {
           </FormLabel>
           <NumberInput
             display="block"
-            onChange={(value) => handleChange(2, value)}
+            onChange={(value) => handleUpdateDebounce(2, value)}
             defaultValue={bottom}
             w="20"
             ml="auto"
@@ -120,7 +118,7 @@ const PaddingController = ({ value = '0 0 0 0', onChange, label }) => {
           </FormLabel>
           <NumberInput
             display="block"
-            onChange={(value) => handleChange(3, value)}
+            onChange={(value) => handleUpdateDebounce(3, value)}
             defaultValue={left}
             w="20"
             ml="auto"

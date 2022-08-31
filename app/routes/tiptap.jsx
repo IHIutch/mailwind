@@ -124,7 +124,13 @@ export const loader = async () => {
   ]
 
   return {
-    blocks: blocks.map((b) => ({ ...b, id: getNanoId() })),
+    blocks: blocks.map((b) => ({
+      ...b,
+      id: getNanoId(),
+      attributes: {
+        padding: ['8px', '0', '8px', '0'],
+      },
+    })),
   }
 }
 
@@ -202,7 +208,7 @@ export default function Tiptap() {
 
 const EditView = () => {
   const [activeItem, setActiveItem] = useState(null)
-  const { control, getValues } = useFormContext()
+  const { control, getValues, watch } = useFormContext()
   const { fields, remove, move, insert } = useFieldArray({
     keyName: 'uuid', // Prevent overwriting "id" key
     control,
@@ -269,18 +275,19 @@ const EditView = () => {
                     overflow="hidden"
                   >
                     <ItemBlock
-                      itemType={getValues(`items.${idx}.type`)}
+                      itemIndex={idx}
                       addItem={(payload) => insert(idx + 1, payload)}
                       removeItem={() => remove(idx)}
                       duplicateItem={() => handleDuplicateItem(idx)}
                     >
                       <Controller
-                        name={`items.${idx}.value`}
+                        name={`items.${idx}`}
                         control={control}
                         render={({ field: { value, onChange } }) => (
                           <Block
-                            type={getValues(`items.${idx}.type`)}
-                            value={value}
+                            attributes={value.attributes}
+                            type={value.type}
+                            value={value.value}
                             onChange={onChange}
                           />
                         )}
@@ -305,7 +312,7 @@ const EditView = () => {
 }
 
 const ItemBlock = ({
-  itemType,
+  itemIndex,
   addItem,
   removeItem,
   duplicateItem,
@@ -339,6 +346,17 @@ const ItemBlock = ({
     }
   }
 
+  const { control } = useFormContext()
+  const itemType = useWatch({
+    name: `items.${itemIndex}.type`,
+    control,
+  })
+
+  const itemPadding = useWatch({
+    name: `items.${itemIndex}.attributes.padding`,
+    control,
+  })
+
   return (
     <Flex
       ref={ref}
@@ -346,7 +364,10 @@ const ItemBlock = ({
       onMouseLeave={() => {
         !isMenuActive && setIsActive(false)
       }}
-      py="2"
+      pt={itemPadding[0]}
+      pr={itemPadding[1]}
+      pb={itemPadding[2]}
+      pl={itemPadding[3]}
     >
       <Box
         pt={
@@ -459,7 +480,13 @@ const ItemBlock = ({
             <PopoverContent>
               <PopoverBody>
                 <Box>
-                  <PaddingController onChange={console.log} />
+                  <Controller
+                    name={`items.${itemIndex}.attributes.padding`}
+                    control={control}
+                    render={({ field: { value, onChange } }) => (
+                      <PaddingController value={value} onChange={onChange} />
+                    )}
+                  />
                 </Box>
               </PopoverBody>
             </PopoverContent>
