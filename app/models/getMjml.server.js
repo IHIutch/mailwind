@@ -34,9 +34,6 @@ export default function getMjMl(json) {
         <MjmlTitle>Last Minute Offer</MjmlTitle>
         <MjmlPreview>Last Minute Offer...</MjmlPreview>
         <MjmlStyle inline>{`
-          html {
-            line-height: 1.5;
-          }
           p {
             padding: 0;
             margin: 0;

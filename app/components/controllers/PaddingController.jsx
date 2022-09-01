@@ -10,8 +10,6 @@ import {
   NumberInputStepper,
   SimpleGrid,
 } from '@chakra-ui/react'
-import debounce from 'lodash/debounce'
-import { useCallback } from 'react'
 
 const PaddingController = ({ value = ['0', '0', '0', '0'], onChange }) => {
   const top = value?.[0] || '0'
@@ -24,11 +22,6 @@ const PaddingController = ({ value = ['0', '0', '0', '0'], onChange }) => {
     newValue[idx] = payload === '0' ? payload : payload + 'px'
     onChange(newValue)
   }
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const handleUpdateDebounce = useCallback(debounce(handleChange, 250), [
-    handleChange,
-  ])
 
   return (
     <Box as="fieldset">
@@ -46,7 +39,7 @@ const PaddingController = ({ value = ['0', '0', '0', '0'], onChange }) => {
           </FormLabel>
           <NumberInput
             display="block"
-            onChange={(value) => handleUpdateDebounce(0, value)}
+            onBlur={(e) => handleChange(0, e.target.value)}
             defaultValue={top}
             w="20"
             ml="auto"
@@ -70,7 +63,7 @@ const PaddingController = ({ value = ['0', '0', '0', '0'], onChange }) => {
           </FormLabel>
           <NumberInput
             display="block"
-            onChange={(value) => handleUpdateDebounce(1, value)}
+            onBlur={(e) => handleChange(1, e.target.value)}
             defaultValue={right}
             w="20"
             ml="auto"
@@ -94,7 +87,7 @@ const PaddingController = ({ value = ['0', '0', '0', '0'], onChange }) => {
           </FormLabel>
           <NumberInput
             display="block"
-            onChange={(value) => handleUpdateDebounce(2, value)}
+            onBlur={(e) => handleChange(2, e.target.value)}
             defaultValue={bottom}
             w="20"
             ml="auto"
@@ -118,7 +111,7 @@ const PaddingController = ({ value = ['0', '0', '0', '0'], onChange }) => {
           </FormLabel>
           <NumberInput
             display="block"
-            onChange={(value) => handleUpdateDebounce(3, value)}
+            onBlur={(e) => handleChange(3, e.target.value)}
             defaultValue={left}
             w="20"
             ml="auto"
