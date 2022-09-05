@@ -23,7 +23,7 @@ export default function ImageDropzone({ onChange, value = '' }) {
   )
 
   const handleClearImage = () => {
-    onChange(null)
+    onChange('')
     setPreview('')
   }
 
@@ -42,7 +42,7 @@ export default function ImageDropzone({ onChange, value = '' }) {
   return (
     <Flex rounded="md" overflow="hidden">
       {preview ? (
-        <Box position="relative" h="100%" w="100%">
+        <Box position="relative" boxSize="100%">
           <IconButton
             icon={<Icon boxSize="3.5" as={X} />}
             size="xs"
@@ -51,12 +51,11 @@ export default function ImageDropzone({ onChange, value = '' }) {
             right="2"
             onClick={handleClearImage}
           />
-          <Image h="100%" w="100%" src={preview} objectFit="cover" alt="" />
+          <Image boxSize="100%" src={preview} objectFit="cover" alt="" />
         </Box>
       ) : (
         <Flex
-          h="100%"
-          w="100%"
+          boxSize="100%"
           bg={isDragActive ? 'blue.100' : 'gray.100'}
           borderColor={isDragActive ? 'blue.200' : 'gray.200'}
           borderWidth="1px"

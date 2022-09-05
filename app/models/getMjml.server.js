@@ -138,7 +138,6 @@ const CodeBlock = ({ id, attributes, value }) => {
 
 const HeadingBlock = ({ id, type, attributes, value }) => {
   const padding = attributes?.padding || defaultAttributes[type].padding
-  console.log({ type })
   return (
     <MjmlText
       padding={padding.join(' ')}
@@ -169,6 +168,18 @@ const SpacerBlock = () => {
   return <MjmlSpacer />
 }
 
+const ImageBlock = ({ id, attributes, value }) => {
+  const padding = attributes?.padding || defaultAttributes.global.padding
+
+  return (
+    <MjmlImage
+      padding={padding.join(' ')}
+      cssClass={`data-${id}`}
+      src={value}
+    />
+  )
+}
+
 const components = {
   [BlockType.Text]: TextBlock,
   [BlockType.H1]: HeadingBlock,
@@ -176,9 +187,9 @@ const components = {
   [BlockType.H3]: HeadingBlock,
   [BlockType.Divider]: DividerBlock,
   [BlockType.Code]: CodeBlock,
+  [BlockType.Image]: ImageBlock,
   //
   [BlockType.Quote]: SpacerBlock,
-  [BlockType.Image]: SpacerBlock,
 }
 
 const DynamicMjmlComponent = ({ id, type, attributes, value }) => {

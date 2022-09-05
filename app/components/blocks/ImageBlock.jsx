@@ -1,10 +1,10 @@
-import { AspectRatio } from '@chakra-ui/react'
-import ImageDropzone from '../ImageDropzone'
+import { Box } from '@chakra-ui/react'
+import ImageAddUrl from '../ImageAddUrl'
 
 export default function ImageBlock({ value, onChange }) {
   return (
-    <AspectRatio height="200px">
-      <ImageDropzone value={value} onChange={onChange} />
-    </AspectRatio>
+    <Box>
+      <ImageAddUrl value={value} onChange={onChange} />
+    </Box>
   )
 }

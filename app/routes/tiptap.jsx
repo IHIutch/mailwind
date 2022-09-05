@@ -404,10 +404,8 @@ const ItemBlock = ({
       onMouseLeave={() => {
         !isMenuActive && setIsActive(false)
       }}
-      pt={itemPadding[0]}
-      pr={itemPadding[1]}
-      pb={itemPadding[2]}
-      pl={itemPadding[3]}
+      pt={itemPadding?.[0] || '0'}
+      pb={itemPadding?.[2] || '0'}
     >
       <Box
         pt={
@@ -538,7 +536,9 @@ const ItemBlock = ({
         </Stack>
       </Box>
       <Box flexGrow="1" px="2">
-        {children}
+        <Box pr={itemPadding?.[1] || '0'} pl={itemPadding?.[3] || '0'}>
+          {children}
+        </Box>
       </Box>
     </Flex>
   )
