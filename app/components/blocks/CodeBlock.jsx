@@ -37,7 +37,13 @@ export default function CodeBlock({ value, onChange = () => null }) {
   }
 
   return (
-    <Box rounded="md" overflow="hidden" p="2" style={theme.plain}>
+    <Box
+      className="prose"
+      rounded="md"
+      overflow="hidden"
+      p="2"
+      style={theme.plain}
+    >
       <Editor
         value={code}
         onValueChange={handleChange}

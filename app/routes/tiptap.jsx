@@ -36,7 +36,6 @@ import {
   useSensors,
 } from '@dnd-kit/core'
 import {
-  arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
@@ -70,6 +69,15 @@ import {
   useFormContext,
   useWatch,
 } from 'react-hook-form'
+import styles from '~/styles/app.css'
+import preflight from '~/styles/preflight.css'
+
+export function links() {
+  return [
+    { rel: 'stylesheet', href: preflight },
+    { rel: 'stylesheet', href: styles },
+  ]
+}
 
 export const loader = async () => {
   const blocks = [
@@ -128,7 +136,9 @@ export const loader = async () => {
       ...b,
       id: getNanoId(),
       attributes: {
-        padding: ['8px', '0', '8px', '0'],
+        padding:
+          defaultAttributes?.[b.type]?.padding ||
+          defaultAttributes.global.padding,
       },
     })),
   }
@@ -404,7 +414,7 @@ const ItemBlock = ({
           itemType === BlockType['H1'] ||
           itemType === BlockType['H2'] ||
           itemType === BlockType['H3']
-            ? 3
+            ? 2
             : 0
         }
       >
@@ -436,7 +446,7 @@ const ItemBlock = ({
                 borderBottomWidth="1px"
                 borderColor="gray.200"
               >
-                {Object.entries(BlockType).map(([key, value], idx) => (
+                {Object.entries(BlockType).map(([key, blockTypeValue], idx) => (
                   <MenuItem
                     key={idx}
                     py="1"
@@ -445,16 +455,17 @@ const ItemBlock = ({
                     onClick={() =>
                       addItem({
                         id: getNanoId(),
-                        type: value,
+                        type: blockTypeValue,
                         value: '',
                         attributes: {
-                          ...defaultAttributes,
+                          ...defaultAttributes.global,
+                          ...(defaultAttributes?.[blockTypeValue] || {}),
                         },
                       })
                     }
                   >
                     <Stack direction="row" align="center">
-                      <Icon boxSize="3.5" as={getIcon(value)} />
+                      <Icon boxSize="3.5" as={getIcon(blockTypeValue)} />
                       <Text as="span">{key}</Text>
                     </Stack>
                   </MenuItem>

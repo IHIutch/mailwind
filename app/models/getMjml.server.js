@@ -19,26 +19,23 @@ import { minify } from 'html-minifier'
 import Highlight, { defaultProps } from 'prism-react-renderer'
 import theme from 'prism-react-renderer/themes/nightOwl'
 import { defaultAttributes } from '~/utils/types'
+import styles from '~/styles/preflight.css'
+import { readFileSync } from 'fs'
 
 export default function getMjMl(json) {
-  // const stylePath =
-  //   process.env.NODE_ENV === 'production'
-  //     ? __dirname + '/../public' + styles
-  //     : './public' + styles
+  const stylePath =
+    process.env.NODE_ENV === 'production'
+      ? __dirname + '/../public' + styles
+      : './public' + styles
 
-  // const codeCss = readFileSync(stylePath, 'utf-8')
+  const codeCss = readFileSync(stylePath, 'utf-8')
 
   const { html, errors } = render(
     <Mjml>
       <MjmlHead>
         <MjmlTitle>Last Minute Offer</MjmlTitle>
         <MjmlPreview>Last Minute Offer...</MjmlPreview>
-        <MjmlStyle inline>{`
-          p {
-            padding: 0;
-            margin: 0;
-          }
-        `}</MjmlStyle>
+        <MjmlStyle inline>{codeCss}</MjmlStyle>
       </MjmlHead>
       <MjmlBody width={600}>
         <MjmlSection fullWidth>
@@ -92,14 +89,14 @@ const BlockType = {
 }
 
 const TextBlock = ({ id, attributes, value }) => {
-  const padding = attributes?.padding || defaultAttributes.padding
+  const padding = attributes?.padding || defaultAttributes.global.padding
   return (
     <MjmlText
       padding={padding.join(' ')}
       cssClass={`data-${id}`}
-      fontFamily={defaultAttributes.fontFamily}
-      fontSize={defaultAttributes.fontSize}
-      lineHeight={defaultAttributes.lineHeight}
+      fontSize={defaultAttributes.global.fontSize}
+      fontFamily={defaultAttributes.global.fontFamily}
+      lineHeight={defaultAttributes.global.lineHeight}
     >
       <div dangerouslySetInnerHTML={{ __html: value }} />
     </MjmlText>
@@ -107,7 +104,7 @@ const TextBlock = ({ id, attributes, value }) => {
 }
 
 const CodeBlock = ({ id, attributes, value }) => {
-  const padding = attributes?.padding || defaultAttributes.padding
+  const padding = attributes?.padding || defaultAttributes.global.padding
   return (
     <MjmlText padding={padding.join(' ')} cssClass={`data-${id}`}>
       <pre
@@ -140,29 +137,16 @@ const CodeBlock = ({ id, attributes, value }) => {
 }
 
 const HeadingBlock = ({ id, type, attributes, value }) => {
-  const padding = attributes?.padding || defaultAttributes.padding
-  const styles = {
-    H1: {
-      fontSize: '24px',
-      // fontWeight: 'bold',
-    },
-    H2: {
-      fontSize: '20px',
-      // fontWeight: 'bold',
-    },
-    H3: {
-      fontSize: '18px',
-      // fontWeight: 'bold',
-    },
-  }
-
+  const padding = attributes?.padding || defaultAttributes[type].padding
+  console.log({ type })
   return (
     <MjmlText
       padding={padding.join(' ')}
       cssClass={`data-${id}`}
-      fontFamily={defaultAttributes.fontFamily}
-      lineHeight={defaultAttributes.lineHeight}
-      {...styles[type]}
+      fontFamily={defaultAttributes.global.fontFamily}
+      fontSize={defaultAttributes[type].fontSize}
+      lineHeight={defaultAttributes[type].lineHeight}
+      fontWeight={defaultAttributes[type].fontWeight}
     >
       <div dangerouslySetInnerHTML={{ __html: value }} />
     </MjmlText>
@@ -170,7 +154,7 @@ const HeadingBlock = ({ id, type, attributes, value }) => {
 }
 
 const DividerBlock = ({ id, attributes, value }) => {
-  const padding = attributes?.padding || defaultAttributes.padding
+  const padding = attributes?.padding || defaultAttributes.global.padding
   return (
     <MjmlDivider
       padding={padding.join(' ')}

@@ -5,6 +5,7 @@ import StarterKit from '@tiptap/starter-kit'
 
 export default function Editor({ value, onChange }) {
   const editor = useEditor({
+    injectCSS: false,
     editorProps: {
       handleDrop: () => true,
     },
@@ -31,7 +32,6 @@ export default function Editor({ value, onChange }) {
   return (
     <EditorContent
       editor={editor}
-      spellCheck={false}
       onKeyUp={(e) => {
         if (e.key === 'Enter') e.preventDefault()
       }}
