@@ -106,7 +106,12 @@ const TextBlock = ({ id, attributes, value }) => {
 const CodeBlock = ({ id, attributes, value }) => {
   const padding = attributes?.padding || defaultAttributes.global.padding
   return (
-    <MjmlText padding={padding.join(' ')} cssClass={`data-${id}`}>
+    <MjmlText
+      padding={padding.join(' ')}
+      cssClass={`data-${id} font-mono`}
+      fontSize={defaultAttributes.global.fontSize}
+      lineHeight={defaultAttributes.global.lineHeight}
+    >
       <pre
         style={{
           padding: '8px',

@@ -37,16 +37,11 @@ export default function CodeBlock({ value, onChange = () => null }) {
   }
 
   return (
-    <Box
-      className="prose"
-      rounded="md"
-      overflow="hidden"
-      p="2"
-      style={theme.plain}
-    >
+    <Box rounded="md" overflow="hidden" p="2" style={theme.plain}>
       <Editor
         value={code}
         onValueChange={handleChange}
+        className="font-mono"
         highlight={(code) => <PrismaHighlight code={code} language="jsx" />}
       />
     </Box>
