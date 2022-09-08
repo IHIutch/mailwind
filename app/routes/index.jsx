@@ -68,14 +68,11 @@ import {
   useFormContext,
   useWatch,
 } from 'react-hook-form'
-import styles from '~/styles/app.css'
 import preflight from '~/styles/preflight.css'
+import clsx from 'clsx'
 
 export function links() {
-  return [
-    { rel: 'stylesheet', href: preflight },
-    { rel: 'stylesheet', href: styles },
-  ]
+  return [{ rel: 'stylesheet', href: preflight }]
 }
 
 export const loader = async () => {
@@ -185,31 +182,31 @@ export default function Tiptap() {
   }, [htmlFetcher.data?.html])
 
   return (
-    <Box>
+    <div>
       <FormProvider {...formMethods}>
         <Navbar
           previewSize={previewSize}
           setPreviewSize={setPreviewSize}
           handleDownload={formMethods.handleSubmit(handleDownload)}
         />
-        <Box h="100%">
-          <Box py="12" mt="16">
-            <Box px="6">
-              <Box
-                position="relative"
-                left={(offset * -1) / 2 + 'px'}
-                mx="auto"
-                w={
-                  previewSize === 'desktop'
-                    ? desktopSize + offset + 'px'
-                    : mobileSize + offset + 'px'
-                }
+        <div className="h-full">
+          <div className="py-12 mt-16">
+            <div className="px-6">
+              <div
+                className="relative mx-auto"
+                style={{
+                  width:
+                    previewSize === 'desktop'
+                      ? desktopSize + offset + 'px'
+                      : mobileSize + offset + 'px',
+                  left: (offset * -1) / 2 + 'px',
+                }}
               >
                 <EditView />
-              </Box>
-            </Box>
-          </Box>
-        </Box>
+              </div>
+            </div>
+          </div>
+        </div>
       </FormProvider>
       {/* <Box>
           <pre>
@@ -241,7 +238,7 @@ export default function Tiptap() {
             )}
           </pre>
         </Box> */}
-    </Box>
+    </div>
   )
 }
 
@@ -293,7 +290,7 @@ const EditView = () => {
   }
 
   return (
-    <Box>
+    <div>
       <DndContext
         id="dnd"
         sensors={sensors}
@@ -304,12 +301,15 @@ const EditView = () => {
         }}
       >
         <SortableContext items={fields} strategy={verticalListSortingStrategy}>
-          <List>
+          <ul>
             {fields.map((v, idx) => (
-              <ListItem key={v.id}>
+              <li key={v.id}>
                 <SortableItem id={v.id}>
-                  <Box
-                    bg={activeItem?.id === v.id ? 'gray.200' : 'white'}
+                  <div
+                    className={clsx(
+                      'rounded-lg overflow-hidden',
+                      activeItem?.id === v.id ? 'bg-gray-200' : 'bg-white'
+                    )}
                     borderRadius="lg"
                     overflow="hidden"
                   >
@@ -332,11 +332,11 @@ const EditView = () => {
                         )}
                       />
                     </ItemBlock>
-                  </Box>
+                  </div>
                 </SortableItem>
-              </ListItem>
+              </li>
             ))}
-          </List>
+          </ul>
         </SortableContext>
         <SortOverlay>
           {activeItem ? (
@@ -346,7 +346,7 @@ const EditView = () => {
           ) : null}
         </SortOverlay>
       </DndContext>
-    </Box>
+    </div>
   )
 }
 
@@ -369,19 +369,19 @@ const ItemBlock = ({
   const getIcon = (value) => {
     switch (value) {
       case BlockType['Text']:
-        return Type
+        return <Type className="w-4 h-4" />
       case BlockType['Divider']:
-        return FlipVertical
+        return <FlipVertical className="w-4 h-4" />
       case BlockType['Code']:
-        return Code2
+        return <Code2 className="w-4 h-4" />
       case BlockType['Image']:
-        return Image
+        return <Image className="w-4 h-4" />
       case BlockType['Quote']:
-        return Quote
+        return <Quote className="w-4 h-4" />
       case BlockType['H1']:
-        return PlusCircle
+        return <PlusCircle className="w-4 h-4" />
       default:
-        return PlusSquare
+        return <PlusSquare className="w-4 h-4" />
     }
   }
 
@@ -397,30 +397,32 @@ const ItemBlock = ({
   })
 
   return (
-    <Flex
+    <div
+      className="flex"
+      style={{
+        paddingTop: itemPadding?.[0] || '0',
+        paddingBottom: itemPadding?.[2] || '0',
+      }}
       ref={ref}
       onMouseEnter={() => setIsActive(true)}
       onMouseLeave={() => {
         !isMenuActive && setIsActive(false)
       }}
-      pt={itemPadding?.[0] || '0'}
-      pb={itemPadding?.[2] || '0'}
     >
-      <Box
-        pt={
+      <div
+        className={clsx(
           itemType === BlockType['H1'] ||
-          itemType === BlockType['H2'] ||
-          itemType === BlockType['H3']
-            ? 2
-            : 0
-        }
+            itemType === BlockType['H2'] ||
+            itemType === BlockType['H3']
+            ? 'pt-2'
+            : 'pt-0'
+        )}
       >
-        <Stack
-          direction="row"
-          spacing="0"
-          visibility={isActive ? 'visible' : 'hidden'}
-          opacity={isActive ? '1' : '0'}
-          transition="all 0.2s cubic-bezier(0, 0, 0.2, 1)"
+        <div
+          className={clsx(
+            'flex transition-all',
+            isActive ? 'visible opacity-100' : 'invisible opacity-0'
+          )}
         >
           <Menu
             onOpen={() => setIsMenuActive(true)}
@@ -461,10 +463,10 @@ const ItemBlock = ({
                       })
                     }
                   >
-                    <Stack direction="row" align="center">
-                      <Icon boxSize="3.5" as={getIcon(blockTypeValue)} />
-                      <Text as="span">{key}</Text>
-                    </Stack>
+                    <div className="flex items-center">
+                      {getIcon(blockTypeValue)}
+                      <p className="pl-2">{key}</p>
+                    </div>
                   </MenuItem>
                 ))}
               </MenuGroup>
@@ -485,10 +487,10 @@ const ItemBlock = ({
                     alignItems="center"
                     onClick={duplicateItem}
                   >
-                    <Stack direction="row" align="center">
-                      <Icon boxSize="3.5" as={Copy} />
-                      <Text as="span">Duplicate Item</Text>
-                    </Stack>
+                    <div className="flex items-center">
+                      <Copy className="h-4 w-4" />
+                      <p className="pl-2">Duplicate Item</p>
+                    </div>
                   </MenuItem>
                   <MenuItem
                     py="1"
@@ -497,10 +499,10 @@ const ItemBlock = ({
                     alignItems="center"
                     onClick={removeItem}
                   >
-                    <Stack direction="row" align="center">
-                      <Icon boxSize="3.5" as={Trash2} />
-                      <Text as="span">Delete Item</Text>
-                    </Stack>
+                    <div className="flex items-center">
+                      <Trash2 className="h-4 w-4" />
+                      <p className="pl-2">Delete Item</p>
+                    </div>
                   </MenuItem>
                 </MenuList>
               </>
@@ -520,7 +522,7 @@ const ItemBlock = ({
             </PopoverTrigger>
             <PopoverContent>
               <PopoverBody>
-                <Box>
+                <div>
                   <Controller
                     name={`blocks.${itemIndex}.attributes.padding`}
                     control={control}
@@ -528,17 +530,22 @@ const ItemBlock = ({
                       <PaddingController value={value} onChange={onChange} />
                     )}
                   />
-                </Box>
+                </div>
               </PopoverBody>
             </PopoverContent>
           </Popover>
-        </Stack>
-      </Box>
-      <Box flexGrow="1" px="2">
-        <Box pr={itemPadding?.[1] || '0'} pl={itemPadding?.[3] || '0'}>
+        </div>
+      </div>
+      <div className="grow px-2">
+        <div
+          style={{
+            paddingLeft: itemPadding?.[1] || '0',
+            paddingRight: itemPadding?.[3] || '0',
+          }}
+        >
           {children}
-        </Box>
-      </Box>
-    </Flex>
+        </div>
+      </div>
+    </div>
   )
 }

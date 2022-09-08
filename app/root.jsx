@@ -10,12 +10,17 @@ import {
 } from '@remix-run/react'
 import { useContext, useEffect } from 'react'
 import { ClientStyleContext, ServerStyleContext } from './context'
+import styles from './styles/app.css'
 
 export const meta = () => ({
   charset: 'utf-8',
   title: 'Mailwind',
   viewport: 'width=device-width,initial-scale=1',
 })
+
+export function links() {
+  return [{ rel: 'stylesheet', href: styles }]
+}
 
 const Document = withEmotionCache(({ children }, emotionCache) => {
   const serverStyleData = useContext(ServerStyleContext)
