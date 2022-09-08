@@ -22,7 +22,6 @@ import {
   Text,
   useOutsideClick,
 } from '@chakra-ui/react'
-import { ClientOnly } from 'remix-utils'
 import { getNanoId } from '~/utils/functions'
 import { BlockType, defaultAttributes } from '~/utils/types'
 import { useFetcher, useLoaderData } from '@remix-run/react'
