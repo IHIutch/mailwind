@@ -1,7 +1,5 @@
 import { Box } from '@chakra-ui/react'
-import { highlight, languages } from 'prismjs'
 import Editor from 'react-simple-code-editor'
-import hljs from 'highlight.js'
 
 import { useCallback, useState } from 'react'
 import debounce from 'lodash/debounce'
@@ -10,7 +8,6 @@ import theme from 'prism-react-renderer/themes/nightOwl'
 
 export default function CodeBlock({ value, onChange = () => null }) {
   const [code, setCode] = useState(value)
-  const [language, setLanguage] = useState('javascript')
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleUpdateDebounce = useCallback(debounce(onChange, 250), [onChange])
@@ -29,11 +26,6 @@ export default function CodeBlock({ value, onChange = () => null }) {
   const handleChange = (payload) => {
     setCode(payload)
     handleUpdateDebounce(payload)
-  }
-
-  const handleHighlight = () => {
-    // if (code) handleDetectLanguageDebounce(code)
-    return highlight(code, languages[language], language)
   }
 
   return (

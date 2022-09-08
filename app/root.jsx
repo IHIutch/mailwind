@@ -9,7 +9,6 @@ import {
   ScrollRestoration,
 } from '@remix-run/react'
 import { useContext, useEffect } from 'react'
-import { ActiveElementProvider } from '../context/activeElement'
 import { ClientStyleContext, ServerStyleContext } from './context'
 
 export const meta = () => ({
@@ -69,12 +68,9 @@ const Document = withEmotionCache(({ children }, emotionCache) => {
 })
 
 export default function App() {
-  // const queryClient = new QueryClient()
   return (
     <Document>
-      <ActiveElementProvider>
-        <Outlet />
-      </ActiveElementProvider>
+      <Outlet />
     </Document>
   )
 }
