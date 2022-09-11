@@ -1,12 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import {
-  Box,
-  Button,
-  Flex,
-  Icon,
   IconButton,
-  List,
-  ListItem,
   Menu,
   MenuButton,
   MenuGroup,
@@ -14,12 +8,8 @@ import {
   MenuList,
   Popover,
   PopoverBody,
-  PopoverCloseButton,
   PopoverContent,
   PopoverTrigger,
-  SimpleGrid,
-  Stack,
-  Text,
   useOutsideClick,
 } from '@chakra-ui/react'
 import { getNanoId } from '~/utils/functions'
@@ -310,8 +300,6 @@ const EditView = () => {
                       'rounded-lg overflow-hidden',
                       activeItem?.id === v.id ? 'bg-gray-200' : 'bg-white'
                     )}
-                    borderRadius="lg"
-                    overflow="hidden"
                   >
                     <ItemBlock
                       itemIndex={idx}
@@ -432,7 +420,7 @@ const ItemBlock = ({
               as={IconButton}
               size="xs"
               variant="ghost"
-              icon={<Icon color="gray.500" boxSize="3.5" as={Plus} />}
+              icon={<Plus className="h-4 w-4 text-gray-500" />}
             />
 
             <MenuList pt="0" pb="1">
@@ -517,20 +505,18 @@ const ItemBlock = ({
               <IconButton
                 size="xs"
                 variant="ghost"
-                icon={<Icon color="gray.500" boxSize="3.5" as={Settings} />}
+                icon={<Settings className="h-4 w-4 text-gray-500" />}
               />
             </PopoverTrigger>
             <PopoverContent>
               <PopoverBody>
-                <div>
-                  <Controller
-                    name={`blocks.${itemIndex}.attributes.padding`}
-                    control={control}
-                    render={({ field: { value, onChange } }) => (
-                      <PaddingController value={value} onChange={onChange} />
-                    )}
-                  />
-                </div>
+                <Controller
+                  name={`blocks.${itemIndex}.attributes.padding`}
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <PaddingController value={value} onChange={onChange} />
+                  )}
+                />
               </PopoverBody>
             </PopoverContent>
           </Popover>

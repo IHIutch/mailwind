@@ -1,4 +1,3 @@
-import { Box } from '@chakra-ui/react'
 import Editor from 'react-simple-code-editor'
 
 import { useCallback, useState } from 'react'
@@ -29,14 +28,14 @@ export default function CodeBlock({ value, onChange = () => null }) {
   }
 
   return (
-    <Box rounded="md" overflow="hidden" p="2" style={theme.plain}>
+    <div className="rounded-md overflow-hidden p-2" style={theme.plain}>
       <Editor
+        className="font-mono"
         value={code}
         onValueChange={handleChange}
-        className="font-mono"
         highlight={(code) => <PrismaHighlight code={code} language="jsx" />}
       />
-    </Box>
+    </div>
   )
 }
 
