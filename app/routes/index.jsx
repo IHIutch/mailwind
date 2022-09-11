@@ -34,7 +34,6 @@ import {
   PlusCircle,
   PlusSquare,
   Quote,
-  Settings,
   Trash2,
   Type,
 } from 'lucide-react'
@@ -45,7 +44,6 @@ import * as Label from '@radix-ui/react-label'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 
 import Navbar from '~/components/Navbar'
-import PaddingController from '~/components/controllers/PaddingController'
 import {
   Controller,
   FormProvider,
@@ -54,13 +52,9 @@ import {
   useFormContext,
   useWatch,
 } from 'react-hook-form'
-// import preflight from '~/styles/preflight.css'
+
 import clsx from 'clsx'
 import { HexColorPicker } from 'react-colorful'
-
-// export function links() {
-//   return [{ rel: 'stylesheet', href: preflight }]
-// }
 
 export const loader = async () => {
   const blocks = [
@@ -191,179 +185,184 @@ export default function Tiptap() {
   ]
 
   return (
-    <div className="h-full pt-16">
+    <div className="pt-16">
       <FormProvider {...formMethods}>
         <Navbar
           previewSize={previewSize}
           setPreviewSize={setPreviewSize}
           handleDownload={formMethods.handleSubmit(handleDownload)}
         />
-        <div className="flex h-full">
-          <div
-            className={clsx('px-4', [
-              global.containerAlign === 'left' && 'mr-auto',
-              global.containerAlign === 'center' && 'mx-auto',
-              global.containerAlign === 'right' && 'ml-auto',
-            ])}
-          >
-            <div
-              className="relative py-12 px-6"
-              style={{
-                width:
-                  previewSize === 'desktop'
-                    ? parseInt(global.containerWidth.replace('px', '')) +
-                      offset +
-                      'px'
-                    : mobileSize + offset + 'px',
-                left: (offset * -1) / 2 + 'px',
-              }}
-            >
-              <EditView />
+        <div>
+          <div className="fixed inset-y-0 top-16 w-[calc(100%-300px)]">
+            <div className="flex h-full overflow-y-auto">
+              <div
+                className={clsx('px-4', [
+                  global.containerAlign === 'left' && 'mr-auto',
+                  global.containerAlign === 'center' && 'mx-auto',
+                  global.containerAlign === 'right' && 'ml-auto',
+                ])}
+              >
+                <div
+                  className="relative py-12 px-6"
+                  style={{
+                    width:
+                      previewSize === 'desktop'
+                        ? parseInt(global.containerWidth.replace('px', '')) +
+                          offset +
+                          'px'
+                        : mobileSize + offset + 'px',
+                    left: (offset * -1) / 2 + 'px',
+                  }}
+                >
+                  <EditView />
+                </div>
+              </div>
             </div>
           </div>
-          <div className="w-[300px] bg-white border-l border-zinc-200 h-full right-0 inset-y-0">
-            <div className="py-4">
-              <div className="mb-4 px-3">
-                <h2 className="font-semibold">Global Attributes</h2>
-              </div>
-              <div className="mb-4 px-3">
-                <fieldset>
-                  <Label.Root htmlFor="containerAlignField" asChild>
-                    <legend className="block text-gray-700 font-semibold text-sm mb-1">
-                      Container Align
-                    </legend>
+          <div className="fixed inset-y-0 right-0 w-[300px] border-l border-zinc-200 bg-white pt-16">
+            <div className="h-full overflow-y-auto">
+              <div className="py-4">
+                <div className="mb-4 px-3">
+                  <h2 className="font-semibold">Global Attributes</h2>
+                </div>
+                <div className="mb-4 px-3">
+                  <fieldset>
+                    <Label.Root htmlFor="containerAlignField" asChild>
+                      <legend className="mb-1 block text-sm font-semibold text-gray-700">
+                        Container Align
+                      </legend>
+                    </Label.Root>
+                    <Controller
+                      name={'global.containerAlign'}
+                      control={formMethods.control}
+                      render={({ field: { value, onChange } }) => (
+                        <ToggleGroup.Root
+                          id="containerAlignField"
+                          type="single"
+                          value={value}
+                          onValueChange={(value) =>
+                            value ? onChange(value) : null
+                          }
+                          className="inline-flex h-10 rounded-md shadow-sm"
+                        >
+                          <ToggleGroup.Item
+                            value="left"
+                            className="rounded-l-md border border-r-0 border-zinc-300 py-1 px-2 font-bold text-zinc-500 hover:bg-indigo-50 [&[data-state=on]]:border-indigo-100 [&[data-state=on]]:bg-indigo-100 [&[data-state=on]]:text-indigo-600"
+                          >
+                            <AlignLeft className="h-5 w-5" />
+                          </ToggleGroup.Item>
+                          <ToggleGroup.Item
+                            value="center"
+                            className="border border-x-0 border-zinc-300 py-1 px-2 font-bold text-zinc-500 hover:bg-indigo-50 [&[data-state=on]]:border-indigo-100 [&[data-state=on]]:bg-indigo-100 [&[data-state=on]]:text-indigo-600"
+                          >
+                            <AlignCenter className="h-5 w-5" />
+                          </ToggleGroup.Item>
+                          <ToggleGroup.Item
+                            value="right"
+                            className="rounded-r-md border border-l-0 border-zinc-300 py-1 px-2 font-bold text-zinc-500 hover:bg-indigo-50 [&[data-state=on]]:border-indigo-100 [&[data-state=on]]:bg-indigo-100 [&[data-state=on]]:text-indigo-600"
+                          >
+                            <AlignRight className="h-5 w-5" />
+                          </ToggleGroup.Item>
+                        </ToggleGroup.Root>
+                      )}
+                    />
+                  </fieldset>
+                </div>
+                <div className="mb-4 px-3">
+                  <Label.Root
+                    className="mb-1 text-sm font-semibold text-zinc-700"
+                    htmlFor="globalWidthField"
+                  >
+                    Container Width
                   </Label.Root>
-                  <Controller
-                    name={'global.containerAlign'}
-                    control={formMethods.control}
-                    render={({ field: { value, onChange } }) => (
-                      <ToggleGroup.Root
-                        id="containerAlignField"
-                        type="single"
-                        value={value}
-                        onValueChange={(value) =>
-                          value ? onChange(value) : null
-                        }
-                        className="inline-flex shadow-sm h-10 rounded-md"
-                      >
-                        <ToggleGroup.Item
-                          value="left"
-                          className="border border-r-0 text-zinc-500 hover:bg-indigo-50 border-zinc-300 font-bold py-1 px-2 rounded-l-md [&[data-state=on]]:bg-indigo-100 [&[data-state=on]]:text-indigo-600 [&[data-state=on]]:border-indigo-100"
-                        >
-                          <AlignLeft className="w-5 h-5" />
-                        </ToggleGroup.Item>
-                        <ToggleGroup.Item
-                          value="center"
-                          className="border border-x-0 text-zinc-500 hover:bg-indigo-50 border-zinc-300 font-bold py-1 px-2 [&[data-state=on]]:bg-indigo-100 [&[data-state=on]]:text-indigo-600 [&[data-state=on]]:border-indigo-100"
-                        >
-                          <AlignCenter className="w-5 h-5" />
-                        </ToggleGroup.Item>
-                        <ToggleGroup.Item
-                          value="right"
-                          className="border border-l-0 text-zinc-500 hover:bg-indigo-50 border-zinc-300 font-bold py-1 px-2 rounded-r-md [&[data-state=on]]:bg-indigo-100 [&[data-state=on]]:text-indigo-600 [&[data-state=on]]:border-indigo-100"
-                        >
-                          <AlignRight className="w-5 h-5" />
-                        </ToggleGroup.Item>
-                      </ToggleGroup.Root>
-                    )}
+                  <input
+                    {...formMethods.register('global.containerWidth')}
+                    id="globalWidthField"
+                    type="text"
+                    className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   />
-                </fieldset>
-              </div>
-              <div className="mb-4 px-3">
-                <Label.Root
-                  className="text-zinc-700 font-semibold text-sm mb-1"
-                  htmlFor="globalWidthField"
-                >
-                  Container Width
-                </Label.Root>
-                <input
-                  {...formMethods.register('global.containerWidth')}
-                  id="globalWidthField"
-                  type="text"
-                  className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                />
-              </div>
-              <div className="px-3 border-t border-zinc-200 pt-4">
-                <div className="mb-1">
-                  <span className="text-zinc-700 font-semibold text-sm">
+                </div>
+                <div className="border-t border-zinc-200 px-3 pt-4">
+                  <div className="mb-1">
+                    <span className="text-sm font-semibold text-zinc-700">
+                      Text Color
+                    </span>
+                  </div>
+                  <div className="flex h-[42px]">
+                    <div className="grow">
+                      <Popover.Root>
+                        <Popover.Trigger className="w-full rounded-l-md border border-zinc-300 py-2 px-3 text-left shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                          <div className="flex items-center">
+                            <div
+                              className="h-4 w-4 rounded"
+                              style={{ backgroundColor: global.color }}
+                            ></div>
+                            <span className="ml-2">{global.color}</span>
+                          </div>
+                        </Popover.Trigger>
+                        <Popover.Anchor />
+                        <Popover.Portal>
+                          <Popover.Content className="rounded-lg p-1 shadow-lg">
+                            <Controller
+                              name={'global.color'}
+                              control={formMethods.control}
+                              render={({ field: { value, onChange } }) => (
+                                <HexColorPicker
+                                  color={value}
+                                  onChange={onChange}
+                                />
+                              )}
+                            />
+                          </Popover.Content>
+                        </Popover.Portal>
+                      </Popover.Root>
+                    </div>
+                    <div className="h-full">
+                      <Popover.Root>
+                        <Popover.Trigger className="h-full w-full rounded-r-md border border-l-0 border-zinc-300 py-2 px-3 text-left shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                          <Palette className="h-4 w-4" />
+                        </Popover.Trigger>
+                        <Popover.Anchor />
+                        <Popover.Portal>
+                          <Popover.Content className="max-h-48 w-fit overflow-y-auto rounded-lg p-3 shadow-lg">
+                            <Controller
+                              name={'global.color'}
+                              control={formMethods.control}
+                              render={({ field: { value, onChange } }) => (
+                                <RadioGroup.Root
+                                  value={value}
+                                  onValueChange={onChange}
+                                  className="grid grid-flow-row grid-cols-5 gap-2"
+                                >
+                                  {colorsList.map((color, idx) => (
+                                    <RadioGroup.Item
+                                      key={idx}
+                                      value={color.value}
+                                      className="h-8 w-8 rounded-full [&[data-state=checked]]:ring-2 [&[data-state=checked]]:ring-indigo-700 [&[data-state=checked]]:ring-offset-2"
+                                      style={{ backgroundColor: color.value }}
+                                    ></RadioGroup.Item>
+                                  ))}
+                                </RadioGroup.Root>
+                              )}
+                            />
+                          </Popover.Content>
+                        </Popover.Portal>
+                      </Popover.Root>
+                    </div>
+                  </div>
+                  {/* <label
+                    className="block text-zinc-700 font-semibold text-sm mb-1"
+                    htmlFor="globalColorField"
+                  >
                     Text Color
-                  </span>
+                  </label>
+                  <input
+                    {...formMethods.register('global.color')}
+                    id="globalColorField"
+                    type="text"
+                    className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  /> */}
                 </div>
-                <div className="flex h-[42px]">
-                  <div className="grow">
-                    <Popover.Root>
-                      <Popover.Trigger className="text-left w-full rounded-l-md border py-2 px-3 border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                        <div className="flex items-center">
-                          <div
-                            className="h-4 w-4 rounded"
-                            style={{ backgroundColor: global.color }}
-                          ></div>
-                          <span className="ml-2">{global.color}</span>
-                        </div>
-                      </Popover.Trigger>
-                      <Popover.Anchor />
-                      <Popover.Portal>
-                        <Popover.Content className="p-1 rounded-lg shadow-lg">
-                          <Controller
-                            name={'global.color'}
-                            control={formMethods.control}
-                            render={({ field: { value, onChange } }) => (
-                              <HexColorPicker
-                                color={value}
-                                onChange={onChange}
-                              />
-                            )}
-                          />
-                        </Popover.Content>
-                      </Popover.Portal>
-                    </Popover.Root>
-                  </div>
-                  <div className="h-full">
-                    <Popover.Root>
-                      <Popover.Trigger className="h-full text-left w-full rounded-r-md border border-l-0 py-2 px-3 border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                        <Palette className="w-4 h-4" />
-                      </Popover.Trigger>
-                      <Popover.Anchor />
-                      <Popover.Portal>
-                        <Popover.Content className="p-3 rounded-lg shadow-lg w-fit max-h-48 overflow-y-auto">
-                          <Controller
-                            name={'global.color'}
-                            control={formMethods.control}
-                            render={({ field: { value, onChange } }) => (
-                              <RadioGroup.Root
-                                value={value}
-                                onValueChange={onChange}
-                                className="grid grid-cols-5 grid-flow-row gap-2"
-                              >
-                                {colorsList.map((color, idx) => (
-                                  <RadioGroup.Item
-                                    key={idx}
-                                    value={color.value}
-                                    className="w-8 h-8 rounded-full [&[data-state=checked]]:ring-2 [&[data-state=checked]]:ring-offset-2 [&[data-state=checked]]:ring-indigo-700"
-                                    style={{ backgroundColor: color.value }}
-                                  ></RadioGroup.Item>
-                                ))}
-                              </RadioGroup.Root>
-                            )}
-                          />
-                        </Popover.Content>
-                      </Popover.Portal>
-                    </Popover.Root>
-                  </div>
-                </div>
-
-                {/* <label
-                  className="block text-zinc-700 font-semibold text-sm mb-1"
-                  htmlFor="globalColorField"
-                >
-                  Text Color
-                </label>
-                <input
-                  {...formMethods.register('global.color')}
-                  id="globalColorField"
-                  type="text"
-                  className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                /> */}
               </div>
             </div>
           </div>
@@ -468,7 +467,7 @@ const EditView = () => {
                 <SortableItem id={v.id}>
                   <div
                     className={clsx(
-                      'rounded-lg overflow-hidden',
+                      'overflow-hidden rounded-lg',
                       activeItem?.id === v.id ? 'bg-gray-200' : 'bg-white'
                     )}
                   >
@@ -522,19 +521,19 @@ const ItemBlock = ({
   const getIcon = (value) => {
     switch (value) {
       case BlockType['Text']:
-        return <Type className="w-4 h-4" />
+        return <Type className="h-4 w-4" />
       case BlockType['Divider']:
-        return <FlipVertical className="w-4 h-4" />
+        return <FlipVertical className="h-4 w-4" />
       case BlockType['Code']:
-        return <Code2 className="w-4 h-4" />
+        return <Code2 className="h-4 w-4" />
       case BlockType['Image']:
-        return <Image className="w-4 h-4" />
+        return <Image className="h-4 w-4" />
       case BlockType['Quote']:
-        return <Quote className="w-4 h-4" />
+        return <Quote className="h-4 w-4" />
       case BlockType['H1']:
-        return <PlusCircle className="w-4 h-4" />
+        return <PlusCircle className="h-4 w-4" />
       default:
-        return <PlusSquare className="w-4 h-4" />
+        return <PlusSquare className="h-4 w-4" />
     }
   }
 
@@ -578,20 +577,20 @@ const ItemBlock = ({
         >
           <DropdownMenu.Root onOpenChange={setIsMenuActive}>
             <DropdownMenu.Trigger asChild>
-              <button className="h-6 w-6 rounded hover:bg-zinc-100 flex items-center justify-center">
-                <Plus className="w-4 h-4 text-gray-500" />
+              <button className="flex h-6 w-6 items-center justify-center rounded hover:bg-zinc-100">
+                <Plus className="h-4 w-4 text-gray-500" />
               </button>
             </DropdownMenu.Trigger>
 
             <DropdownMenu.Portal>
               <DropdownMenu.Content
                 align="start"
-                className="w-48 py-2 bg-white rounded-md border border-zinc-200 shadow-lg"
+                className="w-48 rounded-md border border-zinc-200 bg-white py-2 shadow-lg"
               >
                 {Object.entries(BlockType).map(([key, blockTypeValue], idx) => (
                   <DropdownMenu.Item
                     key={idx}
-                    className="flex items-center hover:bg-zinc-100 py-1 px-2 outline-none cursor-pointer"
+                    className="flex cursor-pointer items-center py-1 px-2 outline-none hover:bg-zinc-100"
                     onClick={() =>
                       addItem({
                         id: getNanoId(),
@@ -615,24 +614,24 @@ const ItemBlock = ({
             <DropdownMenu.Trigger asChild>
               <DragHandle
                 isDragDisabled={isMenuActive}
-                className="h-6 w-6 rounded hover:bg-zinc-100 flex items-center justify-center"
+                className="flex h-6 w-6 items-center justify-center rounded hover:bg-zinc-100"
               />
             </DropdownMenu.Trigger>
 
             <DropdownMenu.Portal>
               <DropdownMenu.Content
                 align="start"
-                className="w-48 py-2 bg-white rounded-md border border-zinc-200 shadow-lg"
+                className="w-48 rounded-md border border-zinc-200 bg-white py-2 shadow-lg"
               >
                 <DropdownMenu.Item
-                  className="flex items-center hover:bg-zinc-100 py-1 px-2 outline-none cursor-pointer"
+                  className="flex cursor-pointer items-center py-1 px-2 outline-none hover:bg-zinc-100"
                   onClick={duplicateItem}
                 >
                   <Copy className="h-4 w-4" />
                   <p className="pl-2">Duplicate Item</p>
                 </DropdownMenu.Item>
                 <DropdownMenu.Item
-                  className="flex items-center hover:bg-zinc-100 py-1 px-2 outline-none cursor-pointer"
+                  className="flex cursor-pointer items-center py-1 px-2 outline-none hover:bg-zinc-100"
                   onClick={removeItem}
                 >
                   <Trash2 className="h-4 w-4" />

@@ -49,11 +49,11 @@ export const DragHandle = forwardRef(function DragHandle(
   { isDragDisabled, ...props },
   ref
 ) {
-  const {
-    attributes,
-    listeners,
-    ref: setActivatorNodeRef,
-  } = useContext(SortableItemContext)
+  // const {
+  //   attributes,
+  //   listeners,
+  //   ref: setActivatorNodeRef,
+  // } = useContext(SortableItemContext)
 
   return (
     <button
