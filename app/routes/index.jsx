@@ -613,7 +613,10 @@ const ItemBlock = ({
           </DropdownMenu.Root>
           <DropdownMenu.Root onOpenChange={setIsMenuActive}>
             <DropdownMenu.Trigger asChild>
-              <DragHandle className="h-6 w-6 rounded hover:bg-zinc-100 flex items-center justify-center" />
+              <DragHandle
+                isDragDisabled={isMenuActive}
+                className="h-6 w-6 rounded hover:bg-zinc-100 flex items-center justify-center"
+              />
             </DropdownMenu.Trigger>
 
             <DropdownMenu.Portal>

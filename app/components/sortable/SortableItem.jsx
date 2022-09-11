@@ -1,11 +1,4 @@
-import { createContext, useContext, useMemo, useState } from 'react'
-import {
-  Box,
-  forwardRef,
-  Icon,
-  IconButton,
-  useMergeRefs,
-} from '@chakra-ui/react'
+import { createContext, forwardRef, useContext, useMemo } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { GripVertical } from 'lucide-react'
@@ -45,26 +38,28 @@ export function SortableItem({ id, children }) {
 
   return (
     <SortableItemContext.Provider value={context}>
-      <Box ref={setNodeRef} style={style}>
+      <div ref={setNodeRef} style={style}>
         {children}
-      </Box>
+      </div>
     </SortableItemContext.Provider>
   )
 }
 
-export const DragHandle = forwardRef((props, ref) => {
+export const DragHandle = forwardRef(function DragHandle(
+  { isDragDisabled, ...props },
+  ref
+) {
   const {
     attributes,
     listeners,
-    ref: innerRef,
+    ref: setActivatorNodeRef,
   } = useContext(SortableItemContext)
-  const refs = useMergeRefs(innerRef, ref)
 
   return (
     <button
-      {...attributes}
-      {...(props.isDragDisabled ? {} : listeners)}
-      ref={refs}
+      // {...attributes}
+      // {...(isDragDisabled && listeners)}
+      ref={ref}
       {...props}
     >
       <GripVertical className="w-4 h-4 text-gray-500" />
