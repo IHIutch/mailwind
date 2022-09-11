@@ -6,10 +6,6 @@ import {
   MenuGroup,
   MenuItem,
   MenuList,
-  Popover,
-  PopoverBody,
-  PopoverContent,
-  PopoverTrigger,
   useOutsideClick,
 } from '@chakra-ui/react'
 import { getNanoId } from '~/utils/functions'
@@ -35,10 +31,14 @@ import {
   SortOverlay,
 } from '~/components/sortable/SortableItem'
 import {
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
   Code2,
   Copy,
   FlipVertical,
   Image,
+  Palette,
   Plus,
   PlusCircle,
   PlusSquare,
@@ -47,6 +47,9 @@ import {
   Trash2,
   Type,
 } from 'lucide-react'
+import * as ToggleGroup from '@radix-ui/react-toggle-group'
+import * as Popover from '@radix-ui/react-popover'
+import * as RadioGroup from '@radix-ui/react-radio-group'
 
 import Navbar from '~/components/Navbar'
 import PaddingController from '~/components/controllers/PaddingController'
@@ -58,12 +61,13 @@ import {
   useFormContext,
   useWatch,
 } from 'react-hook-form'
-import preflight from '~/styles/preflight.css'
+// import preflight from '~/styles/preflight.css'
 import clsx from 'clsx'
+import { HexColorPicker } from 'react-colorful'
 
-export function links() {
-  return [{ rel: 'stylesheet', href: preflight }]
-}
+// export function links() {
+//   return [{ rel: 'stylesheet', href: preflight }]
+// }
 
 export const loader = async () => {
   const blocks = [
@@ -137,11 +141,15 @@ export default function Tiptap() {
   const [previewSize, setPreviewSize] = useState('desktop')
 
   const offset = 72
-  const desktopSize = 600
   const mobileSize = 480
 
   const formMethods = useForm({
     defaultValues: {
+      global: {
+        containerAlign: 'center',
+        containerWidth: '600px',
+        color: '#000000',
+      },
       blocks: loaderBlocks,
     },
   })
@@ -171,28 +179,195 @@ export default function Tiptap() {
     }
   }, [htmlFetcher.data?.html])
 
+  const global = useWatch({
+    name: 'global',
+    control: formMethods.control,
+  })
+
+  const colorsList = [
+    { label: 'zinc.50', value: '#fafafa' },
+    { label: 'zinc.100', value: '#f5f5f5' },
+    { label: 'zinc.200', value: '#e5e5e5' },
+    { label: 'zinc.300', value: '#d4d4d8' },
+    { label: 'zinc.400', value: '#a1a1aa' },
+    { label: 'zinc.500', value: '#71717a' },
+    { label: 'zinc.600', value: '#52525b' },
+    { label: 'zinc.700', value: '#3f3f46' },
+    { label: 'zinc.800', value: '#262626' },
+    { label: 'zinc.900', value: '#171717' },
+  ]
+
   return (
-    <div>
+    <div className="h-full pt-16">
       <FormProvider {...formMethods}>
         <Navbar
           previewSize={previewSize}
           setPreviewSize={setPreviewSize}
           handleDownload={formMethods.handleSubmit(handleDownload)}
         />
-        <div className="h-full">
-          <div className="py-12 mt-16">
-            <div className="px-6">
-              <div
-                className="relative mx-auto"
-                style={{
-                  width:
-                    previewSize === 'desktop'
-                      ? desktopSize + offset + 'px'
-                      : mobileSize + offset + 'px',
-                  left: (offset * -1) / 2 + 'px',
-                }}
-              >
-                <EditView />
+        <div className="flex h-full">
+          <div
+            className={clsx('px-4', [
+              global.containerAlign === 'left' && 'mr-auto',
+              global.containerAlign === 'center' && 'mx-auto',
+              global.containerAlign === 'right' && 'ml-auto',
+            ])}
+          >
+            <div
+              className="relative py-12 px-6"
+              style={{
+                width:
+                  previewSize === 'desktop'
+                    ? parseInt(global.containerWidth.replace('px', '')) +
+                      offset +
+                      'px'
+                    : mobileSize + offset + 'px',
+                left: (offset * -1) / 2 + 'px',
+              }}
+            >
+              <EditView />
+            </div>
+          </div>
+          <div className="w-[300px] bg-white border-l border-zinc-200 h-full right-0 inset-y-0">
+            <div className="py-4">
+              <div className="mb-4 px-3">
+                <h2 className="font-semibold">Global Attributes</h2>
+              </div>
+              <div className="mb-4 px-3">
+                <fieldset>
+                  <legend className="block text-gray-700 font-semibold text-sm mb-1">
+                    Container Align
+                  </legend>
+                  <Controller
+                    name={'global.containerAlign'}
+                    control={formMethods.control}
+                    render={({ field: { value, onChange } }) => (
+                      <ToggleGroup.Root
+                        type="single"
+                        value={value}
+                        onValueChange={onChange}
+                        className="inline-flex shadow-sm h-10 rounded-md"
+                      >
+                        <ToggleGroup.Item
+                          value="left"
+                          className="border border-r-0 text-zinc-500 hover:bg-indigo-50 border-zinc-300 font-bold py-1 px-2 rounded-l-md [&[data-state=on]]:bg-indigo-100 [&[data-state=on]]:text-indigo-600 [&[data-state=on]]:border-indigo-100"
+                        >
+                          <AlignLeft />
+                        </ToggleGroup.Item>
+                        <ToggleGroup.Item
+                          value="center"
+                          className="border border-x-0 text-zinc-500 hover:bg-indigo-50 border-zinc-300 font-bold py-1 px-2 [&[data-state=on]]:bg-indigo-100 [&[data-state=on]]:text-indigo-600 [&[data-state=on]]:border-indigo-100"
+                        >
+                          <AlignCenter />
+                        </ToggleGroup.Item>
+                        <ToggleGroup.Item
+                          value="right"
+                          className="border border-l-0 text-zinc-500 hover:bg-indigo-50 border-zinc-300 font-bold py-1 px-2 rounded-r-md [&[data-state=on]]:bg-indigo-100 [&[data-state=on]]:text-indigo-600 [&[data-state=on]]:border-indigo-100"
+                        >
+                          <AlignRight />
+                        </ToggleGroup.Item>
+                      </ToggleGroup.Root>
+                    )}
+                  />
+                </fieldset>
+              </div>
+              <div className="mb-4 px-3">
+                <label
+                  className="block text-zinc-700 font-semibold text-sm mb-1"
+                  htmlFor="globalWidthField"
+                >
+                  Container Width
+                </label>
+                <input
+                  {...formMethods.register('global.containerWidth')}
+                  id="globalWidthField"
+                  type="text"
+                  className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                />
+              </div>
+              <div className="px-3 border-t border-zinc-200 pt-4">
+                <div className="mb-1">
+                  <span className="text-zinc-700 font-semibold text-sm">
+                    Text Color
+                  </span>
+                </div>
+                <div className="flex h-[42px]">
+                  <div className="grow">
+                    <Popover.Root>
+                      <Popover.Trigger className="text-left w-full rounded-l-md border py-2 px-3 border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        <div className="flex items-center">
+                          <div
+                            className="h-4 w-4 rounded"
+                            style={{ backgroundColor: global.color }}
+                          ></div>
+                          <span className="ml-2">{global.color}</span>
+                        </div>
+                      </Popover.Trigger>
+                      <Popover.Anchor />
+                      <Popover.Portal>
+                        <Popover.Content className="p-1 rounded-lg shadow-lg">
+                          <Popover.Arrow className="fill-white" />
+                          <Controller
+                            name={'global.color'}
+                            control={formMethods.control}
+                            render={({ field: { value, onChange } }) => (
+                              <HexColorPicker
+                                color={value}
+                                onChange={onChange}
+                              />
+                            )}
+                          />
+                        </Popover.Content>
+                      </Popover.Portal>
+                    </Popover.Root>
+                  </div>
+                  <div className="h-full">
+                    <Popover.Root>
+                      <Popover.Trigger className="h-full text-left w-full rounded-r-md border border-l-0 py-2 px-3 border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        <Palette className="w-4 h-4" />
+                      </Popover.Trigger>
+                      <Popover.Anchor />
+                      <Popover.Portal>
+                        <Popover.Content className="p-3 rounded-lg shadow-lg w-fit max-h-48 overflow-y-auto">
+                          <Popover.Arrow className="fill-white" />
+                          <Controller
+                            name={'global.color'}
+                            control={formMethods.control}
+                            render={({ field: { value, onChange } }) => (
+                              <RadioGroup.Root
+                                value={value}
+                                onValueChange={onChange}
+                                className="grid grid-cols-5 grid-flow-row gap-2"
+                              >
+                                {colorsList.map((color, idx) => (
+                                  <RadioGroup.Item
+                                    key={idx}
+                                    value={color.value}
+                                    className="w-8 h-8 rounded-full [&[data-state=checked]]:ring-2 [&[data-state=checked]]:ring-offset-2 [&[data-state=checked]]:ring-indigo-700"
+                                    style={{ backgroundColor: color.value }}
+                                  ></RadioGroup.Item>
+                                ))}
+                              </RadioGroup.Root>
+                            )}
+                          />
+                        </Popover.Content>
+                      </Popover.Portal>
+                    </Popover.Root>
+                  </div>
+                </div>
+
+                {/* <label
+                  className="block text-zinc-700 font-semibold text-sm mb-1"
+                  htmlFor="globalColorField"
+                >
+                  Text Color
+                </label>
+                <input
+                  {...formMethods.register('global.color')}
+                  id="globalColorField"
+                  type="text"
+                  className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                /> */}
               </div>
             </div>
           </div>
@@ -496,7 +671,7 @@ const ItemBlock = ({
               </>
             )}
           </Menu>
-          <Popover
+          {/* <Popover
             onOpen={() => setIsMenuActive(true)}
             onClose={() => setIsMenuActive(false)}
             placement="bottom-start"
@@ -519,10 +694,10 @@ const ItemBlock = ({
                 />
               </PopoverBody>
             </PopoverContent>
-          </Popover>
+          </Popover> */}
         </div>
       </div>
-      <div className="grow px-2">
+      <div className="grow pl-2">
         <div
           style={{
             paddingLeft: itemPadding?.[1] || '0',

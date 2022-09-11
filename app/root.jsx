@@ -42,7 +42,7 @@ const Document = withEmotionCache(({ children }, emotionCache) => {
   }, [])
 
   return (
-    <html lang="en">
+    <html lang="en" className="h-full">
       <head>
         <Meta />
         <Links />
@@ -54,7 +54,7 @@ const Document = withEmotionCache(({ children }, emotionCache) => {
           />
         ))}
       </head>
-      <body>
+      <body className="h-full">
         <ChakraProvider>{children}</ChakraProvider>
         <ScrollRestoration />
 
