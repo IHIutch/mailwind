@@ -50,6 +50,7 @@ import {
 import * as ToggleGroup from '@radix-ui/react-toggle-group'
 import * as Popover from '@radix-ui/react-popover'
 import * as RadioGroup from '@radix-ui/react-radio-group'
+import * as Label from '@radix-ui/react-label'
 
 import Navbar from '~/components/Navbar'
 import PaddingController from '~/components/controllers/PaddingController'
@@ -235,36 +236,41 @@ export default function Tiptap() {
               </div>
               <div className="mb-4 px-3">
                 <fieldset>
-                  <legend className="block text-gray-700 font-semibold text-sm mb-1">
-                    Container Align
-                  </legend>
+                  <Label.Root htmlFor="containerAlignField" asChild>
+                    <legend className="block text-gray-700 font-semibold text-sm mb-1">
+                      Container Align
+                    </legend>
+                  </Label.Root>
                   <Controller
                     name={'global.containerAlign'}
                     control={formMethods.control}
                     render={({ field: { value, onChange } }) => (
                       <ToggleGroup.Root
+                        id="containerAlignField"
                         type="single"
                         value={value}
-                        onValueChange={onChange}
+                        onValueChange={(value) =>
+                          value ? onChange(value) : null
+                        }
                         className="inline-flex shadow-sm h-10 rounded-md"
                       >
                         <ToggleGroup.Item
                           value="left"
                           className="border border-r-0 text-zinc-500 hover:bg-indigo-50 border-zinc-300 font-bold py-1 px-2 rounded-l-md [&[data-state=on]]:bg-indigo-100 [&[data-state=on]]:text-indigo-600 [&[data-state=on]]:border-indigo-100"
                         >
-                          <AlignLeft />
+                          <AlignLeft className="w-5 h-5" />
                         </ToggleGroup.Item>
                         <ToggleGroup.Item
                           value="center"
                           className="border border-x-0 text-zinc-500 hover:bg-indigo-50 border-zinc-300 font-bold py-1 px-2 [&[data-state=on]]:bg-indigo-100 [&[data-state=on]]:text-indigo-600 [&[data-state=on]]:border-indigo-100"
                         >
-                          <AlignCenter />
+                          <AlignCenter className="w-5 h-5" />
                         </ToggleGroup.Item>
                         <ToggleGroup.Item
                           value="right"
                           className="border border-l-0 text-zinc-500 hover:bg-indigo-50 border-zinc-300 font-bold py-1 px-2 rounded-r-md [&[data-state=on]]:bg-indigo-100 [&[data-state=on]]:text-indigo-600 [&[data-state=on]]:border-indigo-100"
                         >
-                          <AlignRight />
+                          <AlignRight className="w-5 h-5" />
                         </ToggleGroup.Item>
                       </ToggleGroup.Root>
                     )}
@@ -272,12 +278,12 @@ export default function Tiptap() {
                 </fieldset>
               </div>
               <div className="mb-4 px-3">
-                <label
-                  className="block text-zinc-700 font-semibold text-sm mb-1"
+                <Label.Root
+                  className="text-zinc-700 font-semibold text-sm mb-1"
                   htmlFor="globalWidthField"
                 >
                   Container Width
-                </label>
+                </Label.Root>
                 <input
                   {...formMethods.register('global.containerWidth')}
                   id="globalWidthField"

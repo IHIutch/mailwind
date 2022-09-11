@@ -16,6 +16,7 @@
     "@emotion/react": "11.10.0",
     "@emotion/server": "11.10.0",
     "@emotion/styled": "11.10.0",
+    "@radix-ui/react-label": "^1.0.0",
     "@radix-ui/react-popover": "^1.0.0",
     "@radix-ui/react-radio-group": "^1.0.0",
     "@radix-ui/react-toggle-group": "^1.0.0",
