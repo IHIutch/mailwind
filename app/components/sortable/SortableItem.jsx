@@ -9,12 +9,7 @@ import {
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { GripVertical } from 'lucide-react'
-import {
-  defaultDropAnimationSideEffects,
-  DragOverlay,
-  useDndContext,
-  useDndMonitor,
-} from '@dnd-kit/core'
+import { defaultDropAnimationSideEffects, DragOverlay } from '@dnd-kit/core'
 
 const SortableItemContext = createContext({
   attributes: {},
@@ -66,15 +61,14 @@ export const DragHandle = forwardRef((props, ref) => {
   const refs = useMergeRefs(innerRef, ref)
 
   return (
-    <IconButton
-      size="xs"
-      variant="ghost"
-      icon={<Icon color="gray.500" boxSize="3.5" as={GripVertical} />}
+    <button
       {...attributes}
       {...(props.isDragDisabled ? {} : listeners)}
       ref={refs}
       {...props}
-    />
+    >
+      <GripVertical className="w-4 h-4 text-gray-500" />
+    </button>
   )
 })
 

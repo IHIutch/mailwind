@@ -1,13 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
-import {
-  IconButton,
-  Menu,
-  MenuButton,
-  MenuGroup,
-  MenuItem,
-  MenuList,
-  useOutsideClick,
-} from '@chakra-ui/react'
+import { useEffect, useState } from 'react'
 import { getNanoId } from '~/utils/functions'
 import { BlockType, defaultAttributes } from '~/utils/types'
 import { useFetcher, useLoaderData } from '@remix-run/react'
@@ -51,6 +42,7 @@ import * as ToggleGroup from '@radix-ui/react-toggle-group'
 import * as Popover from '@radix-ui/react-popover'
 import * as RadioGroup from '@radix-ui/react-radio-group'
 import * as Label from '@radix-ui/react-label'
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 
 import Navbar from '~/components/Navbar'
 import PaddingController from '~/components/controllers/PaddingController'
@@ -312,7 +304,6 @@ export default function Tiptap() {
                       <Popover.Anchor />
                       <Popover.Portal>
                         <Popover.Content className="p-1 rounded-lg shadow-lg">
-                          <Popover.Arrow className="fill-white" />
                           <Controller
                             name={'global.color'}
                             control={formMethods.control}
@@ -335,7 +326,6 @@ export default function Tiptap() {
                       <Popover.Anchor />
                       <Popover.Portal>
                         <Popover.Content className="p-3 rounded-lg shadow-lg w-fit max-h-48 overflow-y-auto">
-                          <Popover.Arrow className="fill-white" />
                           <Controller
                             name={'global.color'}
                             control={formMethods.control}
@@ -529,12 +519,6 @@ const ItemBlock = ({
   const [isActive, setIsActive] = useState(false)
   const [isMenuActive, setIsMenuActive] = useState(false)
 
-  const ref = useRef()
-  useOutsideClick({
-    ref: ref,
-    handler: () => setIsActive(false),
-  })
-
   const getIcon = (value) => {
     switch (value) {
       case BlockType['Text']:
@@ -572,7 +556,6 @@ const ItemBlock = ({
         paddingTop: itemPadding?.[0] || '0',
         paddingBottom: itemPadding?.[2] || '0',
       }}
-      ref={ref}
       onMouseEnter={() => setIsActive(true)}
       onMouseLeave={() => {
         !isMenuActive && setIsActive(false)
@@ -593,33 +576,22 @@ const ItemBlock = ({
             isActive ? 'visible opacity-100' : 'invisible opacity-0'
           )}
         >
-          <Menu
-            onOpen={() => setIsMenuActive(true)}
-            onClose={() => setIsMenuActive(false)}
-          >
-            <MenuButton
-              as={IconButton}
-              size="xs"
-              variant="ghost"
-              icon={<Plus className="h-4 w-4 text-gray-500" />}
-            />
+          <DropdownMenu.Root onOpenChange={setIsMenuActive}>
+            <DropdownMenu.Trigger asChild>
+              <button className="h-6 w-6 rounded hover:bg-zinc-100 flex items-center justify-center">
+                <Plus className="w-4 h-4 text-gray-500" />
+              </button>
+            </DropdownMenu.Trigger>
 
-            <MenuList pt="0" pb="1">
-              <MenuGroup
-                title="Add Item"
-                py="1"
-                px="3"
-                m="0"
-                bg="gray.50"
-                borderBottomWidth="1px"
-                borderColor="gray.200"
+            <DropdownMenu.Portal>
+              <DropdownMenu.Content
+                align="start"
+                className="w-48 py-2 bg-white rounded-md border border-zinc-200 shadow-lg"
               >
                 {Object.entries(BlockType).map(([key, blockTypeValue], idx) => (
-                  <MenuItem
+                  <DropdownMenu.Item
                     key={idx}
-                    py="1"
-                    fontSize="sm"
-                    fontWeight="medium"
+                    className="flex items-center hover:bg-zinc-100 py-1 px-2 outline-none cursor-pointer"
                     onClick={() =>
                       addItem({
                         id: getNanoId(),
@@ -632,51 +604,40 @@ const ItemBlock = ({
                       })
                     }
                   >
-                    <div className="flex items-center">
-                      {getIcon(blockTypeValue)}
-                      <p className="pl-2">{key}</p>
-                    </div>
-                  </MenuItem>
+                    {getIcon(blockTypeValue)}
+                    <p className="pl-2">{key}</p>
+                  </DropdownMenu.Item>
                 ))}
-              </MenuGroup>
-            </MenuList>
-          </Menu>
-          <Menu
-            onOpen={() => setIsMenuActive(true)}
-            onClose={() => setIsMenuActive(false)}
-          >
-            {({ isOpen }) => (
-              <>
-                <MenuButton as={DragHandle} isDragDisabled={isOpen} />
-                <MenuList>
-                  <MenuItem
-                    py="1"
-                    fontSize="sm"
-                    fontWeight="medium"
-                    alignItems="center"
-                    onClick={duplicateItem}
-                  >
-                    <div className="flex items-center">
-                      <Copy className="h-4 w-4" />
-                      <p className="pl-2">Duplicate Item</p>
-                    </div>
-                  </MenuItem>
-                  <MenuItem
-                    py="1"
-                    fontSize="sm"
-                    fontWeight="medium"
-                    alignItems="center"
-                    onClick={removeItem}
-                  >
-                    <div className="flex items-center">
-                      <Trash2 className="h-4 w-4" />
-                      <p className="pl-2">Delete Item</p>
-                    </div>
-                  </MenuItem>
-                </MenuList>
-              </>
-            )}
-          </Menu>
+              </DropdownMenu.Content>
+            </DropdownMenu.Portal>
+          </DropdownMenu.Root>
+          <DropdownMenu.Root onOpenChange={setIsMenuActive}>
+            <DropdownMenu.Trigger asChild>
+              <DragHandle className="h-6 w-6 rounded hover:bg-zinc-100 flex items-center justify-center" />
+            </DropdownMenu.Trigger>
+
+            <DropdownMenu.Portal>
+              <DropdownMenu.Content
+                align="start"
+                className="w-48 py-2 bg-white rounded-md border border-zinc-200 shadow-lg"
+              >
+                <DropdownMenu.Item
+                  className="flex items-center hover:bg-zinc-100 py-1 px-2 outline-none cursor-pointer"
+                  onClick={duplicateItem}
+                >
+                  <Copy className="h-4 w-4" />
+                  <p className="pl-2">Duplicate Item</p>
+                </DropdownMenu.Item>
+                <DropdownMenu.Item
+                  className="flex items-center hover:bg-zinc-100 py-1 px-2 outline-none cursor-pointer"
+                  onClick={removeItem}
+                >
+                  <Trash2 className="h-4 w-4" />
+                  <p className="pl-2">Delete Item</p>
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Portal>
+          </DropdownMenu.Root>
           {/* <Popover
             onOpen={() => setIsMenuActive(true)}
             onClose={() => setIsMenuActive(false)}
