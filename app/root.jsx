@@ -6,6 +6,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from '@remix-run/react'
+import { ActiveElementProvider } from './context/activeElement'
 import styles from './styles/app.css'
 
 export const meta = () => ({
@@ -18,7 +19,7 @@ export function links() {
   return [{ rel: 'stylesheet', href: styles }]
 }
 
-export default function App() {
+const Document = ({ children }) => {
   return (
     <html lang="en" className="h-full">
       <head>
@@ -26,7 +27,7 @@ export default function App() {
         <Links />
       </head>
       <body className="h-full">
-        <Outlet />
+        {children}
         <ScrollRestoration />
 
         {process.env.NODE_ENV === 'production' ? (
@@ -40,5 +41,15 @@ export default function App() {
         <LiveReload />
       </body>
     </html>
+  )
+}
+
+export default function App() {
+  return (
+    <Document>
+      <ActiveElementProvider>
+        <Outlet />
+      </ActiveElementProvider>
+    </Document>
   )
 }

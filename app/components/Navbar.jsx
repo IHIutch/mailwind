@@ -24,13 +24,13 @@ export default function Navbar({
         >
           <ToggleGroup.Item
             value="desktop"
-            className="rounded-l-md border border-r-0 border-zinc-300 py-0.5 px-2 text-sm font-bold text-zinc-500 hover:bg-indigo-50 [&[data-state=on]]:border-indigo-100 [&[data-state=on]]:bg-indigo-100 [&[data-state=on]]:text-indigo-600"
+            className="rounded-l-md border border-r-0 border-zinc-300 py-0.5 px-2 text-sm font-semibold text-zinc-500 hover:bg-indigo-50 [&[data-state=on]]:border-indigo-100 [&[data-state=on]]:bg-indigo-100 [&[data-state=on]]:text-indigo-600"
           >
             Desktop
           </ToggleGroup.Item>
           <ToggleGroup.Item
             value="mobile"
-            className="rounded-r-md border border-l-0 border-zinc-300 py-0.5 px-2 text-sm font-bold text-zinc-500 hover:bg-indigo-50 [&[data-state=on]]:border-indigo-100 [&[data-state=on]]:bg-indigo-100 [&[data-state=on]]:text-indigo-600"
+            className="rounded-r-md border border-l-0 border-zinc-300 py-0.5 px-2 text-sm font-semibold text-zinc-500 hover:bg-indigo-50 [&[data-state=on]]:border-indigo-100 [&[data-state=on]]:bg-indigo-100 [&[data-state=on]]:text-indigo-600"
           >
             Mobile
           </ToggleGroup.Item>
