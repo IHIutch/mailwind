@@ -381,6 +381,7 @@ const ItemBlock = ({
       onMouseLeave={() => {
         !isMenuActive && setIsActive(false)
       }}
+      onClick={handleSetActiveItem}
     >
       <div
         className={clsx(
@@ -467,7 +468,6 @@ const ItemBlock = ({
       </div>
       <div className="grow">
         <div
-          onClick={handleSetActiveItem}
           style={{
             paddingLeft: itemPadding?.[1] || '0',
             paddingRight: itemPadding?.[3] || '0',
