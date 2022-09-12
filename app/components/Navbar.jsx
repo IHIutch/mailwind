@@ -71,40 +71,16 @@ export default function Navbar({
                     placeholder="Your Email..."
                     className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   />
-                  <button className="ml-2 h-10 cursor-pointer rounded-md bg-indigo-500 px-4 font-semibold text-white hover:bg-indigo-600">
+                  <button
+                    className="ml-2 h-10 cursor-pointer rounded-md bg-indigo-500 px-4 font-semibold text-white hover:bg-indigo-600"
+                    onClick={handleSendEmail}
+                  >
                     <Send className="h-5 w-5" />
                   </button>
                 </div>
               </Popover.Content>
             </Popover.Portal>
           </Popover.Root>
-
-          {/* <Popover placement="bottom-end">
-            <PopoverTrigger>
-              <button
-                className="rounded-md bg-indigo-500 py-2 px-4 font-semibold text-white hover:bg-indigo-600 disabled:cursor-not-allowed disabled:bg-indigo-100 disabled:text-zinc-500"
-                disabled
-              >
-                Send Test
-              </button>
-            </PopoverTrigger>
-            <PopoverContent>
-              <PopoverArrow />
-              <PopoverCloseButton />
-              <Flex p="4" alignItems="flex-end">
-                <FormControl>
-                  <FormLabel htmlFor="yourEmail">Your Email</FormLabel>
-                  <Input id="yourEmail" type="email" />
-                </FormControl>
-                <IconButton
-                  ml="2"
-                  colorScheme="blue"
-                  icon={<Icon boxSize="4" as={Send} />}
-                  onClick={handleSendEmail}
-                />
-              </Flex>
-            </PopoverContent>
-          </Popover> */}
         </div>
       </div>
     </div>

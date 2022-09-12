@@ -10,7 +10,7 @@ const SortableItemContext = createContext({
   ref() {},
 })
 
-export function SortableItem({ id, children }) {
+export const SortableItem = ({ id, children }) => {
   const {
     attributes,
     listeners,
@@ -62,7 +62,7 @@ export const DragHandle = forwardRef(function DragHandle(
       ref={ref}
       {...props}
     >
-      <GripVertical className="w-4 h-4 text-gray-500" />
+      <GripVertical className="h-4 w-4 text-gray-500" />
     </button>
   )
 })

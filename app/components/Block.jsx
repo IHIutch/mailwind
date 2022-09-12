@@ -1,7 +1,7 @@
-import { components } from '~/utils/types'
+import { blocks } from '~/utils/types'
 
 export default function Block({ type, attributes, value, onChange }) {
-  const Component = components[type]
+  const Component = blocks[type]
   return (
     <Component
       type={type}

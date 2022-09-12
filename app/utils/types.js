@@ -1,9 +1,20 @@
-import CodeBlock from '~/components/blocks/CodeBlock'
-import DividerBlock from '~/components/blocks/DividerBlock'
-import HeadingBlock from '~/components/blocks/HeadingBlock'
-import ImageBlock from '~/components/blocks/ImageBlock'
-import QuoteBlock from '~/components/blocks/QuoteBlock'
-import TextBlock from '~/components/blocks/TextBlock'
+import {
+  CodeBlock,
+  DividerBlock,
+  HeadingBlock,
+  ImageBlock,
+  QuoteBlock,
+  TextBlock,
+} from '~/components/blocks'
+import {
+  CodeSidebar,
+  DividerSidebar,
+  GlobalSidebar,
+  HeadingSidebar,
+  ImageSidebar,
+  QuoteSidebar,
+  TextSidebar,
+} from '~/components/sidebars'
 
 export const BlockType = {
   Text: 'TEXT',
@@ -16,7 +27,7 @@ export const BlockType = {
   Code: 'CODE',
 }
 
-export const components = {
+export const blocks = {
   [BlockType.Text]: TextBlock,
   [BlockType.H1]: HeadingBlock,
   [BlockType.H2]: HeadingBlock,
@@ -25,6 +36,18 @@ export const components = {
   [BlockType.Quote]: QuoteBlock,
   [BlockType.Image]: ImageBlock,
   [BlockType.Code]: CodeBlock,
+}
+
+export const sidebars = {
+  global: GlobalSidebar,
+  [BlockType.Text]: TextSidebar,
+  [BlockType.H1]: HeadingSidebar,
+  [BlockType.H2]: HeadingSidebar,
+  [BlockType.H3]: HeadingSidebar,
+  [BlockType.Divider]: DividerSidebar,
+  [BlockType.Quote]: QuoteSidebar,
+  [BlockType.Image]: ImageSidebar,
+  [BlockType.Code]: CodeSidebar,
 }
 
 export const defaultAttributes = {
