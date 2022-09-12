@@ -57,11 +57,11 @@ import {
 import clsx from 'clsx'
 import { HexColorPicker } from 'react-colorful'
 import {
-  ActiveElementProvider,
-  setActiveElement,
-  useActiveElementDispatch,
-  useActiveElementState,
-} from '~/context/activeElement'
+  ActiveBlockProvider,
+  setActiveBlock,
+  useActiveBlockDispatch,
+  useActiveBlockState,
+} from '~/context/activeBlock'
 
 export const loader = async () => {
   const blocks = [
@@ -132,8 +132,8 @@ export default function Index() {
   const { blocks: loaderBlocks } = useLoaderData()
   const htmlFetcher = useFetcher()
 
-  const { data: activeElement } = useActiveElementState()
-  const dispatch = useActiveElementDispatch()
+  const { data: activeBlock } = useActiveBlockState()
+  const dispatch = useActiveBlockDispatch()
 
   const [previewSize, setPreviewSize] = useState('desktop')
 
@@ -194,8 +194,8 @@ export default function Index() {
     { label: 'zinc.900', value: '#171717' },
   ]
 
-  const handleUnsetActiveElement = () => {
-    dispatch(setActiveElement(null))
+  const handleUnsetActiveBlock = () => {
+    dispatch(setActiveBlock(null))
   }
 
   return (
@@ -236,7 +236,7 @@ export default function Index() {
           <div className="fixed inset-y-0 right-0 w-[300px] border-l border-zinc-200 bg-white pt-16">
             <div className="h-full overflow-y-auto">
               <div className="py-4">
-                {!activeElement ? (
+                {!activeBlock ? (
                   <>
                     <div className="mb-4 px-3">
                       <h2 className="font-semibold">Global Attributes</h2>
@@ -375,17 +375,15 @@ export default function Index() {
                     <div className="relative">
                       <button
                         className="absolute right-2 flex h-8 w-8 items-center justify-center rounded bg-zinc-200 hover:bg-zinc-300"
-                        onClick={handleUnsetActiveElement}
+                        onClick={handleUnsetActiveBlock}
                       >
                         <X className="h-4 w-4" />
                       </button>
                       <div>
                         <div className="mb-4 px-3">
-                          <h2 className="font-semibold">
-                            {activeElement.type}
-                          </h2>
+                          <h2 className="font-semibold">{activeBlock.type}</h2>
                         </div>
-                        {JSON.stringify(activeElement, null, 2)}
+                        {JSON.stringify(activeBlock, null, 2)}
                       </div>
                     </div>
                   </>
@@ -542,7 +540,7 @@ const ItemBlock = ({
   duplicateItem,
   children,
 }) => {
-  const dispatch = useActiveElementDispatch()
+  const dispatch = useActiveBlockDispatch()
   const [isActive, setIsActive] = useState(false)
   const [isMenuActive, setIsMenuActive] = useState(false)
 
@@ -579,7 +577,7 @@ const ItemBlock = ({
   const handleSetActiveItem = () => {
     const { id, type } = getValues(`blocks.${itemIndex}`)
     dispatch(
-      setActiveElement({
+      setActiveBlock({
         id,
         type,
       })

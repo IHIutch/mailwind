@@ -6,7 +6,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from '@remix-run/react'
-import { ActiveElementProvider } from './context/activeElement'
+import { ActiveBlockProvider } from './context/activeBlock'
 import styles from './styles/app.css'
 
 export const meta = () => ({
@@ -47,9 +47,9 @@ const Document = ({ children }) => {
 export default function App() {
   return (
     <Document>
-      <ActiveElementProvider>
+      <ActiveBlockProvider>
         <Outlet />
-      </ActiveElementProvider>
+      </ActiveBlockProvider>
     </Document>
   )
 }
