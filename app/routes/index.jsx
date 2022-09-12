@@ -137,7 +137,7 @@ export default function Index() {
 
   const [previewSize, setPreviewSize] = useState('desktop')
 
-  const offset = 72
+  const offset = 56
   const mobileSize = 480
 
   const formMethods = useForm({
@@ -217,7 +217,7 @@ export default function Index() {
                 ])}
               >
                 <div
-                  className="relative py-12 px-6"
+                  className="relative py-12"
                   style={{
                     width:
                       previewSize === 'desktop'
@@ -598,6 +598,7 @@ const ItemBlock = ({
     >
       <div
         className={clsx(
+          'pr-2',
           itemType === BlockType['H1'] ||
             itemType === BlockType['H2'] ||
             itemType === BlockType['H3']
@@ -702,7 +703,7 @@ const ItemBlock = ({
           </Popover> */}
         </div>
       </div>
-      <div className="grow pl-2">
+      <div className="grow">
         <div
           onClick={handleSetActiveItem}
           style={{
