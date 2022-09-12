@@ -1,15 +1,7 @@
 import { useCallback, useState } from 'react'
-import {
-  Box,
-  Flex,
-  Icon,
-  IconButton,
-  Image,
-  Input,
-  Text,
-} from '@chakra-ui/react'
 import { useDropzone } from 'react-dropzone'
 import { X } from 'lucide-react'
+import clsx from 'clsx'
 
 export default function ImageDropzone({ onChange, value = '' }) {
   const [preview, setPreview] = useState(value)
@@ -40,41 +32,35 @@ export default function ImageDropzone({ onChange, value = '' }) {
   })
 
   return (
-    <Flex rounded="md" overflow="hidden">
+    <div className="flex overflow-hidden rounded-md">
       {preview ? (
-        <Box position="relative" boxSize="100%">
-          <IconButton
-            icon={<Icon boxSize="3.5" as={X} />}
-            size="xs"
-            position="absolute"
-            top="2"
-            right="2"
+        <div className="relative h-full w-full">
+          <button
+            className="absolute top-2 right-2 h-8 w-8 rounded"
             onClick={handleClearImage}
-          />
-          <Image boxSize="100%" src={preview} objectFit="cover" alt="" />
-        </Box>
+          >
+            <X className="h-4 w-4" />
+          </button>
+          <img className="h-full w-full object-cover" src={preview} alt="" />
+        </div>
       ) : (
-        <Flex
-          boxSize="100%"
-          bg={isDragActive ? 'blue.100' : 'gray.100'}
-          borderColor={isDragActive ? 'blue.200' : 'gray.200'}
-          borderWidth="1px"
-          align="center"
-          justify="center"
-          textAlign="center"
-          fontWeight="semibold"
-          transition="all 0.2s ease"
-          cursor="pointer"
+        <div
+          className={clsx(
+            'flex h-full w-full cursor-pointer items-center justify-center border text-center font-semibold transition-colors',
+            isDragActive
+              ? 'border-indigo-200 bg-indigo-100'
+              : 'border-zinc-200 bg-zinc-100'
+          )}
           {...getRootProps()}
         >
-          <Input {...getInputProps()} />
+          <input {...getInputProps()} />
           {isDragActive ? (
-            <Text>Drop the files here ...</Text>
+            <p>Drop the files here ...</p>
           ) : (
-            <Text>Upload an Image</Text>
+            <p>Upload an Image</p>
           )}
-        </Flex>
+        </div>
       )}
-    </Flex>
+    </div>
   )
 }

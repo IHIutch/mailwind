@@ -1,4 +1,20 @@
-import { createRequestHandler } from '@remix-run/vercel'
-import * as build from '@remix-run/dev/server-build'
+import { RemixServer } from '@remix-run/react'
+import { renderToString } from 'react-dom/server'
 
-export default createRequestHandler({ build, mode: process.env.NODE_ENV })
+export default function handleRequest(
+  request,
+  responseStatusCode,
+  responseHeaders,
+  remixContext
+) {
+  const markup = renderToString(
+    <RemixServer context={remixContext} url={request.url} />
+  )
+
+  responseHeaders.set('Content-Type', 'text/html')
+
+  return new Response('<!DOCTYPE html>' + markup, {
+    status: responseStatusCode,
+    headers: responseHeaders,
+  })
+}
