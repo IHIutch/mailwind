@@ -1,6 +1,6 @@
 import { blocks } from '~/utils/types'
 
-export default function Block({ type, attributes, value, onChange }) {
+export default function DynamicBlock({ type, attributes, value, onChange }) {
   const Component = blocks[type]
   return (
     <Component

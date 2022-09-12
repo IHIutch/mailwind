@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { getNanoId } from '~/utils/functions'
 import { BlockType, defaultAttributes } from '~/utils/types'
 import { useFetcher, useLoaderData } from '@remix-run/react'
-import Block from '~/components/Block'
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import {
   DndContext,
   KeyboardSensor,
@@ -21,6 +21,10 @@ import {
   SortableItem,
   SortOverlay,
 } from '~/components/sortable/SortableItem'
+
+import Navbar from '~/components/Navbar'
+import DynamicBlock from '~/components/DynamicBlock'
+import DynamicSidebar from '~/components/DynamicSidebar'
 import {
   Code2,
   Copy,
@@ -33,9 +37,7 @@ import {
   Trash2,
   Type,
 } from 'lucide-react'
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 
-import Navbar from '~/components/Navbar'
 import {
   Controller,
   FormProvider,
@@ -45,9 +47,8 @@ import {
   useWatch,
 } from 'react-hook-form'
 
-import clsx from 'clsx'
 import { setActiveBlock, useActiveBlockDispatch } from '~/context/activeBlock'
-import DynamicSidebar from '~/components/DynamicSidebar'
+import clsx from 'clsx'
 
 export const loader = async () => {
   const blocks = [
@@ -208,36 +209,6 @@ export default function Index() {
           </div>
         </div>
       </FormProvider>
-      {/* <Box>
-          <pre>
-            {JSON.stringify(
-              blocks.map((b) => {
-                return [
-                  BlockType.Text,
-                  BlockType.H1,
-                  BlockType.H2,
-                  BlockType.H3,
-                ].includes(b.type)
-                  ? {
-                      ...b,
-                      details: {
-                        value: b.details.value,
-                        // .replaceAll('<p>', '')
-                        // .replaceAll('</p>', '')
-                        // .replaceAll('<strong>', '**')
-                        // .replaceAll('</strong>', '**')
-                        // .replaceAll('<em>', '*')
-                        // .replaceAll('</em>', '*')
-                        // .replaceAll(/<br.*?>/g, ''),
-                      },
-                    }
-                  : b
-              }),
-              null,
-              2
-            )}
-          </pre>
-        </Box> */}
     </div>
   )
 }
@@ -321,7 +292,7 @@ const EditView = () => {
                         name={`blocks.${idx}.value`}
                         control={control}
                         render={({ field: { value, onChange } }) => (
-                          <Block
+                          <DynamicBlock
                             attributes={watch(`blocks.${idx}.attributes`)}
                             type={getValues(`blocks.${idx}.type`)}
                             value={value}
@@ -339,7 +310,7 @@ const EditView = () => {
         <SortOverlay>
           {activeItem ? (
             <ItemBlock>
-              <Block type={activeItem.type} value={activeItem.value} />
+              <DynamicBlock type={activeItem.type} value={activeItem.value} />
             </ItemBlock>
           ) : null}
         </SortOverlay>
@@ -492,30 +463,6 @@ const ItemBlock = ({
               </DropdownMenu.Content>
             </DropdownMenu.Portal>
           </DropdownMenu.Root>
-          {/* <Popover
-            onOpen={() => setIsMenuActive(true)}
-            onClose={() => setIsMenuActive(false)}
-            placement="bottom-start"
-          >
-            <PopoverTrigger>
-              <IconButton
-                size="xs"
-                variant="ghost"
-                icon={<Settings className="h-4 w-4 text-gray-500" />}
-              />
-            </PopoverTrigger>
-            <PopoverContent>
-              <PopoverBody>
-                <Controller
-                  name={`blocks.${itemIndex}.attributes.padding`}
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <PaddingController value={value} onChange={onChange} />
-                  )}
-                />
-              </PopoverBody>
-            </PopoverContent>
-          </Popover> */}
         </div>
       </div>
       <div className="grow">
