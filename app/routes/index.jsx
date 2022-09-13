@@ -121,8 +121,8 @@ export default function Index() {
 
   const [previewSize, setPreviewSize] = useState('desktop')
 
-  const offset = 56
-  const mobileSize = 480
+  const offset = '56px'
+  const mobileSize = '480px'
 
   const formMethods = useForm({
     defaultValues: {
@@ -177,26 +177,20 @@ export default function Index() {
           <div className="fixed inset-y-0 top-16 w-[calc(100%-300px)]">
             <div className="flex h-full overflow-y-auto">
               <div
-                className={clsx('px-4', [
+                className={clsx('relative py-12 px-4', [
                   global.containerAlign === 'left' && 'mr-auto',
                   global.containerAlign === 'center' && 'mx-auto',
                   global.containerAlign === 'right' && 'ml-auto',
                 ])}
+                style={{
+                  width:
+                    previewSize === 'desktop'
+                      ? `calc(${global.containerWidth} - ${offset})`
+                      : `calc(${mobileSize} - ${offset})`,
+                  left: `calc(${offset} * -1 / 2)`,
+                }}
               >
-                <div
-                  className="relative py-12"
-                  style={{
-                    width:
-                      previewSize === 'desktop'
-                        ? parseInt(global.containerWidth.replace('px', '')) +
-                          offset +
-                          'px'
-                        : mobileSize + offset + 'px',
-                    left: (offset * -1) / 2 + 'px',
-                  }}
-                >
-                  <EditView />
-                </div>
+                <EditView />
               </div>
             </div>
           </div>
