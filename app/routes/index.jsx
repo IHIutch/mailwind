@@ -125,11 +125,15 @@ export default function Index() {
   const mobileSize = '480px'
 
   const formMethods = useForm({
+    mode: 'onChange',
     defaultValues: {
       global: {
         containerAlign: 'center',
         containerWidth: '600px',
         color: '#000000',
+      },
+      some: {
+        test: '123px',
       },
       blocks: loaderBlocks,
     },
