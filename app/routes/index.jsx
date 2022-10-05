@@ -55,6 +55,7 @@ export const loader = async () => {
     {
       type: BlockType.H1,
       value: '<p>Get Started</p>',
+      ...defaultAttributes[BlockType.H1],
     },
     {
       type: BlockType.Divider,
@@ -63,42 +64,51 @@ export const loader = async () => {
       type: BlockType.Text,
       value:
         '<p>👋 Welcome! This is a private page for you to play around with.</p>',
+      ...defaultAttributes[BlockType.Text],
     },
     {
       type: BlockType.Text,
       value: '<p>Give these things a try:</p>',
+      ...defaultAttributes[BlockType.Text],
     },
     {
       type: BlockType.Text,
       value: '<p>1. Hover on the left of each line for quick actions</p>',
+      ...defaultAttributes[BlockType.Text],
     },
 
     {
       type: BlockType.Text,
       value: '<p>2. Click on the + button to add a new line</p>',
+      ...defaultAttributes[BlockType.Text],
     },
     {
       type: BlockType.Text,
       value: '<p>3. Drag the ⋮⋮ button to reorder</p>',
+      ...defaultAttributes[BlockType.Text],
     },
     {
       type: BlockType.Text,
       value: '<p>4. Click the trash icon to delete this block</p>',
+      ...defaultAttributes[BlockType.Text],
     },
     {
       type: BlockType.Text,
       value:
         '<p>5. <strong>Bold</strong> and <em>italicize</em> using markdown e.g. *italic* or **bold**</p>',
+      ...defaultAttributes[BlockType.Text],
     },
     {
       type: BlockType.Text,
       value:
         "<p>6. Add headers and dividers with '#', '##' or '---' followed by a space</p>",
+      ...defaultAttributes[BlockType.Text],
     },
     {
       type: BlockType.Text,
       value:
         "<p>7. Type '/' for a menu to quickly switch blocks and search by typing</p>",
+      ...defaultAttributes[BlockType.Text],
     },
   ]
 
@@ -212,6 +222,7 @@ export default function Index() {
 }
 
 const EditView = () => {
+  const dispatch = useActiveBlockDispatch()
   const [activeItem, setActiveItem] = useState(null)
   const { control, getValues, watch } = useFormContext()
   const { fields, remove, move, insert } = useFieldArray({
@@ -244,10 +255,26 @@ const EditView = () => {
     setActiveItem(null)
   }
 
+  const handleSetActiveItem = (itemIndex) => {
+    const { id, type } = getValues(`blocks.${itemIndex}`)
+    dispatch(
+      setActiveBlock({
+        index: itemIndex,
+        id,
+        type,
+      })
+    )
+  }
+
   const handleDragStart = ({ active: { data: activeData } }) => {
     const activeIdx = activeData?.current?.sortable?.index
     const item = getValues(`blocks.${activeIdx}`)
     setActiveItem(item)
+  }
+
+  const handleAddItem = (idx, payload) => {
+    insert(idx, payload)
+    handleSetActiveItem(idx)
   }
 
   const handleDuplicateItem = (idx) => {
@@ -282,7 +309,7 @@ const EditView = () => {
                   >
                     <ItemBlock
                       itemIndex={idx}
-                      addItem={(payload) => insert(idx + 1, payload)}
+                      addItem={(payload) => handleAddItem(idx + 1, payload)}
                       removeItem={() => remove(idx)}
                       duplicateItem={() => handleDuplicateItem(idx)}
                     >
@@ -362,6 +389,7 @@ const ItemBlock = ({
     const { id, type } = getValues(`blocks.${itemIndex}`)
     dispatch(
       setActiveBlock({
+        index: itemIndex,
         id,
         type,
       })
@@ -413,7 +441,8 @@ const ItemBlock = ({
                   <DropdownMenu.Item
                     key={idx}
                     className="flex cursor-pointer items-center py-1 px-2 outline-none hover:bg-zinc-100"
-                    onClick={() =>
+                    onClick={(e) => {
+                      e.stopPropagation() // This is a hacky fix that prevents the items behind this button from receiving a click event: https://github.com/radix-ui/primitives/issues/1658
                       addItem({
                         id: getNanoId(),
                         type: blockTypeValue,
@@ -423,7 +452,7 @@ const ItemBlock = ({
                           ...(defaultAttributes?.[blockTypeValue] || {}),
                         },
                       })
-                    }
+                    }}
                   >
                     {getIcon(blockTypeValue)}
                     <p className="pl-2">{key}</p>
