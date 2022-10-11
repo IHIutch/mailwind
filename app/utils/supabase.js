@@ -10,8 +10,8 @@ const supabaseUrl = isServer
   : window.env.SUPABASE_URL
 
 const supabaseAnonKey = isServer
-  ? process.env.SUPABASE_ANON_KEY
-  : window.env.SUPABASE_ANON_KEY
+  ? process.env.SUPABASE_KEY
+  : window.env.SUPABASE_KEY
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 

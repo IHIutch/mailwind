@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_CONNECTION_STRING")
+}
+
+model User {
+  id                   String       @id @db.Uuid
+  stripeSubscriptionId String?      @unique @db.VarChar
+  stripeCustomerId     String?      @unique @db.VarChar
+  createdAt            DateTime     @default(now()) @db.Timestamptz()
+  updatedAt            DateTime     @default(now()) @updatedAt @db.Timestamptz()
+  deletedAt            DateTime?    @db.Timestamptz()
+  role                 GlobalRole
+  memberships          Membership[]
+}
+
+model Block {
+  id         Int       @id @default(autoincrement())
+  type       String    @db.VarChar
+  templateId Int
+  position   Int
+  createdAt  DateTime  @default(now()) @db.Timestamptz()
+  updatedAt  DateTime  @default(now()) @updatedAt @db.Timestamptz()
+  deletedAt  DateTime? @db.Timestamptz()
+  Template   Template? @relation(fields: [templateId], references: [id])
+}
+
+model Template {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now()) @db.Timestamptz()
+  updatedAt DateTime  @default(now()) @updatedAt @db.Timestamptz()
+  deletedAt DateTime? @db.Timestamptz()
+  blocks    Block[]
+}
+
+model Membership {
+  id             Int            @id @default(autoincrement())
+  role           MembershipRole
+  organizationId Int
+  userId         String         @db.Uuid
+  createdAt      DateTime       @default(now()) @db.Timestamptz()
+  updatedAt      DateTime       @default(now()) @updatedAt @db.Timestamptz()
+  deletedAt      DateTime?      @db.Timestamptz()
+  User           User           @relation(fields: [userId], references: [id])
+  Organization   Organization   @relation(fields: [organizationId], references: [id])
+}
+
+model Organization {
+  id          Int          @id @default(autoincrement())
+  name        String
+  createdAt   DateTime     @default(now()) @db.Timestamptz()
+  updatedAt   DateTime     @default(now()) @updatedAt @db.Timestamptz()
+  deletedAt   DateTime?    @db.Timestamptz()
+  memberships Membership[]
+}
+
+enum MembershipRole {
+  OWNER
+  ADMIN
+  USER
+}
+
+enum GlobalRole {
+  SUPERADMIN
+  CUSTOMER
+}
