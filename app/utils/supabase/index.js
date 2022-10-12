@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import { getSession } from './session.server'
+import { getSession } from '../session.server'
 
 // see documention about using .env variables
 // https://remix.run/docs/en/v1/guides/envvars#server-environment-variables
