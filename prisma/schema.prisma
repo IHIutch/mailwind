@@ -25,7 +25,8 @@ model Block {
   id         Int       @id @default(autoincrement())
   type       String    @db.VarChar
   templateId Int
-  position   Int
+  position   Int       @db.SmallInt
+  attributes Json?     @db.Json
   createdAt  DateTime  @default(now()) @db.Timestamptz()
   updatedAt  DateTime  @default(now()) @updatedAt @db.Timestamptz()
   deletedAt  DateTime? @db.Timestamptz()
@@ -33,11 +34,14 @@ model Block {
 }
 
 model Template {
-  id        Int       @id @default(autoincrement())
-  createdAt DateTime  @default(now()) @db.Timestamptz()
-  updatedAt DateTime  @default(now()) @updatedAt @db.Timestamptz()
-  deletedAt DateTime? @db.Timestamptz()
-  blocks    Block[]
+  id             Int           @id @default(autoincrement())
+  membershipId   Int
+  createdAt      DateTime      @default(now()) @db.Timestamptz()
+  updatedAt      DateTime      @default(now()) @updatedAt @db.Timestamptz()
+  deletedAt      DateTime?     @db.Timestamptz()
+  blocks         Block[]
+  Organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizationId Int?
 }
 
 model Membership {
@@ -54,11 +58,12 @@ model Membership {
 
 model Organization {
   id          Int          @id @default(autoincrement())
-  name        String
+  name        String       @db.VarChar
   createdAt   DateTime     @default(now()) @db.Timestamptz()
   updatedAt   DateTime     @default(now()) @updatedAt @db.Timestamptz()
   deletedAt   DateTime?    @db.Timestamptz()
   memberships Membership[]
+  templates   Template[]
 }
 
 enum MembershipRole {

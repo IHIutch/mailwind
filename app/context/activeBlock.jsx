@@ -17,7 +17,7 @@ const reducer = (state, action) => {
       }
 
     default:
-      throw new Error(`Unknown action: ${action.type}`)
+      throw Error(`Unknown action: ${action.type}`)
   }
 }
 

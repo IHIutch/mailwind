@@ -64,7 +64,7 @@ export default function getMjMl(json) {
   )
 
   if (errors.length) {
-    throw new Error(errors[0])
+    throw Error(errors[0])
   }
 
   return minify(
