@@ -1,13 +1,11 @@
-import { redirect, json } from '@remix-run/node'
+import { json } from '@remix-run/node'
 import {
   useLoaderData,
   Link,
   Form,
   useActionData,
   NavLink,
-  useFetcher,
 } from '@remix-run/react'
-import { getSession } from '~/utils/session.server'
 import { supabase } from '~/utils/supabase'
 
 // https://remix.run/api/conventions#meta
@@ -18,59 +16,34 @@ export const meta = () => {
   }
 }
 
-export const loader = async ({ request }) => {
-  const session = await getSession(request.headers.get('Cookie'))
-
-  // if there is no access token in the header then
-  // the user is not authenticated, go to login
-  if (session.has('access_token')) {
-    const { user, error } = await supabase.auth.api.getUser(
-      session.get('access_token')
-    )
-    if (user) {
-      return redirect(`/profile`)
-    }
-    if (error) {
-      return json({
-        error: error || 'Authentication error: Something went wrong',
-      })
-    }
-  }
-  return json(null)
-}
-
 export const action = async ({ request }) => {
-  // get user credentials from form
-  const form = await request.formData()
-  const email = form.get('email')
+  try {
+    const formData = await request.formData()
+    const { email } = Object.fromEntries(formData)
 
-  // login using the credentials
-  const { error } = await supabase.auth.signIn(
-    { email },
-    {
-      redirectTo: 'http://localhost:3000/login',
-    }
-  )
+    const { error } = await supabase.auth.signIn(
+      { email },
+      {
+        redirectTo: 'http://localhost:3000/auth',
+      }
+    )
 
-  return { error }
+    if (error) throw Error(error.message)
+    return null
+  } catch (error) {
+    return json(
+      {
+        error: {
+          message: error.message,
+        },
+      },
+      400
+    )
+  }
 }
 
-// https://remix.run/guides/routing#index-routes
 export default function Login() {
   const actionData = useActionData()
-  const authFetcher = useFetcher()
-
-  supabase.auth.onAuthStateChange((event, session) => {
-    if (event === 'SIGNED_IN') {
-      authFetcher.submit(
-        {
-          event,
-          access_token: session.access_token,
-        },
-        { method: 'post', action: '/auth' }
-      )
-    }
-  })
 
   return (
     <div className="remix__page">

@@ -14,9 +14,3 @@ const supabaseAnonKey = isServer
   : window.env.SUPABASE_KEY
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
-
-export const hasAuthSession = async (request) => {
-  const session = await getSession(request.headers.get('Cookie'))
-  if (!session.has('access_token')) throw Error('No session')
-  supabase.auth.setAuth(session.get('access_token'))
-}
