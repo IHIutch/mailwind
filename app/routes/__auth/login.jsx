@@ -1,12 +1,6 @@
-import { json } from '@remix-run/node'
-import {
-  useLoaderData,
-  Link,
-  Form,
-  useActionData,
-  NavLink,
-} from '@remix-run/react'
-import { supabase } from '~/utils/supabase'
+import { redirect, json } from '@remix-run/node'
+import { Form, useActionData } from '@remix-run/react'
+import { createServerClient } from '~/utils/supabase.server'
 
 // https://remix.run/api/conventions#meta
 export const meta = () => {
@@ -16,17 +10,36 @@ export const meta = () => {
   }
 }
 
+export const loader = async ({ request }) => {
+  const response = new Response()
+  const supabase = createServerClient({ request, response })
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+
+  if (session) {
+    return redirect('/profile')
+  }
+  return null
+}
+
 export const action = async ({ request }) => {
   try {
     const formData = await request.formData()
     const { email } = Object.fromEntries(formData)
 
-    const { error } = await supabase.auth.signIn(
-      { email },
-      {
-        redirectTo: 'http://localhost:3000/auth',
-      }
-    )
+    const response = new Response()
+    const supabase = createServerClient({ request, response })
+
+    const { data, error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: 'http://localhost:3000/handle-login',
+      },
+    })
+
+    console.log({ data })
 
     if (error) throw Error(error.message)
     return null
@@ -46,7 +59,7 @@ export default function Login() {
   const actionData = useActionData()
 
   return (
-    <div className="remix__page">
+    <div>
       <main>
         <h2 className="text-2xl font-bold">
           Welcome to Supabase Remix - Login Page
@@ -54,7 +67,7 @@ export default function Login() {
         <Form method="post">
           <div className="flex flex-1 flex-col items-center">
             <div className="form_item">
-              <label htmlFor="email">EMAIL ADDRESS:</label>
+              <label htmlFor="email">Your Email</label>
               <input id="email" name="email" type="text" />
             </div>
             <div className="mt-8 flex flex-1 flex-row items-center">
@@ -62,7 +75,7 @@ export default function Login() {
                 className="mr-4 w-fit rounded-sm bg-slate-500 px-8 text-white"
                 type="submit"
               >
-                SUBMIT
+                Submit
               </button>
             </div>
           </div>

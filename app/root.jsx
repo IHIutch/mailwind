@@ -1,4 +1,3 @@
-import { json } from '@remix-run/node'
 import {
   Links,
   LiveReload,
@@ -6,7 +5,6 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useLoaderData,
 } from '@remix-run/react'
 import { ActiveBlockProvider } from './context/activeBlock'
 import styles from './styles/app.css'
@@ -21,17 +19,19 @@ export function links() {
   return [{ rel: 'stylesheet', href: styles }]
 }
 
-export async function loader() {
-  return json({
-    env: {
-      SUPABASE_URL: process.env.SUPABASE_URL,
-      SUPABASE_KEY: process.env.SUPABASE_KEY,
-    },
-  })
+export function ErrorBoundary({ error }) {
+  console.log({ error })
+  return (
+    <div>
+      <h1>Error</h1>
+      <p>{error.message}</p>
+      <p>The stack trace is:</p>
+      <pre>{JSON.stringify(error, null, 2)}</pre>
+    </div>
+  )
 }
 
 const Document = ({ children }) => {
-  const { env } = useLoaderData()
   return (
     <html lang="en" className="h-full">
       <head>
@@ -49,11 +49,6 @@ const Document = ({ children }) => {
             defer
           />
         ) : null}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `window.env = ${JSON.stringify(env)}`,
-          }}
-        />
         <Scripts />
         <LiveReload />
       </body>
