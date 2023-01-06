@@ -88,29 +88,49 @@ const BlockType = {
   Code: 'CODE',
 }
 
-const TextBlock = ({ id, attributes, value }) => {
-  const padding = attributes?.padding || defaultAttributes.global.padding
+const TextBlock = ({ id, type, attributes, value }) => {
   return (
     <MjmlText
-      padding={padding.join(' ')}
       cssClass={`data-${id}`}
-      fontSize={defaultAttributes.global.fontSize}
-      fontFamily={defaultAttributes.global.fontFamily}
-      lineHeight={defaultAttributes.global.lineHeight}
+      paddingTop={attributes?.paddingTop || defaultAttributes[type].paddingTop}
+      paddingRight={
+        attributes?.paddingRight || defaultAttributes[type].paddingRight
+      }
+      paddingBottom={
+        attributes?.paddingBottom || defaultAttributes[type].paddingBottom
+      }
+      paddingLeft={
+        attributes?.paddingLeft || defaultAttributes[type].paddingLeft
+      }
+      fontSize={attributes?.fontSize || defaultAttributes[type].fontSize}
+      fontFamily={attributes?.fontFamily || defaultAttributes.GLOBAL.fontFamily}
+      lineHeight={attributes?.lineHeight || defaultAttributes[type].lineHeight}
+      containerBackgroundColor={
+        attributes?.backgroundColor || defaultAttributes[type].backgroundColor
+      }
     >
       <div dangerouslySetInnerHTML={{ __html: value }} />
     </MjmlText>
   )
 }
 
-const CodeBlock = ({ id, attributes, value }) => {
-  const padding = attributes?.padding || defaultAttributes.global.padding
+const CodeBlock = ({ id, type, attributes, value }) => {
   return (
     <MjmlText
-      padding={padding.join(' ')}
       cssClass={`data-${id} font-mono`}
-      fontSize={defaultAttributes.global.fontSize}
-      lineHeight={defaultAttributes.global.lineHeight}
+      paddingTop={attributes?.paddingTop || defaultAttributes[type].paddingTop}
+      paddingRight={
+        attributes?.paddingRight || defaultAttributes[type].paddingRight
+      }
+      paddingBottom={
+        attributes?.paddingBottom || defaultAttributes[type].paddingBottom
+      }
+      paddingLeft={
+        attributes?.paddingLeft || defaultAttributes[type].paddingLeft
+      }
+      fontSize={attributes?.fontSize || defaultAttributes[type].fontSize}
+      fontFamily={attributes?.fontFamily || defaultAttributes.GLOBAL.fontFamily}
+      lineHeight={attributes?.lineHeight || defaultAttributes[type].lineHeight}
     >
       <pre
         style={{
@@ -142,29 +162,45 @@ const CodeBlock = ({ id, attributes, value }) => {
 }
 
 const HeadingBlock = ({ id, type, attributes, value }) => {
-  const padding = attributes?.padding || defaultAttributes[type].padding
   return (
     <MjmlText
-      padding={padding.join(' ')}
       cssClass={`data-${id}`}
-      fontFamily={defaultAttributes.global.fontFamily}
-      fontSize={defaultAttributes[type].fontSize}
-      lineHeight={defaultAttributes[type].lineHeight}
-      fontWeight={defaultAttributes[type].fontWeight}
+      paddingTop={attributes?.paddingTop || defaultAttributes[type].paddingTop}
+      paddingRight={
+        attributes?.paddingRight || defaultAttributes[type].paddingRight
+      }
+      paddingBottom={
+        attributes?.paddingBottom || defaultAttributes[type].paddingBottom
+      }
+      paddingLeft={
+        attributes?.paddingLeft || defaultAttributes[type].paddingLeft
+      }
+      fontSize={attributes?.fontSize || defaultAttributes[type].fontSize}
+      fontFamily={attributes?.fontFamily || defaultAttributes.GLOBAL.fontFamily}
+      lineHeight={attributes?.lineHeight || defaultAttributes[type].lineHeight}
+      fontWeight={attributes?.fontWeight || defaultAttributes[type].fontWeight}
     >
       <div dangerouslySetInnerHTML={{ __html: value }} />
     </MjmlText>
   )
 }
 
-const DividerBlock = ({ id, attributes, value }) => {
-  const padding = attributes?.padding || defaultAttributes.global.padding
+const DividerBlock = ({ id, type, attributes }) => {
   return (
     <MjmlDivider
-      padding={padding.join(' ')}
+      cssClass={`data-${id}`}
+      paddingTop={attributes?.paddingTop || defaultAttributes[type].paddingTop}
+      paddingRight={
+        attributes?.paddingRight || defaultAttributes[type].paddingRight
+      }
+      paddingBottom={
+        attributes?.paddingBottom || defaultAttributes[type].paddingBottom
+      }
+      paddingLeft={
+        attributes?.paddingLeft || defaultAttributes[type].paddingLeft
+      }
       borderWidth="1px"
       borderColor="#E2E8F0"
-      cssClass={`data-${id}`}
     />
   )
 }
@@ -173,13 +209,20 @@ const SpacerBlock = () => {
   return <MjmlSpacer />
 }
 
-const ImageBlock = ({ id, attributes, value }) => {
-  const padding = attributes?.padding || defaultAttributes.global.padding
-
+const ImageBlock = ({ id, type, attributes, value }) => {
   return (
     <MjmlImage
-      padding={padding.join(' ')}
       cssClass={`data-${id}`}
+      paddingTop={attributes?.paddingTop || defaultAttributes[type].paddingTop}
+      paddingRight={
+        attributes?.paddingRight || defaultAttributes[type].paddingRight
+      }
+      paddingBottom={
+        attributes?.paddingBottom || defaultAttributes[type].paddingBottom
+      }
+      paddingLeft={
+        attributes?.paddingLeft || defaultAttributes[type].paddingLeft
+      }
       src={value}
     />
   )

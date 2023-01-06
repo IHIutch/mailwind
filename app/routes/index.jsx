@@ -36,6 +36,7 @@ import {
   Quote,
   Trash2,
   Type,
+  Settings,
 } from 'lucide-react'
 
 import {
@@ -55,7 +56,9 @@ export const loader = async () => {
     {
       type: BlockType.H1,
       value: '<p>Get Started</p>',
-      ...defaultAttributes[BlockType.H1],
+      attributes: {
+        ...defaultAttributes[BlockType.H1],
+      },
     },
     {
       type: BlockType.Divider,
@@ -64,51 +67,69 @@ export const loader = async () => {
       type: BlockType.Text,
       value:
         '<p>👋 Welcome! This is a private page for you to play around with.</p>',
-      ...defaultAttributes[BlockType.Text],
+      attributes: {
+        ...defaultAttributes[BlockType.Text],
+      },
     },
     {
       type: BlockType.Text,
       value: '<p>Give these things a try:</p>',
-      ...defaultAttributes[BlockType.Text],
+      attributes: {
+        ...defaultAttributes[BlockType.Text],
+      },
     },
     {
       type: BlockType.Text,
       value: '<p>1. Hover on the left of each line for quick actions</p>',
-      ...defaultAttributes[BlockType.Text],
+      attributes: {
+        ...defaultAttributes[BlockType.Text],
+      },
     },
 
     {
       type: BlockType.Text,
       value: '<p>2. Click on the + button to add a new line</p>',
-      ...defaultAttributes[BlockType.Text],
+      attributes: {
+        ...defaultAttributes[BlockType.Text],
+      },
     },
     {
       type: BlockType.Text,
       value: '<p>3. Drag the ⋮⋮ button to reorder</p>',
-      ...defaultAttributes[BlockType.Text],
+      attributes: {
+        ...defaultAttributes[BlockType.Text],
+      },
     },
     {
       type: BlockType.Text,
       value: '<p>4. Click the trash icon to delete this block</p>',
-      ...defaultAttributes[BlockType.Text],
+      attributes: {
+        ...defaultAttributes[BlockType.Text],
+      },
     },
     {
       type: BlockType.Text,
       value:
         '<p>5. <strong>Bold</strong> and <em>italicize</em> using markdown e.g. *italic* or **bold**</p>',
-      ...defaultAttributes[BlockType.Text],
+      attributes: {
+        ...defaultAttributes[BlockType.Text],
+      },
     },
     {
       type: BlockType.Text,
       value:
         "<p>6. Add headers and dividers with '#', '##' or '---' followed by a space</p>",
-      ...defaultAttributes[BlockType.Text],
+      attributes: {
+        ...defaultAttributes[BlockType.Text],
+      },
     },
     {
       type: BlockType.Text,
       value:
         "<p>7. Type '/' for a menu to quickly switch blocks and search by typing</p>",
-      ...defaultAttributes[BlockType.Text],
+      attributes: {
+        ...defaultAttributes[BlockType.Text],
+      },
     },
   ]
 
@@ -116,11 +137,6 @@ export const loader = async () => {
     blocks: blocks.map((b) => ({
       ...b,
       id: getNanoId(),
-      attributes: {
-        padding:
-          defaultAttributes?.[b.type]?.padding ||
-          defaultAttributes.global.padding,
-      },
     })),
   }
 }
@@ -131,7 +147,7 @@ export default function Index() {
 
   const [previewSize, setPreviewSize] = useState('desktop')
 
-  const offset = '56px'
+  const offset = '80px'
   const mobileSize = '480px'
 
   const formMethods = useForm({
@@ -141,9 +157,6 @@ export default function Index() {
         containerAlign: 'center',
         containerWidth: '600px',
         color: '#000000',
-      },
-      some: {
-        test: '123px',
       },
       blocks: loaderBlocks,
     },
@@ -199,9 +212,9 @@ export default function Index() {
                 style={{
                   width:
                     previewSize === 'desktop'
-                      ? `calc(${global.containerWidth} - ${offset})`
-                      : `calc(${mobileSize} - ${offset})`,
-                  left: `calc(${offset} * -1 / 2)`,
+                      ? `calc(${global.containerWidth} + ${offset})`
+                      : `calc(${mobileSize} + ${offset})`,
+                  left: offset,
                 }}
               >
                 <EditView />
@@ -303,8 +316,10 @@ const EditView = () => {
                 <SortableItem id={v.id}>
                   <div
                     className={clsx(
-                      'overflow-hidden rounded-lg',
-                      activeItem?.id === v.id ? 'bg-gray-200' : 'bg-white'
+                      'overflow-hidden rounded-lg transition-all',
+                      activeItem?.id === v.id
+                        ? 'ring-offset-2 ring-2'
+                        : 'ring-offset-0 ring-0'
                     )}
                   >
                     <ItemBlock
@@ -380,8 +395,8 @@ const ItemBlock = ({
     control,
   })
 
-  const itemPadding = useWatch({
-    name: `blocks.${itemIndex}.attributes.padding`,
+  const itemPaddingTop = useWatch({
+    name: `blocks.${itemIndex}.attributes.paddingTop`,
     control,
   })
 
@@ -399,10 +414,6 @@ const ItemBlock = ({
   return (
     <div
       className="flex"
-      style={{
-        paddingTop: itemPadding?.[0] || '0',
-        paddingBottom: itemPadding?.[2] || '0',
-      }}
       onMouseEnter={() => setIsActive(true)}
       onMouseLeave={() => {
         !isMenuActive && setIsActive(false)
@@ -420,6 +431,7 @@ const ItemBlock = ({
         )}
       >
         <div
+          style={{ paddingTop: itemPaddingTop }}
           className={clsx(
             'flex transition-all',
             isActive ? 'visible opacity-100' : 'invisible opacity-0'
@@ -448,7 +460,7 @@ const ItemBlock = ({
                         type: blockTypeValue,
                         value: '',
                         attributes: {
-                          ...defaultAttributes.global,
+                          ...defaultAttributes.GLOBAL,
                           ...(defaultAttributes?.[blockTypeValue] || {}),
                         },
                       })
@@ -463,10 +475,9 @@ const ItemBlock = ({
           </DropdownMenu.Root>
           <DropdownMenu.Root onOpenChange={setIsMenuActive}>
             <DropdownMenu.Trigger asChild>
-              <DragHandle
-                isDragDisabled={isMenuActive}
-                className="flex h-6 w-6 items-center justify-center rounded hover:bg-zinc-100"
-              />
+              <button className="flex h-6 w-6 items-center justify-center rounded hover:bg-zinc-100">
+                <Settings className="h-4 w-4 text-gray-500" />
+              </button>
             </DropdownMenu.Trigger>
 
             <DropdownMenu.Portal>
@@ -491,18 +502,13 @@ const ItemBlock = ({
               </DropdownMenu.Content>
             </DropdownMenu.Portal>
           </DropdownMenu.Root>
+          <DragHandle
+            isDragDisabled={isMenuActive}
+            className="flex h-6 w-6 items-center justify-center rounded hover:bg-zinc-100"
+          />
         </div>
       </div>
-      <div className="grow">
-        <div
-          style={{
-            paddingLeft: itemPadding?.[1] || '0',
-            paddingRight: itemPadding?.[3] || '0',
-          }}
-        >
-          {children}
-        </div>
-      </div>
+      <div className="grow">{children}</div>
     </div>
   )
 }

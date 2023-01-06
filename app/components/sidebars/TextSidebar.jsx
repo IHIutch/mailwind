@@ -23,7 +23,7 @@ export default function TextSidebar({ heading }) {
           </Label.Root>
           <FontSizeInput
             id="fontSizeField"
-            name={`blocks.${activeBlock.index}.fontSize`}
+            name={`blocks.${activeBlock.index}.attributes.fontSize`}
             control={control}
             className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             errorClassName="mt-1 text-xs text-red-500"
@@ -38,7 +38,7 @@ export default function TextSidebar({ heading }) {
           </Label.Root>
           <LineHeightInput
             id="lineHeightField"
-            name={`blocks.${activeBlock.index}.lineHeight`}
+            name={`blocks.${activeBlock.index}.attributes.lineHeight`}
             control={control}
             className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             errorClassName="mt-1 text-xs text-red-500"
@@ -54,7 +54,7 @@ export default function TextSidebar({ heading }) {
             </Label.Root>
             <PaddingInput
               id="paddingTopField"
-              name={`blocks.${activeBlock.index}.paddingTop`}
+              name={`blocks.${activeBlock.index}.attributes.paddingTop`}
               control={control}
               className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               errorClassName="mt-1 text-xs text-red-500"
@@ -69,7 +69,7 @@ export default function TextSidebar({ heading }) {
             </Label.Root>
             <PaddingInput
               id="paddingRightField"
-              name={`blocks.${activeBlock.index}.paddingRight`}
+              name={`blocks.${activeBlock.index}.attributes.paddingRight`}
               control={control}
               className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               errorClassName="mt-1 text-xs text-red-500"
@@ -84,7 +84,7 @@ export default function TextSidebar({ heading }) {
             </Label.Root>
             <PaddingInput
               id="paddingBottomField"
-              name={`blocks.${activeBlock.index}.paddingBottom`}
+              name={`blocks.${activeBlock.index}.attributes.paddingBottom`}
               control={control}
               className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               errorClassName="mt-1 text-xs text-red-500"
@@ -99,7 +99,7 @@ export default function TextSidebar({ heading }) {
             </Label.Root>
             <PaddingInput
               id="paddingLeftField"
-              name={`blocks.${activeBlock.index}.paddingLeft`}
+              name={`blocks.${activeBlock.index}.attributes.paddingLeft`}
               control={control}
               className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               errorClassName="mt-1 text-xs text-red-500"
@@ -115,7 +115,7 @@ export default function TextSidebar({ heading }) {
           </Label.Root>
           <ColorInput
             id="backgroundColorField"
-            name={`blocks.${activeBlock.index}.backgroundColor`}
+            name={`blocks.${activeBlock.index}.attributes.backgroundColor`}
             control={control}
           />
         </div>

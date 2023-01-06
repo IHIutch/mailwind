@@ -1,4 +1,4 @@
-import { createContext, forwardRef, useContext, useMemo } from 'react'
+import { createContext, useContext, useMemo } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { GripVertical } from 'lucide-react'
@@ -45,27 +45,24 @@ export const SortableItem = ({ id, children }) => {
   )
 }
 
-export const DragHandle = forwardRef(function DragHandle(
-  { isDragDisabled, ...props },
-  ref
-) {
-  // const {
-  //   attributes,
-  //   listeners,
-  //   ref: setActivatorNodeRef,
-  // } = useContext(SortableItemContext)
+export const DragHandle = ({ isDragDisabled, ...props }) => {
+  const {
+    attributes,
+    listeners,
+    ref: setActivatorNodeRef,
+  } = useContext(SortableItemContext)
 
   return (
-    <button
-      // {...attributes}
-      // {...(isDragDisabled && listeners)}
-      ref={ref}
+    <div
+      {...attributes}
+      {...(isDragDisabled ? {} : listeners)}
+      ref={setActivatorNodeRef}
       {...props}
     >
       <GripVertical className="h-4 w-4 text-gray-500" />
-    </button>
+    </div>
   )
-})
+}
 
 export const SortOverlay = ({ children }) => {
   const dropAnimationConfig = {

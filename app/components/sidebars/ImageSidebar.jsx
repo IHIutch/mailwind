@@ -21,7 +21,7 @@ export default function ImageSidebar({ heading }) {
           </Label.Root>
           <SpacingInput
             id="heightInputField"
-            name={`blocks.${activeBlock.index}.height`}
+            name={`blocks.${activeBlock.index}.attributes.height`}
             control={control}
             className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             errorClassName="mt-1 text-xs text-red-500"
@@ -36,7 +36,7 @@ export default function ImageSidebar({ heading }) {
           </Label.Root>
           <SpacingInput
             id="widthInputField"
-            name={`blocks.${activeBlock.index}.width`}
+            name={`blocks.${activeBlock.index}.attributes.width`}
             control={control}
             className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             errorClassName="mt-1 text-xs text-red-500"
@@ -52,7 +52,7 @@ export default function ImageSidebar({ heading }) {
             </Label.Root>
             <PaddingInput
               id="paddingTopField"
-              name={`blocks.${activeBlock.index}.paddingTop`}
+              name={`blocks.${activeBlock.index}.attributes.paddingTop`}
               control={control}
               className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               errorClassName="mt-1 text-xs text-red-500"
@@ -67,7 +67,7 @@ export default function ImageSidebar({ heading }) {
             </Label.Root>
             <PaddingInput
               id="paddingRightField"
-              name={`blocks.${activeBlock.index}.paddingRight`}
+              name={`blocks.${activeBlock.index}.attributes.paddingRight`}
               control={control}
               className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               errorClassName="mt-1 text-xs text-red-500"
@@ -82,7 +82,7 @@ export default function ImageSidebar({ heading }) {
             </Label.Root>
             <PaddingInput
               id="paddingBottomField"
-              name={`blocks.${activeBlock.index}.paddingBottom`}
+              name={`blocks.${activeBlock.index}.attributes.paddingBottom`}
               control={control}
               className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               errorClassName="mt-1 text-xs text-red-500"
@@ -97,7 +97,7 @@ export default function ImageSidebar({ heading }) {
             </Label.Root>
             <PaddingInput
               id="paddingLeftField"
-              name={`blocks.${activeBlock.index}.paddingLeft`}
+              name={`blocks.${activeBlock.index}.attributes.paddingLeft`}
               control={control}
               className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               errorClassName="mt-1 text-xs text-red-500"
@@ -113,7 +113,7 @@ export default function ImageSidebar({ heading }) {
           </Label.Root>
           <LinkInput
             id="urlField"
-            name={`blocks.${activeBlock.index}.url`}
+            name={`blocks.${activeBlock.index}.attributes.url`}
             control={control}
             className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             errorClassName="mt-1 text-xs text-red-500"

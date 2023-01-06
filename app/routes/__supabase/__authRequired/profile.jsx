@@ -50,7 +50,7 @@ export default function Profile() {
         <span>Welcome, {user.email}</span>
       </div>
 
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-3 lg:grid-cols-4 gap-4">
         <TemplateLink pathname="/templates/new">
           <span>New Template</span>
         </TemplateLink>

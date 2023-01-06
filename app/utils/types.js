@@ -51,12 +51,16 @@ export const sidebars = {
 }
 
 export const defaultAttributes = {
-  global: {
-    padding: ['8px', '0', '8px', '0'],
+  GLOBAL: {
+    paddingTop: '8px',
+    paddingRight: '0',
+    paddingBottom: '8px',
+    paddingLeft: '0',
     fontFamily:
       '-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol',
     fontSize: '16px',
     lineHeight: '1.5',
+    backgroundColor: 'transparent',
   },
   H1: {
     paddingTop: '0',
@@ -86,6 +90,15 @@ export const defaultAttributes = {
     fontWeight: '600',
   },
   TEXT: {
+    paddingTop: '12px',
+    paddingRight: '0',
+    paddingBottom: '12px',
+    paddingLeft: '0',
+    fontSize: '16px',
+    lineHeight: '18px',
+    fontWeight: '400',
+  },
+  CODE: {
     paddingTop: '8px',
     paddingRight: '0',
     paddingBottom: '8px',
@@ -93,5 +106,17 @@ export const defaultAttributes = {
     fontSize: '16px',
     lineHeight: '18px',
     fontWeight: '400',
+  },
+  DIVIDER: {
+    paddingTop: '8px',
+    paddingRight: '0',
+    paddingBottom: '8px',
+    paddingLeft: '0',
+  },
+  IMAGE: {
+    paddingTop: '8px',
+    paddingRight: '0',
+    paddingBottom: '8px',
+    paddingLeft: '0',
   },
 }
