@@ -39,6 +39,7 @@ model Template {
   createdAt      DateTime      @default(now()) @db.Timestamptz()
   updatedAt      DateTime      @default(now()) @updatedAt @db.Timestamptz()
   deletedAt      DateTime?     @db.Timestamptz()
+  title          String?       @db.VarChar
   blocks         Block[]
   Organization   Organization? @relation(fields: [organizationId], references: [id])
   organizationId Int?

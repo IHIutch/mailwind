@@ -78,8 +78,7 @@ export default function Profile() {
               className="after:absolute after:inset-0"
               to={`/templates/${template.id}`}
             >
-              <span>{template.id}</span>
-              <span>{template.name}</span>
+              <span>{template.title || 'Untitled'}</span>
             </Link>
           </div>
         ))}
