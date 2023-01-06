@@ -2,7 +2,6 @@ import { json } from '@remix-run/node'
 import {
   useOutletContext,
   useLoaderData,
-  useSubmit,
   useTransition,
   Link,
 } from '@remix-run/react'
@@ -36,8 +35,6 @@ export const loader = async ({ request }) => {
 export default function Profile() {
   const { templates } = useLoaderData()
   const { user } = useOutletContext()
-  const submit = useSubmit()
-  const transition = useTransition()
 
   // const handleLogout = async () => {
   //   const { error } = await supabase.auth.signOut()
@@ -45,10 +42,6 @@ export default function Profile() {
   //     console.log({ error })
   //   }
   // }
-
-  const createNewTemplate = async () => {
-    submit(null, { method: 'post', action: '/api/new-template' })
-  }
 
   return (
     <div className="container mx-auto">
@@ -58,31 +51,29 @@ export default function Profile() {
       </div>
 
       <div className="grid grid-cols-4 gap-4">
-        <button
-          onClick={createNewTemplate}
-          disabled={transition.state !== 'idle'}
-          className="border border-gray-200 h-32 rounded flex items-center justify-center shadow"
-        >
-          {transition.type !== 'normalLoad' && transition.state !== 'idle' ? (
-            <span>Creating...</span>
-          ) : (
-            <span>New Template</span>
-          )}
-        </button>
+        <TemplateLink pathname="/templates/new">
+          <span>New Template</span>
+        </TemplateLink>
         {templates.map((template, idx) => (
-          <div
-            className="border border-gray-200 h-32 rounded flex items-center justify-center shadow relative"
-            key={idx}
-          >
-            <Link
-              className="after:absolute after:inset-0"
-              to={`/templates/${template.id}`}
-            >
-              <span>{template.title || 'Untitled'}</span>
-            </Link>
-          </div>
+          <TemplateLink key={idx} pathname={`/templates/${template.id}`}>
+            <span>{template.title || 'Untitled'}</span>
+          </TemplateLink>
         ))}
       </div>
+    </div>
+  )
+}
+
+const TemplateLink = ({ pathname, children }) => {
+  const transition = useTransition()
+  const isLoading =
+    transition.state === 'loading' && transition.location.pathname === pathname
+
+  return (
+    <div className="border border-gray-200 h-32 rounded flex items-center justify-center shadow relative">
+      <Link className="after:absolute after:inset-0" to={pathname}>
+        {isLoading ? <span>Loading...</span> : children}
+      </Link>
     </div>
   )
 }

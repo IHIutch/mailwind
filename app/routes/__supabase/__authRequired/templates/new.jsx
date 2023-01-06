@@ -2,7 +2,7 @@ import { redirect } from '@remix-run/node'
 import { prismaPostTemplate } from '~/utils/prisma/templates.server'
 import { createServerClient } from '~/utils/supabase.server'
 
-export const action = async ({ request }) => {
+export const loader = async ({ request }) => {
   const response = new Response()
   const supabase = createServerClient({ request, response })
 
