@@ -9,8 +9,8 @@ import { sidebars } from '~/utils/types'
 export default function DynamicSidebar() {
   const { data: activeBlock } = useActiveBlockState()
 
-  const Component = sidebars[activeBlock?.type || 'global']
-  return <Component heading={<Heading />} />
+  const Component = sidebars[activeBlock?.type || 'GLOBAL']
+  return <Component key={activeBlock?.id} heading={<Heading />} />
 }
 
 const Heading = () => {
@@ -20,6 +20,9 @@ const Heading = () => {
   const handleUnsetActiveBlock = () => {
     dispatch(setActiveBlock(null))
   }
+
+  console.log({ activeBlock })
+
   return (
     <div className="relative">
       {activeBlock ? (
@@ -33,7 +36,7 @@ const Heading = () => {
       <div>
         <div className="mb-4 px-3">
           <h2 className="font-semibold">
-            {activeBlock?.type || 'Global Attributes'}
+            {activeBlock?.type || 'Global Attributes'} {activeBlock?.index}
           </h2>
         </div>
         {/* {activeBlock ? JSON.stringify(activeBlock, null, 2) : null} */}

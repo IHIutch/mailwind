@@ -48,7 +48,11 @@ import {
   useWatch,
 } from 'react-hook-form'
 
-import { setActiveBlock, useActiveBlockDispatch } from '~/context/activeBlock'
+import {
+  setActiveBlock,
+  useActiveBlockDispatch,
+  useActiveBlockState,
+} from '~/context/activeBlock'
 import clsx from 'clsx'
 
 export const loader = async () => {
@@ -236,6 +240,7 @@ export default function Demo() {
 
 const EditView = () => {
   const dispatch = useActiveBlockDispatch()
+  const { data: activeBlock } = useActiveBlockState()
   const [activeItem, setActiveItem] = useState(null)
   const { control, getValues, watch } = useFormContext()
   const { fields, remove, move, insert } = useFieldArray({
@@ -266,9 +271,24 @@ const EditView = () => {
       move(activeIdx, overIdx)
     }
     setActiveItem(null)
+
+    const blocks = getValues('blocks')
+    const foundBlockIdx = blocks.findIndex((b) => b.id === activeBlock?.id)
+
+    console.log({ foundBlockIdx })
+
+    if (foundBlockIdx) {
+      dispatch(
+        setActiveBlock({
+          index: foundBlockIdx,
+          id: blocks[foundBlockIdx].id,
+          type: blocks[foundBlockIdx].type,
+        })
+      )
+    }
   }
 
-  const handleSetActiveItem = (itemIndex) => {
+  const handleSetActiveBlock = (itemIndex) => {
     const { id, type } = getValues(`blocks.${itemIndex}`)
     dispatch(
       setActiveBlock({
@@ -287,7 +307,7 @@ const EditView = () => {
 
   const handleAddItem = (idx, payload) => {
     insert(idx, payload)
-    handleSetActiveItem(idx)
+    handleSetActiveBlock(idx)
   }
 
   const handleDuplicateItem = (idx) => {
@@ -400,7 +420,7 @@ const ItemBlock = ({
     control,
   })
 
-  const handleSetActiveItem = () => {
+  const handleSetActiveBlock = () => {
     const { id, type } = getValues(`blocks.${itemIndex}`)
     dispatch(
       setActiveBlock({
@@ -418,7 +438,7 @@ const ItemBlock = ({
       onMouseLeave={() => {
         !isMenuActive && setIsActive(false)
       }}
-      onClick={handleSetActiveItem}
+      onClick={handleSetActiveBlock}
     >
       <div
         className={clsx(

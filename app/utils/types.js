@@ -39,7 +39,7 @@ export const blocks = {
 }
 
 export const sidebars = {
-  global: GlobalSidebar,
+  GLOBAL: GlobalSidebar,
   [BlockType.Text]: TextSidebar,
   [BlockType.H1]: HeadingSidebar,
   [BlockType.H2]: HeadingSidebar,
@@ -60,7 +60,7 @@ export const defaultAttributes = {
       '-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol',
     fontSize: '16px',
     lineHeight: '1.5',
-    backgroundColor: 'transparent',
+    backgroundColor: '#ffffff',
   },
   H1: {
     paddingTop: '0',
