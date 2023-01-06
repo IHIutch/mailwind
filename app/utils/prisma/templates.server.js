@@ -1,4 +1,4 @@
-import prisma from '@/utils/prisma'
+import prisma from '~/utils/prisma/index.server'
 import { templateSchema } from '../zod/schemas'
 
 export const prismaGetTemplates = async (where) => {
@@ -6,9 +6,6 @@ export const prismaGetTemplates = async (where) => {
     const validWhere = templateSchema.parse(where)
     return await prisma.Template.findMany({
       where: validWhere,
-      orderBy: {
-        position: 'asc',
-      },
     })
   } catch (error) {
     throw Error(error.message)

@@ -2,7 +2,8 @@ import { json } from '@remix-run/node'
 import { Outlet, useFetcher, useLoaderData } from '@remix-run/react'
 import { createBrowserClient } from '@supabase/auth-helpers-remix'
 import { useEffect, useState } from 'react'
-import { prismaGetUser } from '~/utils/prisma/users.server'
+import { prismaGetUser, prismaPostUser } from '~/utils/prisma/users.server'
+import { createStripeCustomer } from '~/utils/stripe/index.server'
 import { createServerClient } from '~/utils/supabase.server'
 
 export const loader = async ({ request }) => {
@@ -22,7 +23,22 @@ export const loader = async ({ request }) => {
 
   let authUser = null
   if (session) {
-    authUser = await prismaGetUser({ id: session.user.id })
+    // If session exists, but public.user doesn't, this is probably a new user
+    // In that case, we need to add them to stripe and add them to the public.user table
+    // This should probably be an async function
+    if (!session?.user?.id) {
+      const stripeCustomer = await createStripeCustomer({
+        email: session.user.email,
+      })
+
+      authUser = await prismaPostUser({
+        id: session.user.id,
+        stripeCustomerId: stripeCustomer.id,
+        role: 'CUSTOMER',
+      })
+    } else {
+      authUser = await prismaGetUser({ id: session.user.id })
+    }
   }
 
   // in order for the set-cookie header to be set,
@@ -73,5 +89,5 @@ export default function Supabase() {
     }
   }, [serverAccessToken, supabase, fetcher])
 
-  return <Outlet context={{ supabase, session }} />
+  return <Outlet />
 }
