@@ -1,12 +1,14 @@
+import * as Label from '@radix-ui/react-label'
 import { redirect, json } from '@remix-run/node'
-import { Form, useActionData } from '@remix-run/react'
+import { useFetcher } from '@remix-run/react'
+import clsx from 'clsx'
 import { createServerClient } from '~/utils/supabase.server'
 
 // https://remix.run/api/conventions#meta
 export const meta = () => {
   return {
-    title: 'Remix Supabase Starter',
-    description: 'Welcome to remix! Login Page',
+    title: 'Mailwind',
+    description: 'Welcome to Mailwind!',
   }
 }
 
@@ -42,7 +44,9 @@ export const action = async ({ request }) => {
     console.log({ data })
 
     if (error) throw Error(error.message)
-    return null
+    return json({
+      email,
+    })
   } catch (error) {
     return json(
       {
@@ -56,32 +60,69 @@ export const action = async ({ request }) => {
 }
 
 export default function Login() {
-  const actionData = useActionData()
+  const fetcher = useFetcher()
 
   return (
-    <div>
-      <main>
-        <h2 className="text-2xl font-bold">
-          Welcome to Supabase Remix - Login Page
-        </h2>
-        <Form method="post">
-          <div className="flex flex-1 flex-col items-center">
-            <div className="form_item">
-              <label htmlFor="email">Your Email</label>
-              <input id="email" name="email" type="text" />
-            </div>
-            <div className="mt-8 flex flex-1 flex-row items-center">
-              <button
-                className="mr-4 w-fit rounded-sm bg-slate-500 px-8 text-white"
-                type="submit"
-              >
-                Submit
-              </button>
-            </div>
+    <main>
+      <div className="mx-auto w-96 border rounded-lg mt-20 p-8 shadow">
+        {fetcher?.data?.email ? (
+          <div className="text-center">
+            <h1 className="text-3xl font-bold mb-2">Email Sent</h1>
+            <p className="text-gray-600 text-sm mb-8">
+              Login link sent to {fetcher.data.email}
+            </p>
+            <p>Click the link in your email to sign in.</p>
           </div>
-        </Form>
-        <div>{actionData?.error ? actionData?.error?.message : null}</div>
-      </main>
-    </div>
+        ) : (
+          <div>
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold text-center">Login</h1>
+            </div>
+            <fetcher.Form method="post">
+              <div>
+                <div className="mb-4">
+                  <Label.Root
+                    htmlFor="email"
+                    className="mb-1 block text-sm font-semibold text-gray-700"
+                  >
+                    Your Email
+                  </Label.Root>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    aria-describedby={fetcher?.error || `email-error-message`}
+                    aria-invalid={fetcher?.error ? 'true' : 'false'}
+                  />
+                  {fetcher?.data?.error ? (
+                    <p
+                      id="email-error-message"
+                      className="mt-1 text-xs text-red-500"
+                    >
+                      {fetcher?.data?.error?.message}
+                    </p>
+                  ) : null}
+                </div>
+                <div>
+                  <button
+                    className={clsx(
+                      'w-full cursor-pointer rounded-md bg-indigo-500 py-2 px-4 font-semibold text-white hover:bg-indigo-600',
+                      'disabled:opacity-60 disabled:cursor-not-allowed'
+                    )}
+                    disabled={fetcher.state !== 'idle'}
+                    type="submit"
+                  >
+                    {fetcher.state !== 'idle'
+                      ? 'Sending...'
+                      : 'Send Login Link'}
+                  </button>
+                </div>
+              </div>
+            </fetcher.Form>
+          </div>
+        )}
+      </div>
+    </main>
   )
 }

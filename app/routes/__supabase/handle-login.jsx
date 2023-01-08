@@ -1,5 +1,6 @@
 import { redirect } from '@remix-run/node'
 import { createServerClient } from '~/utils/supabase.server'
+import { Loader2 } from 'lucide-react'
 
 export const loader = async ({ request }) => {
   const response = new Response()
@@ -17,5 +18,12 @@ export const loader = async ({ request }) => {
 }
 
 export default function HandleLogin() {
-  return <div>Logging in...</div>
+  return (
+    <div className="h-full flex items-center justify-center">
+      <div className="flex items-center">
+        <Loader2 className="h-5 w-5 animate-spin mr-3" />
+        <p className="font-semibold">Logging in...</p>
+      </div>
+    </div>
+  )
 }

@@ -21,8 +21,6 @@ const Heading = () => {
     dispatch(setActiveBlock(null))
   }
 
-  console.log({ activeBlock })
-
   return (
     <div className="relative">
       {activeBlock ? (
