@@ -36,7 +36,7 @@ const Heading = () => {
       <div>
         <div className="mb-4 px-3">
           <h2 className="font-semibold">
-            {activeBlock?.type || 'Global Attributes'} {activeBlock?.index}
+            {activeBlock?.type || 'Global Attributes'}
           </h2>
         </div>
         {/* {activeBlock ? JSON.stringify(activeBlock, null, 2) : null} */}
