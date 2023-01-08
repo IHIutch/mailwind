@@ -89,5 +89,5 @@ export default function Supabase() {
     }
   }, [serverAccessToken, supabase, fetcher])
 
-  return <Outlet />
+  return <Outlet context={{ supabase }} />
 }
