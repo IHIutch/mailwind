@@ -21,23 +21,22 @@ export const loader = async ({ request }) => {
     data: { session },
   } = await supabase.auth.getSession()
 
-  let authUser = null
   if (session) {
     // If session exists, but public.user doesn't, this is probably a new user
     // In that case, we need to add them to stripe and add them to the public.user table
     // This should probably be an async function
-    if (!session?.user?.id) {
+    const authUser = await prismaGetUser({ id: session.user.id })
+
+    if (!authUser) {
       const stripeCustomer = await createStripeCustomer({
         email: session.user.email,
       })
 
-      authUser = await prismaPostUser({
+      await prismaPostUser({
         id: session.user.id,
         stripeCustomerId: stripeCustomer.id,
         role: 'CUSTOMER',
       })
-    } else {
-      authUser = await prismaGetUser({ id: session.user.id })
     }
   }
 
@@ -47,7 +46,6 @@ export const loader = async ({ request }) => {
     {
       env,
       session,
-      authUser,
     },
     {
       headers: response.headers,
@@ -78,7 +76,7 @@ export default function Supabase() {
           { event },
           {
             method: 'post',
-            action: '/api/handle-supabase-auth', // TODO: Update this to something else
+            action: '/api/handle-supabase-auth',
           }
         )
       }

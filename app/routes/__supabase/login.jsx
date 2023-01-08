@@ -65,13 +65,18 @@ export default function Login() {
   return (
     <main>
       <div className="mx-auto w-96 border rounded-lg mt-20 p-8 shadow">
-        {fetcher?.data?.email ? (
+        {fetcher.data?.email ? (
           <div className="text-center">
             <h1 className="text-3xl font-bold mb-2">Email Sent</h1>
             <p className="text-gray-600 text-sm mb-8">
-              Login link sent to {fetcher.data.email}
+              A link has been sent to{' '}
+              <span className="font-semibold">{fetcher.data?.email}</span>.
+              <br />
+              It expires in 24 hours and can only be used once.
             </p>
-            <p>Click the link in your email to sign in.</p>
+            <p>
+              Didn't get the link? <a href="/login">Try Again</a>.
+            </p>
           </div>
         ) : (
           <div>
@@ -92,15 +97,17 @@ export default function Login() {
                     name="email"
                     type="email"
                     className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                    aria-describedby={fetcher?.error || `email-error-message`}
-                    aria-invalid={fetcher?.error ? 'true' : 'false'}
+                    aria-describedby={
+                      fetcher.data?.error || `email-error-message`
+                    }
+                    aria-invalid={fetcher.data?.error ? 'true' : 'false'}
                   />
-                  {fetcher?.data?.error ? (
+                  {fetcher.data?.error ? (
                     <p
                       id="email-error-message"
                       className="mt-1 text-xs text-red-500"
                     >
-                      {fetcher?.data?.error?.message}
+                      {fetcher.data?.error?.message}
                     </p>
                   ) : null}
                 </div>
