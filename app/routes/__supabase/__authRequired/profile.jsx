@@ -56,7 +56,7 @@ export default function Profile() {
         </TemplateLink>
         {templates.map((template, idx) => (
           <TemplateLink key={idx} pathname={`/templates/${template.id}`}>
-            <span>{template.title || 'Untitled'}</span>
+            <span>{template.title ?? 'Untitled'}</span>
           </TemplateLink>
         ))}
       </div>

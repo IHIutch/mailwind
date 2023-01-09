@@ -18,7 +18,7 @@ export default function getHtml(json) {
     })
 
     const { html } = mjml2html(
-      json || {
+      json ?? {
         tagName: 'mjml',
         attributes: {},
         children: [

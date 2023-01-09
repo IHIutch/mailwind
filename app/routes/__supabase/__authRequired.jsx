@@ -20,7 +20,7 @@ export const loader = async ({ request }) => {
   }
 
   const authUser = {
-    ...((await prismaGetUser({ id: user.id })) || {}),
+    ...((await prismaGetUser({ id: user.id })) ?? {}),
     email: user.email,
   }
 

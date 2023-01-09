@@ -42,7 +42,7 @@ export default function FontWeightInput({
         value={value}
         name={inputName}
         ref={ref}
-        aria-describedby={error || `${id}-error-message`}
+        aria-describedby={error ?? `${id}-error-message`}
         aria-invalid={error ? 'true' : 'false'}
       >
         <Select.Trigger

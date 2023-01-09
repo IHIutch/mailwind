@@ -12,10 +12,10 @@ import {
 } from '@chakra-ui/react'
 
 const PaddingController = ({ value = ['0', '0', '0', '0'], onChange }) => {
-  const top = value?.[0] || '0'
-  const right = value?.[1] || '0'
-  const bottom = value?.[2] || '0'
-  const left = value?.[3] || '0'
+  const top = value?.[0] ?? '0'
+  const right = value?.[1] ?? '0'
+  const bottom = value?.[2] ?? '0'
+  const left = value?.[3] ?? '0'
 
   const handleChange = (idx, payload) => {
     const newValue = [...value]

@@ -9,7 +9,7 @@ import { sidebars } from '~/utils/types'
 export default function DynamicSidebar() {
   const { data: activeBlock } = useActiveBlockState()
 
-  const Component = sidebars[activeBlock?.type || 'GLOBAL']
+  const Component = sidebars[activeBlock?.type ?? 'GLOBAL']
   return <Component key={activeBlock?.id} heading={<Heading />} />
 }
 
@@ -34,7 +34,7 @@ const Heading = () => {
       <div>
         <div className="mb-4 px-3">
           <h2 className="font-semibold">
-            {activeBlock?.type || 'Global Attributes'}
+            {activeBlock?.type ?? 'Global Attributes'}
           </h2>
         </div>
         {/* {activeBlock ? JSON.stringify(activeBlock, null, 2) : null} */}

@@ -78,7 +78,7 @@ export default function SpacingInput({
         value={value}
         name={inputName}
         ref={ref}
-        aria-describedby={error || `${id}-error-message`}
+        aria-describedby={error ?? `${id}-error-message`}
         aria-invalid={error ? 'true' : 'false'}
       />
       {error ? (

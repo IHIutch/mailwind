@@ -12,10 +12,10 @@ import {
 } from '@chakra-ui/react'
 
 const BorderController = ({ value, onChange }) => {
-  const top = value.split(' ')[0] || '0'
-  const right = value.split(' ')[1] || '0'
-  const bottom = value.split(' ')[2] || '0'
-  const left = value.split(' ')[3] || '0'
+  const top = value.split(' ')[0] ?? '0'
+  const right = value.split(' ')[1] ?? '0'
+  const bottom = value.split(' ')[2] ?? '0'
+  const left = value.split(' ')[3] ?? '0'
 
   const handleBorderChange = (value) => {
     return value == '0' ? '0' : value + 'px'

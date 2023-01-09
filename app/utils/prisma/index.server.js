@@ -1,6 +1,6 @@
 import Prisma1, * as Prisma2 from '@prisma/client'
 
-let Prisma = Prisma1 || Prisma2
+let Prisma = Prisma1 ?? Prisma2
 let prisma
 
 if (process.env.NODE_ENV === 'production') {
