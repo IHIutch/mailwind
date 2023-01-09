@@ -44,7 +44,7 @@ export default function Profile() {
   // }
 
   return (
-    <div className="container mx-auto">
+    <div className="container-lg mx-auto">
       <h1 className="text-2xl">Profile</h1>
       <div>
         <span>Welcome, {user.email}</span>

@@ -24,7 +24,6 @@ export const loader = async ({ request }) => {
   if (session) {
     // If session exists, but public.user doesn't, this is probably a new user
     // In that case, we need to add them to stripe and add them to the public.user table
-    // This should probably be an async function
     const authUser = await prismaGetUser({ id: session.user.id })
 
     if (!authUser) {
