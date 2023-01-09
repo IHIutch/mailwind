@@ -37,7 +37,10 @@ export const action = async ({ request }) => {
     const { data, error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: 'http://localhost:3000/handle-login',
+        emailRedirectTo:
+          (process.env.NODE_ENV === 'production'
+            ? 'https://mailwind.app'
+            : 'http://localhost:3000') + '/handle-login',
       },
     })
 
