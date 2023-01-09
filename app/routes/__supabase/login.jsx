@@ -34,19 +34,19 @@ export const action = async ({ request }) => {
     const response = new Response()
     const supabase = createServerClient({ request, response })
 
-    const { data, error } = await supabase.auth.signInWithOtp({
+    const appUrl =
+      process?.env?.SITE_URL ??
+      process?.env?.VERCEL_URL ??
+      'http://localhost:3000'
+
+    const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo:
-          (process.env.NODE_ENV === 'production'
-            ? 'https://mailwind.app'
-            : 'http://localhost:3000') + '/handle-login',
+        emailRedirectTo: appUrl + '/handle-login',
       },
     })
-
-    console.log({ data })
-
     if (error) throw Error(error.message)
+
     return json({
       email,
     })
@@ -101,7 +101,7 @@ export default function Login() {
                     type="email"
                     className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                     aria-describedby={
-                      fetcher.data?.error || `email-error-message`
+                      fetcher.data?.error ?? `email-error-message`
                     }
                     aria-invalid={fetcher.data?.error ? 'true' : 'false'}
                   />
