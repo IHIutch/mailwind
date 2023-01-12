@@ -1,5 +1,5 @@
 import { json, redirect } from '@remix-run/node'
-import { Outlet, useLoaderData } from '@remix-run/react'
+import { useOutletContext, Outlet, useLoaderData } from '@remix-run/react'
 import { prismaGetUser } from '~/utils/prisma/users.server'
 import { createServerClient } from '~/utils/supabase.server'
 
@@ -36,5 +36,6 @@ export const loader = async ({ request }) => {
 
 export default function AuthRequired() {
   const { user } = useLoaderData()
-  return <Outlet context={{ user }} />
+  const { supabase } = useOutletContext()
+  return <Outlet context={{ supabase, user }} />
 }

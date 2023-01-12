@@ -10,7 +10,7 @@
 @tailwind components;
 @tailwind utilities;
 
-a {
+.editor a {
   @apply text-blue-500;
   text-decoration: underline;
   font-weight: 600;

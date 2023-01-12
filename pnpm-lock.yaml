@@ -29,6 +29,7 @@ specifiers:
   autoprefixer: ^10.4.8
   clsx: ^1.2.1
   concurrently: ^7.3.0
+  dayjs: ^1.11.7
   eslint: ^8.15.0
   eslint-config-prettier: ^8.5.0
   eslint-plugin-prettier: ^4.2.1
@@ -79,6 +80,7 @@ dependencies:
   '@tiptap/starter-kit': 2.0.0-beta.209_mr3bhnmfox2kjnahwbtgkxt4cy
   '@vercel/node': 1.15.4
   clsx: 1.2.1
+  dayjs: 1.11.7
   highlight.js: 11.6.0
   html-minifier: 4.0.0
   lodash: 4.17.21
@@ -4247,6 +4249,10 @@ packages:
     resolution: {integrity: sha512-dDCnyH2WnnKusqvZZ6+jA1O51Ibt8ZMRNkDZdyAyK4YfbDwa/cEmuztzG5pk6hqlp9aSBPYcjOlktquahGwGeA==}
     engines: {node: '>=0.11'}
     dev: true
+
+  /dayjs/1.11.7:
+    resolution: {integrity: sha512-+Yw9U6YO5TQohxLcIkrXBeY73WP3ejHWVvx8XCk3gxvQDCTEmS48ZrSZCKciI7Bhl/uCMyxYtE9UqRILmFphkQ==}
+    dev: false
 
   /deasync/0.1.28:
     resolution: {integrity: sha512-QqLF6inIDwiATrfROIyQtwOQxjZuek13WRYZ7donU5wJPLoP67MnYxA6QtqdvdBy2mMqv5m3UefBVdJjvevOYg==}

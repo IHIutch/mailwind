@@ -318,8 +318,8 @@ const EditView = () => {
                     className={clsx(
                       'overflow-hidden rounded-lg transition-all',
                       activeItem?.id === v.id
-                        ? 'ring-offset-2 ring-2'
-                        : 'ring-offset-0 ring-0'
+                        ? 'ring-2 ring-offset-2'
+                        : 'ring-0 ring-offset-0'
                     )}
                   >
                     <ItemBlock
@@ -490,14 +490,14 @@ const ItemBlock = ({
                   onClick={duplicateItem}
                 >
                   <Copy className="h-4 w-4" />
-                  <p className="pl-2">Duplicate Item</p>
+                  <span className="pl-2">Duplicate Item</span>
                 </DropdownMenu.Item>
                 <DropdownMenu.Item
                   className="flex cursor-pointer items-center py-1 px-2 outline-none hover:bg-zinc-100"
                   onClick={removeItem}
                 >
                   <Trash2 className="h-4 w-4" />
-                  <p className="pl-2">Delete Item</p>
+                  <span className="pl-2">Delete Item</span>
                 </DropdownMenu.Item>
               </DropdownMenu.Content>
             </DropdownMenu.Portal>
