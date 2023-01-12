@@ -13,7 +13,7 @@ export default function Navbar({
   }
 
   return (
-    <div className="fixed inset-x-0 top-0 z-10 flex h-16 border-b border-zinc-200 bg-white px-8  shadow-sm">
+    <div className="fixed inset-x-0 top-0 z-10 flex h-16 border-b border-zinc-200 bg-white px-8 shadow-sm">
       <div className="absolute inset-x-0 flex h-full items-center justify-center">
         <ToggleGroup.Root
           id="containerAlignField"

@@ -28,7 +28,7 @@ export default function CodeBlock({ value, onChange = () => null }) {
   }
 
   return (
-    <div className="rounded-md overflow-hidden p-2" style={theme.plain}>
+    <div className="overflow-hidden rounded-md p-2" style={theme.plain}>
       <Editor
         className="font-mono"
         value={code}

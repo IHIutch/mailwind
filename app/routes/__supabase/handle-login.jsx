@@ -19,9 +19,9 @@ export const loader = async ({ request }) => {
 
 export default function HandleLogin() {
   return (
-    <div className="h-full flex items-center justify-center">
+    <div className="flex h-full items-center justify-center">
       <div className="flex items-center">
-        <Loader2 className="h-5 w-5 animate-spin mr-3" />
+        <Loader2 className="mr-3 h-5 w-5 animate-spin" />
         <p className="font-semibold">Logging in...</p>
       </div>
     </div>

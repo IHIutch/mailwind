@@ -67,11 +67,11 @@ export default function Login() {
 
   return (
     <main>
-      <div className="mx-auto w-96 border rounded-lg mt-20 p-8 shadow">
+      <div className="mx-auto mt-20 w-96 rounded-lg border p-8 shadow">
         {fetcher.data?.email ? (
           <div className="text-center">
-            <h1 className="text-3xl font-bold mb-2">Email Sent</h1>
-            <p className="text-gray-600 text-sm mb-8">
+            <h1 className="mb-2 text-3xl font-bold">Email Sent</h1>
+            <p className="mb-8 text-sm text-gray-600">
               A link has been sent to{' '}
               <span className="font-semibold">{fetcher.data?.email}</span>.
               <br />
@@ -84,7 +84,7 @@ export default function Login() {
         ) : (
           <div>
             <div className="mb-8">
-              <h1 className="text-3xl font-bold text-center">Login</h1>
+              <h1 className="text-center text-3xl font-bold">Login</h1>
             </div>
             <fetcher.Form method="post">
               <div>
@@ -118,7 +118,7 @@ export default function Login() {
                   <button
                     className={clsx(
                       'w-full cursor-pointer rounded-md bg-indigo-500 py-2 px-4 font-semibold text-white hover:bg-indigo-600',
-                      'disabled:opacity-60 disabled:cursor-not-allowed'
+                      'disabled:cursor-not-allowed disabled:opacity-60'
                     )}
                     disabled={fetcher.state !== 'idle'}
                     type="submit"

@@ -338,8 +338,8 @@ const EditView = () => {
                     className={clsx(
                       'overflow-hidden rounded-lg transition-all',
                       activeItem?.id === v.id
-                        ? 'ring-offset-2 ring-2'
-                        : 'ring-offset-0 ring-0'
+                        ? 'ring-2 ring-offset-2'
+                        : 'ring-0 ring-offset-0'
                     )}
                   >
                     <ItemBlock
