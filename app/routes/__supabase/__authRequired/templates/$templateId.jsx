@@ -265,9 +265,17 @@ export default function TemplateEdit() {
   )
 }
 
-const TemplateTitle = ({ title }) => {
+const TemplateTitle = () => {
   const { template } = useLoaderData()
+  const [open, setOpen] = useState(false)
+
   const fetcher = useFetcher()
+
+  useEffect(() => {
+    if (fetcher.type === 'done') {
+      setOpen(false)
+    }
+  }, [fetcher.type])
 
   return (
     <div className="mx-4 flex items-center border-l border-gray-300 px-4">
@@ -278,7 +286,7 @@ const TemplateTitle = ({ title }) => {
         </p>
       </div>
       <div className="ml-4">
-        <Dialog.Root>
+        <Dialog.Root open={open} onOpenChange={setOpen}>
           <Dialog.Trigger
             className={clsx(
               'flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-100 p-1 transition-colors',
@@ -345,8 +353,12 @@ const TemplateTitle = ({ title }) => {
                         Cancel
                       </Dialog.Close>
                       <button
+                        disabled={fetcher.state !== 'idle'}
                         type="submit"
-                        className="ml-2 h-8 rounded bg-indigo-500 px-2 text-sm font-semibold text-white hover:bg-indigo-600"
+                        className={clsx(
+                          'ml-2 h-8 rounded bg-indigo-500 px-2 text-sm font-semibold text-white hover:bg-indigo-600',
+                          'disabled:opacity-40'
+                        )}
                       >
                         Save
                       </button>
