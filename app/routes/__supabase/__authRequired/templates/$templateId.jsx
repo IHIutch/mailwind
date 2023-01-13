@@ -58,8 +58,14 @@ import {
 } from '~/context/activeBlock'
 import clsx from 'clsx'
 import GlobalNavbar from '~/components/GlobalNavbar'
+import {
+  prismaGetTemplate,
+  prismaPutTemplate,
+} from '~/utils/prisma/templates.server'
+import dayjs from 'dayjs'
+import { json } from '@remix-run/node'
 
-export const loader = async () => {
+export const loader = async ({ params }) => {
   const blocks = [
     {
       type: BlockType.H1,
@@ -141,15 +147,27 @@ export const loader = async () => {
     },
   ]
 
+  const template = await prismaGetTemplate({ id: params.templateId })
+
   return {
     blocks: blocks.map((b) => ({
       ...b,
       id: getNanoId(),
     })),
+    template,
   }
 }
 
-export default function Demo() {
+export const action = async ({ request, params }) => {
+  const formData = await request.formData()
+  const payload = Object.fromEntries(formData)
+
+  const template = await prismaPutTemplate({ id: params.templateId }, payload)
+  console.log({ template })
+  return json({ template })
+}
+
+export default function TemplateEdit() {
   const { blocks: loaderBlocks } = useLoaderData()
   const htmlFetcher = useFetcher()
 
@@ -248,12 +266,15 @@ export default function Demo() {
 }
 
 const TemplateTitle = ({ title }) => {
+  const { template } = useLoaderData()
+  const fetcher = useFetcher()
+
   return (
     <div className="mx-4 flex items-center border-l border-gray-300 px-4">
       <div>
-        <p className="font-medium">{title || 'Untitled Template'}</p>
+        <p className="font-medium">{template.title ?? 'Untitled Template'}</p>
         <p className="text-xs text-neutral-500">
-          Last Modified: Jan 13 10:59am
+          Last Modified: {dayjs(template.updatedAt).format('MMM D, h:mma')}
         </p>
       </div>
       <div className="ml-4">
@@ -290,7 +311,7 @@ const TemplateTitle = ({ title }) => {
                     <X />
                   </button>
                 </Dialog.Close>
-                <form action="">
+                <fetcher.Form method="post">
                   <div className="p-4">
                     <Label.Root
                       htmlFor="template-title"
@@ -303,6 +324,7 @@ const TemplateTitle = ({ title }) => {
                       name="title"
                       type="text"
                       className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                      defaultValue={template.title}
                       // aria-describedby={
                       //   fetcher.data?.error ?? `email-error-message`
                       // }
@@ -330,7 +352,7 @@ const TemplateTitle = ({ title }) => {
                       </button>
                     </div>
                   </footer>
-                </form>
+                </fetcher.Form>
               </Dialog.Content>
             </div>
           </Dialog.Portal>
@@ -376,8 +398,6 @@ const EditView = () => {
 
     const blocks = getValues('blocks')
     const foundBlockIdx = blocks.findIndex((b) => b.id === activeBlock?.id)
-
-    console.log({ foundBlockIdx })
 
     if (foundBlockIdx) {
       dispatch(
@@ -641,8 +661,7 @@ const EditorNavbar = ({ handleDownload, previewSize, setPreviewSize }) => {
   }
   return (
     <div className="relative flex h-12 shrink-0 border-b border-zinc-200 bg-white px-8 shadow-sm">
-      <div className="z-10 flex items-center"></div>
-      <div className="absolute inset-x-0 z-0 flex h-full items-center justify-center">
+      <div className="absolute inset-x-0 flex h-full items-center justify-center">
         <ToggleGroup.Root
           id="containerAlignField"
           type="single"

@@ -17,9 +17,7 @@ export const loader = async ({ request }) => {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const [templates] = await Promise.all([
-    await prismaGetTemplates({ userId: user.id }),
-  ])
+  const templates = await prismaGetTemplates({ userId: user.id })
 
   return json(
     {
@@ -57,7 +55,7 @@ export default function Profile() {
                 <div className="p-4">
                   <div className="mb-0.5">
                     <span className="text-lg font-medium">
-                      {template.title ?? 'Untitled'}
+                      {template.title ?? 'Untitled Template'}
                     </span>
                   </div>
                   <div className="text-xs text-neutral-500">
