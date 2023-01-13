@@ -22,7 +22,7 @@ import {
   SortOverlay,
 } from '~/components/sortable/SortableItem'
 
-import Navbar from '~/components/Navbar'
+import EditorNavbar from '~/components/EditorNavbar'
 import DynamicBlock from '~/components/DynamicBlock'
 import DynamicSidebar from '~/components/DynamicSidebar'
 import {
@@ -195,7 +195,7 @@ export default function Demo() {
   return (
     <div className="pt-16">
       <FormProvider {...formMethods}>
-        <Navbar
+        <EditorNavbar
           previewSize={previewSize}
           setPreviewSize={setPreviewSize}
           handleDownload={formMethods.handleSubmit(handleDownload)}

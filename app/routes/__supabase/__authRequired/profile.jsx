@@ -36,9 +36,9 @@ export default function Profile() {
 
   return (
     <div className="h-full bg-neutral-50">
-      <GlobalNavbar />
+      <GlobalNavbar className="shadow-sm" />
       <div className="pt-16">
-        <div className="container-lg mx-auto py-12 px-4">
+        <div className="container-xl mx-auto py-12 px-4">
           <h1 className="mb-8 text-3xl font-bold">Your Templates</h1>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
             <TemplateLink pathname="/templates/new">

@@ -3,6 +3,10 @@ import { getNanoId } from '~/utils/functions'
 import { BlockType, defaultAttributes } from '~/utils/types'
 import { useFetcher, useLoaderData } from '@remix-run/react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+import * as Dialog from '@radix-ui/react-dialog'
+import * as Label from '@radix-ui/react-label'
+import * as Popover from '@radix-ui/react-popover'
+import * as ToggleGroup from '@radix-ui/react-toggle-group'
 import {
   DndContext,
   KeyboardSensor,
@@ -21,8 +25,6 @@ import {
   SortableItem,
   SortOverlay,
 } from '~/components/sortable/SortableItem'
-
-import Navbar from '~/components/Navbar'
 import DynamicBlock from '~/components/DynamicBlock'
 import DynamicSidebar from '~/components/DynamicSidebar'
 import {
@@ -37,8 +39,9 @@ import {
   Trash2,
   Type,
   Settings,
+  X,
+  Send,
 } from 'lucide-react'
-
 import {
   Controller,
   FormProvider,
@@ -54,6 +57,7 @@ import {
   useActiveBlockState,
 } from '~/context/activeBlock'
 import clsx from 'clsx'
+import GlobalNavbar from '~/components/GlobalNavbar'
 
 export const loader = async () => {
   const blocks = [
@@ -197,43 +201,141 @@ export default function Demo() {
   })
 
   return (
-    <div className="pt-16">
-      <FormProvider {...formMethods}>
-        <Navbar
-          previewSize={previewSize}
-          setPreviewSize={setPreviewSize}
-          handleDownload={formMethods.handleSubmit(handleDownload)}
-        />
-        <div>
-          <div className="fixed inset-y-0 top-16 w-[calc(100%-300px)]">
-            <div className="flex h-full overflow-y-auto">
-              <div
-                className={clsx('relative py-12 px-4', [
-                  global.containerAlign === 'left' && 'mr-auto',
-                  global.containerAlign === 'center' && 'mx-auto',
-                  global.containerAlign === 'right' && 'ml-auto',
-                ])}
-                style={{
-                  width:
-                    previewSize === 'desktop'
-                      ? `calc(${global.containerWidth} + ${offset})`
-                      : `calc(${mobileSize} + ${offset})`,
-                  left: offset,
-                }}
-              >
-                <EditView />
+    <div className="h-full">
+      <GlobalNavbar>
+        <TemplateTitle />
+      </GlobalNavbar>
+      <div className="relative flex h-full pt-16">
+        <FormProvider {...formMethods}>
+          <div className="flex h-full w-[calc(100%-300px)] flex-col">
+            <EditorNavbar
+              previewSize={previewSize}
+              setPreviewSize={setPreviewSize}
+              handleDownload={formMethods.handleSubmit(handleDownload)}
+            />
+            <div className="grow overflow-y-auto">
+              <div className="">
+                <div
+                  className={clsx('relative py-12 px-4', [
+                    global.containerAlign === 'left' && 'mr-auto',
+                    global.containerAlign === 'center' && 'mx-auto',
+                    global.containerAlign === 'right' && 'ml-auto',
+                  ])}
+                  style={{
+                    width:
+                      previewSize === 'desktop'
+                        ? `calc(${global.containerWidth} + ${offset})`
+                        : `calc(${mobileSize} + ${offset})`,
+                    left: offset,
+                  }}
+                >
+                  <EditView />
+                </div>
               </div>
             </div>
           </div>
-          <div className="fixed inset-y-0 right-0 w-[300px] border-l border-zinc-200 bg-white pt-16">
+          <div className="w-[300px] shrink-0 border-l border-zinc-200 bg-white">
             <div className="h-full overflow-y-auto">
               <div className="py-4">
                 <DynamicSidebar />
               </div>
             </div>
           </div>
-        </div>
-      </FormProvider>
+        </FormProvider>
+      </div>
+    </div>
+  )
+}
+
+const TemplateTitle = ({ title }) => {
+  return (
+    <div className="mx-4 flex items-center border-l border-gray-300 px-4">
+      <div>
+        <p className="font-medium">{title || 'Untitled Template'}</p>
+        <p className="text-xs text-neutral-500">
+          Last Modified: Jan 13 10:59am
+        </p>
+      </div>
+      <div className="ml-4">
+        <Dialog.Root>
+          <Dialog.Trigger
+            className={clsx(
+              'flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-100 p-1 transition-colors',
+              'hover:bg-neutral-200'
+            )}
+          >
+            <Settings className="h-5 w-5" />
+          </Dialog.Trigger>
+          <Dialog.Portal>
+            <Dialog.Overlay
+              className={clsx(
+                'fixed inset-0 z-40 bg-neutral-900',
+                '[&[data-state=open]]:opacity-40'
+              )}
+            />
+            <div className="fixed inset-0 z-50 flex items-start justify-center">
+              <Dialog.Content className="relative my-16 flex w-full max-w-[28rem] flex-col rounded-md bg-white">
+                <header className="p-4">
+                  <Dialog.Title className="text-2xl font-semibold">
+                    Edit Template Title
+                  </Dialog.Title>
+                </header>
+                <Dialog.Close asChild className="absolute top-2 right-3">
+                  <button
+                    className={clsx(
+                      'rounded-lg bg-neutral-100 p-1 transition-colors',
+                      'hover:bg-neutral-200'
+                    )}
+                  >
+                    <X />
+                  </button>
+                </Dialog.Close>
+                <form action="">
+                  <div className="p-4">
+                    <Label.Root
+                      htmlFor="template-title"
+                      className="mb-1 block text-sm font-semibold text-gray-700"
+                    >
+                      Title
+                    </Label.Root>
+                    <input
+                      id="template-title"
+                      name="title"
+                      type="text"
+                      className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                      // aria-describedby={
+                      //   fetcher.data?.error ?? `email-error-message`
+                      // }
+                      // aria-invalid={fetcher.data?.error ? 'true' : 'false'}
+                    />
+                    {/* {fetcher.data?.error ? (
+                            <p
+                              id="email-error-message"
+                              className="mt-1 text-xs text-red-500"
+                            >
+                              {fetcher.data?.error?.message}
+                            </p>
+                          ) : null} */}
+                  </div>
+                  <footer className="flex p-4">
+                    <div className="ml-auto">
+                      <Dialog.Close className="h-8 rounded border border-zinc-300 px-2 text-sm font-semibold text-zinc-500 hover:bg-indigo-50">
+                        Cancel
+                      </Dialog.Close>
+                      <button
+                        type="submit"
+                        className="ml-2 h-8 rounded bg-indigo-500 px-2 text-sm font-semibold text-white hover:bg-indigo-600"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </footer>
+                </form>
+              </Dialog.Content>
+            </div>
+          </Dialog.Portal>
+        </Dialog.Root>
+      </div>
     </div>
   )
 }
@@ -529,6 +631,86 @@ const ItemBlock = ({
         </div>
       </div>
       <div className="grow">{children}</div>
+    </div>
+  )
+}
+
+const EditorNavbar = ({ handleDownload, previewSize, setPreviewSize }) => {
+  const handleSendEmail = () => {
+    console.log('send email')
+  }
+  return (
+    <div className="relative flex h-12 shrink-0 border-b border-zinc-200 bg-white px-8 shadow-sm">
+      <div className="z-10 flex items-center"></div>
+      <div className="absolute inset-x-0 z-0 flex h-full items-center justify-center">
+        <ToggleGroup.Root
+          id="containerAlignField"
+          type="single"
+          value={previewSize}
+          onValueChange={(value) => (value ? setPreviewSize(value) : null)}
+          className="flex h-8 rounded-md shadow-sm"
+        >
+          <ToggleGroup.Item
+            value="desktop"
+            className="rounded-l-md border border-r-0 border-zinc-300 px-2 text-sm font-semibold text-zinc-500 hover:bg-indigo-50 [&[data-state=on]]:border-indigo-100 [&[data-state=on]]:bg-indigo-100 [&[data-state=on]]:text-indigo-600"
+          >
+            Desktop
+          </ToggleGroup.Item>
+          <ToggleGroup.Item
+            value="mobile"
+            className="rounded-r-md border border-l-0 border-zinc-300 px-2 text-sm font-semibold text-zinc-500 hover:bg-indigo-50 [&[data-state=on]]:border-indigo-100 [&[data-state=on]]:bg-indigo-100 [&[data-state=on]]:text-indigo-600"
+          >
+            Mobile
+          </ToggleGroup.Item>
+        </ToggleGroup.Root>
+      </div>
+      <div className="relative ml-auto flex items-center">
+        <button
+          className="h-8 cursor-pointer rounded-md bg-indigo-500 px-2 text-sm font-semibold text-white hover:bg-indigo-600"
+          onClick={handleDownload}
+        >
+          Download
+        </button>
+        <div className="ml-2">
+          <Popover.Root>
+            <Popover.Trigger
+              className="h-8 rounded-md bg-indigo-100 px-2 text-sm font-semibold text-indigo-700 hover:bg-indigo-200 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:bg-indigo-100"
+              disabled
+            >
+              Send Test
+            </Popover.Trigger>
+            <Popover.Portal>
+              <Popover.Content
+                align="end"
+                sideOffset="1"
+                className="rounded-md border border-zinc-200 bg-white p-2 shadow-lg"
+              >
+                <Label.Root
+                  // className="mb-1 text-sm font-semibold text-zinc-700"
+                  className="sr-only"
+                  htmlFor="emailToSendField"
+                >
+                  Your Email
+                </Label.Root>
+                <div className="flex items-end">
+                  <input
+                    id="emailToSendField"
+                    type="email"
+                    placeholder="Your Email..."
+                    className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  />
+                  <button
+                    className="ml-2 h-10 cursor-pointer rounded-md bg-indigo-500 px-4 font-semibold text-white hover:bg-indigo-600"
+                    onClick={handleSendEmail}
+                  >
+                    <Send className="h-5 w-5" />
+                  </button>
+                </div>
+              </Popover.Content>
+            </Popover.Portal>
+          </Popover.Root>
+        </div>
+      </div>
     </div>
   )
 }
