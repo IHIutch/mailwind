@@ -27,6 +27,7 @@ model Block {
   templateId Int
   position   Int       @db.SmallInt
   attributes Json?     @db.Json
+  value      String?   @db.VarChar
   createdAt  DateTime  @default(now()) @db.Timestamptz()
   updatedAt  DateTime  @default(now()) @updatedAt @db.Timestamptz()
   deletedAt  DateTime? @db.Timestamptz()

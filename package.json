@@ -5,7 +5,8 @@
     "build": "npm run build:css && remix build",
     "build:css": "tailwindcss -m -i ./styles/app.css -o app/styles/app.css",
     "dev": "concurrently \"npm run dev:css\" \"remix dev\"",
-    "dev:css": "tailwindcss -w -i ./styles/app.css -o app/styles/app.css"
+    "dev:css": "tailwindcss -w -i ./styles/app.css -o app/styles/app.css",
+    "lint:fix": "eslint --ext .js,.jsx --ignore-path .gitignore . --fix"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.0.5",
@@ -32,6 +33,7 @@
     "@vercel/node": "^1.15.2",
     "clsx": "^1.2.1",
     "dayjs": "^1.11.7",
+    "eslint-plugin-tailwindcss": "^3.8.0",
     "highlight.js": "^11.6.0",
     "html-minifier": "^4.0.0",
     "lodash": "^4.17.21",

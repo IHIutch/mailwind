@@ -23,7 +23,7 @@ export default function ImageSidebar({ heading }) {
             id="heightInputField"
             name={`blocks.${activeBlock.index}.attributes.height`}
             control={control}
-            className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
             errorClassName="mt-1 text-xs text-red-500"
           />
         </div>
@@ -38,7 +38,7 @@ export default function ImageSidebar({ heading }) {
             id="widthInputField"
             name={`blocks.${activeBlock.index}.attributes.width`}
             control={control}
-            className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
             errorClassName="mt-1 text-xs text-red-500"
           />
         </div>
@@ -54,7 +54,7 @@ export default function ImageSidebar({ heading }) {
               id="paddingTopField"
               name={`blocks.${activeBlock.index}.attributes.paddingTop`}
               control={control}
-              className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
               errorClassName="mt-1 text-xs text-red-500"
             />
           </div>
@@ -69,7 +69,7 @@ export default function ImageSidebar({ heading }) {
               id="paddingRightField"
               name={`blocks.${activeBlock.index}.attributes.paddingRight`}
               control={control}
-              className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
               errorClassName="mt-1 text-xs text-red-500"
             />
           </div>
@@ -84,7 +84,7 @@ export default function ImageSidebar({ heading }) {
               id="paddingBottomField"
               name={`blocks.${activeBlock.index}.attributes.paddingBottom`}
               control={control}
-              className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
               errorClassName="mt-1 text-xs text-red-500"
             />
           </div>
@@ -99,7 +99,7 @@ export default function ImageSidebar({ heading }) {
               id="paddingLeftField"
               name={`blocks.${activeBlock.index}.attributes.paddingLeft`}
               control={control}
-              className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
               errorClassName="mt-1 text-xs text-red-500"
             />
           </div>
@@ -115,7 +115,7 @@ export default function ImageSidebar({ heading }) {
             id="urlField"
             name={`blocks.${activeBlock.index}.attributes.url`}
             control={control}
-            className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
             errorClassName="mt-1 text-xs text-red-500"
           />
         </div>

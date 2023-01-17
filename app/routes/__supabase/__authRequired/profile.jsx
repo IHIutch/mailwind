@@ -1,6 +1,5 @@
 import { json } from '@remix-run/node'
 import { useLoaderData, useTransition, Link } from '@remix-run/react'
-import clsx from 'clsx'
 import dayjs from 'dayjs'
 import { Plus } from 'lucide-react'
 import GlobalNavbar from '~/components/GlobalNavbar'
@@ -79,10 +78,8 @@ const TemplateLink = ({ pathname, children }) => {
 
   return (
     <div
-      className={clsx(
-        'relative overflow-hidden rounded border border-gray-200 bg-white shadow-sm transition-all',
-        'hover:-translate-y-1 hover:shadow-md'
-      )}
+      className="relative overflow-hidden rounded border border-gray-200 bg-white shadow-sm transition-all
+      hover:-translate-y-1 hover:shadow-md"
     >
       <Link className="after:absolute after:inset-0" to={pathname}>
         {isLoading ? <span>Loading...</span> : children}

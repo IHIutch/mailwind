@@ -1,7 +1,6 @@
 import { Link, useOutletContext } from '@remix-run/react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { LogOut } from 'lucide-react'
-import clsx from 'clsx'
 
 export default function GlobalNavbar({ className, children }) {
   const { user, supabase } = useOutletContext()
@@ -12,10 +11,8 @@ export default function GlobalNavbar({ className, children }) {
 
   return (
     <div
-      className={clsx(
-        className,
-        'fixed inset-x-0 top-0 z-10 h-16 border-b border-zinc-200 bg-white px-8'
-      )}
+      className={`${className}
+      fixed inset-x-0 top-0 z-10 h-16 border-b border-zinc-200 bg-white px-8`}
     >
       <div className="container-xl mx-auto flex h-full items-center px-4">
         <div>

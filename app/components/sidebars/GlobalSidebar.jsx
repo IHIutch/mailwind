@@ -63,7 +63,7 @@ export default function GlobalSidebar({ heading }) {
           id="globalWidthField"
           name="global.containerWidth"
           control={control}
-          className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
         />
       </div>
       <div className="border-t border-zinc-200 px-3 pt-4">

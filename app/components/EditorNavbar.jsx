@@ -3,7 +3,6 @@ import * as ToggleGroup from '@radix-ui/react-toggle-group'
 import * as Popover from '@radix-ui/react-popover'
 import * as Label from '@radix-ui/react-label'
 import * as Dialog from '@radix-ui/react-dialog'
-import clsx from 'clsx'
 
 export default function EditorNavbar({
   handleDownload,
@@ -25,7 +24,7 @@ export default function EditorNavbar({
             </span>
           </Dialog.Trigger>
           <Dialog.Portal>
-            <Dialog.Overlay className="fixed inset-0 z-50 flex items-start justify-center bg-neutral-900 bg-opacity-90">
+            <Dialog.Overlay className="fixed inset-0 z-50 flex items-start justify-center bg-neutral-900/90">
               <Dialog.Content className="relative my-16 flex w-full max-w-[28rem] flex-col rounded-md bg-white">
                 <header className="p-4">
                   <Dialog.Title className="text-2xl font-semibold">
@@ -34,10 +33,8 @@ export default function EditorNavbar({
                 </header>
                 <Dialog.Close asChild className="absolute top-2 right-3">
                   <button
-                    className={clsx(
-                      'rounded-lg bg-neutral-100 p-1 transition-colors',
-                      'hover:bg-neutral-200'
-                    )}
+                    className="rounded-lg bg-neutral-100 p-1 transition-colors
+                      hover:bg-neutral-200"
                   >
                     <X />
                   </button>
@@ -54,7 +51,7 @@ export default function EditorNavbar({
                       id="template-title"
                       name="title"
                       type="text"
-                      className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                      className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
                       // aria-describedby={
                       //   fetcher.data?.error ?? `email-error-message`
                       // }
@@ -143,7 +140,7 @@ export default function EditorNavbar({
                     id="emailToSendField"
                     type="email"
                     placeholder="Your Email..."
-                    className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
                   />
                   <button
                     className="ml-2 h-10 cursor-pointer rounded-md bg-indigo-500 px-4 font-semibold text-white hover:bg-indigo-600"

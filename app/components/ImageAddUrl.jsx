@@ -52,12 +52,12 @@ export default function ImageDropzone({ onChange, value = '' }) {
                 type="url"
                 id="imageUrlField"
                 placeholder="Image URL..."
-                className="grow rounded-md border-zinc-300 pl-10 pr-20 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="grow rounded-md border-zinc-300 pl-10 pr-20 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
               />
               <div className="absolute inset-y-0 right-0 flex w-20 items-center justify-center px-1">
                 <button
                   onClick={handleSubmit}
-                  className="w-full cursor-pointer rounded-md bg-indigo-500 py-2 px-2 text-sm font-semibold text-white hover:bg-indigo-600"
+                  className="w-full cursor-pointer rounded-md bg-indigo-500 p-2 text-sm font-semibold text-white hover:bg-indigo-600"
                 >
                   Submit
                 </button>

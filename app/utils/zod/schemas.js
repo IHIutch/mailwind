@@ -1,5 +1,13 @@
 import { z } from 'zod'
 
+const textBlockSchema = z.any()
+const headingBlockSchema = z.any()
+const imageBlockSchema = z.any()
+const codeBlockSchema = z.any()
+const dividerBlockSchema = z.any()
+const quoteBlockSchema = z.any()
+// TODO: Define schemas
+
 export const userSchema = z
   .object({
     id: z.coerce.string().uuid(),
@@ -28,12 +36,20 @@ export const blockSchema = z
     id: z.coerce.number(),
     templateId: z.coerce.number(),
     position: z.coerce.number(),
-    attributes: z.object(), // TODO: Create a union using various block specific schemas
+    attributes: z.union([
+      textBlockSchema,
+      imageBlockSchema,
+      quoteBlockSchema,
+      codeBlockSchema,
+      dividerBlockSchema,
+      headingBlockSchema,
+    ]),
+    value: z.string(),
     createdAt: z.date(),
     updatedAt: z.date(),
     deletedAt: z.date().nullable(),
   })
-  .partial()
+  .deepPartial()
 
 export const membershipSchema = z
   .object({

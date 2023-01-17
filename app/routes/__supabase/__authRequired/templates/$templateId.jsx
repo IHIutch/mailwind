@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { getNanoId } from '~/utils/functions'
 import { BlockType, defaultAttributes } from '~/utils/types'
 import { useFetcher, useLoaderData } from '@remix-run/react'
@@ -58,118 +58,50 @@ import {
 } from '~/context/activeBlock'
 import clsx from 'clsx'
 import GlobalNavbar from '~/components/GlobalNavbar'
-import {
-  prismaGetTemplate,
-  prismaPutTemplate,
-} from '~/utils/prisma/templates.server'
+import { prismaGetTemplate } from '~/utils/prisma/templates.server'
 import dayjs from 'dayjs'
-import { json } from '@remix-run/node'
+import { debounce } from 'lodash'
+import { prismaGetBlocks } from '~/utils/prisma/blocks.server'
 
-export const loader = async ({ params }) => {
-  const blocks = [
-    {
-      type: BlockType.H1,
-      value: '<p>Get Started</p>',
-      attributes: {
-        ...defaultAttributes[BlockType.H1],
-      },
-    },
-    {
-      type: BlockType.Divider,
-    },
-    {
-      type: BlockType.Text,
-      value:
-        '<p>👋 Welcome! This is a private page for you to play around with.</p>',
-      attributes: {
-        ...defaultAttributes[BlockType.Text],
-      },
-    },
-    {
-      type: BlockType.Text,
-      value: '<p>Give these things a try:</p>',
-      attributes: {
-        ...defaultAttributes[BlockType.Text],
-      },
-    },
-    {
-      type: BlockType.Text,
-      value: '<p>1. Hover on the left of each line for quick actions</p>',
-      attributes: {
-        ...defaultAttributes[BlockType.Text],
-      },
-    },
-
-    {
-      type: BlockType.Text,
-      value: '<p>2. Click on the + button to add a new line</p>',
-      attributes: {
-        ...defaultAttributes[BlockType.Text],
-      },
-    },
-    {
-      type: BlockType.Text,
-      value: '<p>3. Drag the ⋮⋮ button to reorder</p>',
-      attributes: {
-        ...defaultAttributes[BlockType.Text],
-      },
-    },
-    {
-      type: BlockType.Text,
-      value: '<p>4. Click the trash icon to delete this block</p>',
-      attributes: {
-        ...defaultAttributes[BlockType.Text],
-      },
-    },
-    {
-      type: BlockType.Text,
-      value:
-        '<p>5. <strong>Bold</strong> and <em>italicize</em> using markdown e.g. *italic* or **bold**</p>',
-      attributes: {
-        ...defaultAttributes[BlockType.Text],
-      },
-    },
-    {
-      type: BlockType.Text,
-      value:
-        "<p>6. Add headers and dividers with '#', '##' or '---' followed by a space</p>",
-      attributes: {
-        ...defaultAttributes[BlockType.Text],
-      },
-    },
-    {
-      type: BlockType.Text,
-      value:
-        "<p>7. Type '/' for a menu to quickly switch blocks and search by typing</p>",
-      attributes: {
-        ...defaultAttributes[BlockType.Text],
-      },
-    },
-  ]
-
-  const template = await prismaGetTemplate({ id: params.templateId })
+export const loader = async ({ params: { templateId } }) => {
+  const blocks = await prismaGetBlocks({ templateId: templateId })
+  const template = await prismaGetTemplate({ id: templateId })
 
   return {
-    blocks: blocks.map((b) => ({
-      ...b,
-      id: getNanoId(),
-    })),
+    blocks,
     template,
   }
 }
 
-export const action = async ({ request, params }) => {
-  const formData = await request.formData()
-  const payload = Object.fromEntries(formData)
+// export const action = async ({ request, params }) => {
+//   const formData = await request.formData()
+//   const payload = Object.fromEntries(formData)
 
-  const template = await prismaPutTemplate({ id: params.templateId }, payload)
-  console.log({ template })
-  return json({ template })
-}
+//   let template = await prismaPutTemplate({ id: params.templateId }, payload)
+
+//   if (payload?.json) {
+//     // console.log(payload.json)
+//     template = {
+//       ...template,
+//       blocks: JSON.parse(payload.json).map((block, idx) => ({
+//         templateId: params.templateId,
+//         position: idx,
+//         value: JSON.stringify(block.value),
+//         attributes: JSON.stringify(block.attributes),
+//         type: block.type,
+//       })),
+//     }
+//   }
+
+//   console.log({ blocks: template.blocks })
+//   return json({ template })
+// }
 
 export default function TemplateEdit() {
-  const { blocks: loaderBlocks } = useLoaderData()
-  const htmlFetcher = useFetcher()
+  const { blocks: loaderBlocks, template } = useLoaderData()
+  const { data: activeBlock } = useActiveBlockState()
+  const blockFetcher = useFetcher()
+  const downloadFetcher = useFetcher()
 
   const [previewSize, setPreviewSize] = useState('desktop')
 
@@ -189,7 +121,7 @@ export default function TemplateEdit() {
   })
 
   const handleDownload = async (formData) => {
-    htmlFetcher.submit(
+    downloadFetcher.submit(
       {
         json: JSON.stringify(formData.blocks),
       },
@@ -198,8 +130,8 @@ export default function TemplateEdit() {
   }
 
   useEffect(() => {
-    if (htmlFetcher.data?.html) {
-      var blob = new Blob([htmlFetcher.data.html], {
+    if (downloadFetcher.data?.html) {
+      var blob = new Blob([downloadFetcher.data.html], {
         type: 'text/html;charset=utf-8',
       })
       var link = document.createElement('a')
@@ -211,12 +143,61 @@ export default function TemplateEdit() {
 
       document.body.removeChild(link)
     }
-  }, [htmlFetcher.data?.html])
+  }, [downloadFetcher.data?.html])
 
   const global = useWatch({
     name: 'global',
     control: formMethods.control,
   })
+
+  const blocks = useWatch({
+    name: 'blocks',
+    control: formMethods.control,
+  })
+
+  const autoSaveDebounce = useMemo(
+    () =>
+      debounce((activeBlockIdx) => {
+        const blockValue = formMethods.getValues(`blocks.${activeBlockIdx}`)
+        blockFetcher.submit(
+          {
+            payload: JSON.stringify({
+              value: blockValue.value,
+              attributes: blockValue.attributes,
+              position: activeBlockIdx,
+            }),
+          },
+          { method: 'post', action: `/api/blocks/${blockValue.id}` }
+        )
+      }, 750),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  )
+
+  useEffect(() => {
+    if (formMethods.formState.isDirty && activeBlock?.index)
+      autoSaveDebounce(activeBlock.index)
+  }, [
+    autoSaveDebounce,
+    formMethods.formState.isDirty,
+    blocks,
+    activeBlock?.index,
+  ])
+  // TODO: Save blocks w/in their components, when the attributes change. We dont want to autosave when a block is dragged, we want to save that manually.
+
+  useEffect(() => {
+    if (template.blocks) {
+      const formattedBlocks = template.blocks.map((b) => ({
+        type: b.type,
+        attributes: JSON.parse(b.attributes),
+        value: JSON.parse(b.value),
+      }))
+
+      formMethods.resetField('blocks', {
+        defaultValue: formattedBlocks,
+      })
+    }
+  }, [template.blocks, formMethods])
 
   return (
     <div className="h-full">
@@ -264,7 +245,6 @@ export default function TemplateEdit() {
     </div>
   )
 }
-
 const TemplateTitle = () => {
   const { template } = useLoaderData()
   const [open, setOpen] = useState(false)
@@ -331,7 +311,7 @@ const TemplateTitle = () => {
                       id="template-title"
                       name="title"
                       type="text"
-                      className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                      className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
                       defaultValue={template.title}
                       // aria-describedby={
                       //   fetcher.data?.error ?? `email-error-message`
@@ -376,7 +356,6 @@ const TemplateTitle = () => {
 
 const EditView = () => {
   const dispatch = useActiveBlockDispatch()
-  const { data: activeBlock } = useActiveBlockState()
   const [activeItem, setActiveItem] = useState(null)
   const { control, getValues, watch } = useFormContext()
   const { fields, remove, move, insert } = useFieldArray({
@@ -408,18 +387,14 @@ const EditView = () => {
     }
     setActiveItem(null)
 
-    const blocks = getValues('blocks')
-    const foundBlockIdx = blocks.findIndex((b) => b.id === activeBlock?.id)
-
-    if (foundBlockIdx) {
-      dispatch(
-        setActiveBlock({
-          index: foundBlockIdx,
-          id: blocks[foundBlockIdx].id,
-          type: blocks[foundBlockIdx].type,
-        })
-      )
-    }
+    const { id, type } = getValues(`blocks.${overIdx}`)
+    dispatch(
+      setActiveBlock({
+        index: overIdx,
+        id,
+        type,
+      })
+    )
   }
 
   const handleSetActiveBlock = (itemIndex) => {
@@ -440,12 +415,14 @@ const EditView = () => {
   }
 
   const handleAddItem = (idx, payload) => {
+    // TODO: POST to create new block in DB
     insert(idx, payload)
     handleSetActiveBlock(idx)
   }
 
   const handleDuplicateItem = (idx) => {
     const item = getValues(`blocks.${idx}`)
+    // TODO: POST to create new block in DB
     insert(idx + 1, {
       ...item,
       id: getNanoId(),
@@ -728,7 +705,7 @@ const EditorNavbar = ({ handleDownload, previewSize, setPreviewSize }) => {
                     id="emailToSendField"
                     type="email"
                     placeholder="Your Email..."
-                    className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
                   />
                   <button
                     className="ml-2 h-10 cursor-pointer rounded-md bg-indigo-500 px-4 font-semibold text-white hover:bg-indigo-600"

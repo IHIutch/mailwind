@@ -76,7 +76,7 @@ const SwatchColorPicker = ({ value, onChange }) => {
 
   return (
     <Popover.Root>
-      <Popover.Trigger className="h-full w-full rounded-r-md border border-l-0 border-zinc-300 py-2 px-3 text-left shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 [&[data-state=open]]:border-l [&[data-state=open]]:border-indigo-300 [&[data-state=open]]:ring [&[data-state=open]]:ring-indigo-200">
+      <Popover.Trigger className="h-full w-full rounded-r-md border border-l-0 border-zinc-300 py-2 px-3 text-left shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50 [&[data-state=open]]:border-l [&[data-state=open]]:border-indigo-300 [&[data-state=open]]:ring [&[data-state=open]]:ring-indigo-200">
         <Palette className="h-4 w-4" />
       </Popover.Trigger>
       <Popover.Portal>
