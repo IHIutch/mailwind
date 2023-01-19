@@ -73,32 +73,8 @@ export const loader = async ({ params: { templateId } }) => {
   }
 }
 
-// export const action = async ({ request, params }) => {
-//   const formData = await request.formData()
-//   const payload = Object.fromEntries(formData)
-
-//   let template = await prismaPutTemplate({ id: params.templateId }, payload)
-
-//   if (payload?.json) {
-//     // console.log(payload.json)
-//     template = {
-//       ...template,
-//       blocks: JSON.parse(payload.json).map((block, idx) => ({
-//         templateId: params.templateId,
-//         position: idx,
-//         value: JSON.stringify(block.value),
-//         attributes: JSON.stringify(block.attributes),
-//         type: block.type,
-//       })),
-//     }
-//   }
-
-//   console.log({ blocks: template.blocks })
-//   return json({ template })
-// }
-
 export default function TemplateEdit() {
-  const { blocks: loaderBlocks, template } = useLoaderData()
+  const { blocks: loaderBlocks } = useLoaderData()
   const { data: activeBlock } = useActiveBlockState()
   const blockFetcher = useFetcher()
   const downloadFetcher = useFetcher()
@@ -184,20 +160,6 @@ export default function TemplateEdit() {
     activeBlock?.index,
   ])
   // TODO: Save blocks w/in their components, when the attributes change. We dont want to autosave when a block is dragged, we want to save that manually.
-
-  useEffect(() => {
-    if (template.blocks) {
-      const formattedBlocks = template.blocks.map((b) => ({
-        type: b.type,
-        attributes: JSON.parse(b.attributes),
-        value: JSON.parse(b.value),
-      }))
-
-      formMethods.resetField('blocks', {
-        defaultValue: formattedBlocks,
-      })
-    }
-  }, [template.blocks, formMethods])
 
   return (
     <div className="h-full">

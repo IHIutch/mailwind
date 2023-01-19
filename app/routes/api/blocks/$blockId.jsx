@@ -6,8 +6,6 @@ export async function action({ request, params }) {
     const formData = await request.formData()
     const { payload } = Object.fromEntries(formData)
 
-    console.log(JSON.parse(payload))
-
     const data = await prismaPutBlock(
       {
         id: params.blockId,
