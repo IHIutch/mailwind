@@ -39,7 +39,6 @@ export const prismaPostBlock = async (payload) => {
 
 export const prismaPutBlock = async (where, payload) => {
   try {
-    console.log({ payload })
     const validPayload = blockSchema.parse(payload)
     const validWhere = blockSchema.parse(where)
     return await prisma.Block.update({

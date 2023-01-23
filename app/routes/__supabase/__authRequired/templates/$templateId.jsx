@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import { getNanoId } from '~/utils/functions'
 import { BlockType, defaultAttributes } from '~/utils/types'
 import { useFetcher, useLoaderData, useParams } from '@remix-run/react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
@@ -100,7 +99,6 @@ export default function TemplateEdit() {
   })
 
   useEffect(() => {
-    console.log({ loaderBlocks })
     formMethods.reset((formValues) => ({
       ...formValues,
       blocks: loaderBlocks,
@@ -391,28 +389,29 @@ const EditView = () => {
     // handleSetActiveBlock(idx)
   }
 
-  const handleDuplicateItem = (idx) => {
-    const item = getValues(`blocks.${idx}`)
-
+  const handleDuplicateItem = (itemIndex) => {
+    const { id } = getValues(`blocks.${itemIndex}`)
     // TODO: Figure out how to "insert" an item into an array. Might need to "reorder" on duplicate
 
-    createFetcher.submit(
-      {
-        payload: JSON.stringify({
-          position: idx + 1,
-          templateId,
-          type: item.type,
-          value: item.value,
-          attributes: item.attributes,
-        }),
-      },
-      { method: 'post', action: `/api/blocks/duplicate` }
-    )
+    createFetcher.submit(null, {
+      method: 'post',
+      action: `/api/blocks/${id}/duplicate`,
+    })
 
     // insert(idx + 1, {
     //   ...item,
     //   id: getNanoId(),
     // })
+  }
+
+  const handleDeleteItem = (itemIndex) => {
+    const { id } = getValues(`blocks.${itemIndex}`)
+    // TODO: Figure out how to "insert" an item into an array. Might need to "reorder" on duplicate
+
+    createFetcher.submit(null, {
+      method: 'post',
+      action: `/api/blocks/${id}/delete`,
+    })
   }
 
   return (
@@ -442,7 +441,7 @@ const EditView = () => {
                     <ItemBlock
                       itemIndex={idx}
                       addItem={(payload) => handleAddItem(idx + 1, payload)}
-                      removeItem={() => remove(idx)}
+                      removeItem={() => handleDeleteItem(idx)}
                       duplicateItem={() => handleDuplicateItem(idx)}
                     >
                       <Controller
@@ -530,7 +529,7 @@ const ItemBlock = ({
               attributes,
             }),
           },
-          { method: 'post', action: `/api/blocks/${id}` }
+          { method: 'post', action: `/api/blocks/${id}?index` }
         )
       }, 750),
     // eslint-disable-next-line react-hooks/exhaustive-deps
