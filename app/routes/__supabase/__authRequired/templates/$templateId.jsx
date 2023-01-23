@@ -474,8 +474,6 @@ const ItemBlock = ({
     control,
   })
 
-  // console.log(blockAttributes)
-
   const autoSaveDebounce = useMemo(
     () =>
       debounce(() => {
@@ -495,6 +493,7 @@ const ItemBlock = ({
   )
 
   useEffect(() => {
+    // Would also like to see if I can avoid this from saving on initial load
     if (activeBlock?.index === itemIndex && formState.isDirty) {
       autoSaveDebounce()
     }
@@ -504,9 +503,8 @@ const ItemBlock = ({
     itemIndex,
     formState.isDirty,
     blockValue,
-    JSON.stringify(blockAttributes),
+    blockAttributes,
   ])
-  // TODO: Save blocks w/in their components, when the attributes change. We dont want to autosave when a block is dragged, we want to save that manually.
 
   const handleSetActiveBlock = () => {
     const { id, type } = getValues(`blocks.${itemIndex}`)
