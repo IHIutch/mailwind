@@ -76,8 +76,6 @@ export const loader = async ({ params: { templateId } }) => {
 
 export default function TemplateEdit() {
   const { blocks: loaderBlocks } = useLoaderData()
-  const { data: activeBlock } = useActiveBlockState()
-  const blockFetcher = useFetcher()
   const downloadFetcher = useFetcher()
 
   const [previewSize, setPreviewSize] = useState('desktop')
@@ -126,41 +124,6 @@ export default function TemplateEdit() {
     name: 'global',
     control: formMethods.control,
   })
-
-  const blocks = useWatch({
-    name: 'blocks',
-    control: formMethods.control,
-  })
-
-  const autoSaveDebounce = useMemo(
-    () =>
-      debounce((activeBlockIdx) => {
-        const blockValue = formMethods.getValues(`blocks.${activeBlockIdx}`)
-        blockFetcher.submit(
-          {
-            payload: JSON.stringify({
-              value: blockValue.value,
-              attributes: blockValue.attributes,
-              position: activeBlockIdx,
-            }),
-          },
-          { method: 'post', action: `/api/blocks/${blockValue.id}` }
-        )
-      }, 750),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  )
-
-  useEffect(() => {
-    if (formMethods.formState.isDirty && activeBlock?.index)
-      autoSaveDebounce(activeBlock.index)
-  }, [
-    autoSaveDebounce,
-    formMethods.formState.isDirty,
-    blocks,
-    activeBlock?.index,
-  ])
-  // TODO: Save blocks w/in their components, when the attributes change. We dont want to autosave when a block is dragged, we want to save that manually.
 
   return (
     <div className="h-full">
@@ -476,6 +439,9 @@ const ItemBlock = ({
   children,
 }) => {
   const dispatch = useActiveBlockDispatch()
+  const { data: activeBlock } = useActiveBlockState()
+  const blockFetcher = useFetcher()
+
   const [isActive, setIsActive] = useState(false)
   const [isMenuActive, setIsMenuActive] = useState(false)
 
@@ -498,26 +464,62 @@ const ItemBlock = ({
     }
   }
 
-  const { control, getValues } = useFormContext()
-  const itemType = useWatch({
-    name: `blocks.${itemIndex}.type`,
+  const { getValues, control, formState } = useFormContext()
+  const [itemType, blockValue, blockAttributes] = useWatch({
+    name: [
+      `blocks.${itemIndex}.type`,
+      `blocks.${itemIndex}.value`,
+      `blocks.${itemIndex}.attributes`,
+    ],
     control,
   })
 
-  const itemPaddingTop = useWatch({
-    name: `blocks.${itemIndex}.attributes.paddingTop`,
-    control,
-  })
+  // console.log(blockAttributes)
+
+  const autoSaveDebounce = useMemo(
+    () =>
+      debounce(() => {
+        const { id, value, attributes } = getValues(`blocks.${itemIndex}`)
+        blockFetcher.submit(
+          {
+            payload: JSON.stringify({
+              value,
+              attributes,
+            }),
+          },
+          { method: 'post', action: `/api/blocks/${id}` }
+        )
+      }, 750),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  )
+
+  useEffect(() => {
+    if (activeBlock?.index === itemIndex && formState.isDirty) {
+      autoSaveDebounce()
+    }
+  }, [
+    autoSaveDebounce,
+    activeBlock?.index,
+    itemIndex,
+    formState.isDirty,
+    blockValue,
+    JSON.stringify(blockAttributes),
+  ])
+  // TODO: Save blocks w/in their components, when the attributes change. We dont want to autosave when a block is dragged, we want to save that manually.
 
   const handleSetActiveBlock = () => {
     const { id, type } = getValues(`blocks.${itemIndex}`)
-    dispatch(
-      setActiveBlock({
-        index: itemIndex,
-        id,
-        type,
-      })
-    )
+
+    if (activeBlock?.index !== itemIndex) {
+      dispatch(
+        setActiveBlock({
+          index: itemIndex,
+          id,
+          type,
+        })
+      )
+    }
   }
 
   return (
@@ -540,7 +542,7 @@ const ItemBlock = ({
         )}
       >
         <div
-          style={{ paddingTop: itemPaddingTop }}
+          style={{ paddingTop: blockAttributes?.paddingTop }}
           className={clsx(
             'flex transition-all',
             isActive ? 'visible opacity-100' : 'invisible opacity-0'
