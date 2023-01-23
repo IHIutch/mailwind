@@ -65,7 +65,7 @@ import { debounce } from 'lodash'
 import { prismaGetBlocks } from '~/utils/prisma/blocks.server'
 
 export const loader = async ({ params: { templateId } }) => {
-  const blocks = await prismaGetBlocks({ templateId: templateId })
+  const blocks = await prismaGetBlocks({ templateId })
   const template = await prismaGetTemplate({ id: templateId })
 
   return {
@@ -83,6 +83,10 @@ export default function TemplateEdit() {
   const offset = '80px'
   const mobileSize = '480px'
 
+  // const defaultBlocks = useMemo(() => {
+  //   return loaderBlocks
+  // }, [loaderBlocks])
+
   const formMethods = useForm({
     mode: 'onChange',
     defaultValues: {
@@ -94,6 +98,14 @@ export default function TemplateEdit() {
       blocks: loaderBlocks,
     },
   })
+
+  useEffect(() => {
+    console.log({ loaderBlocks })
+    formMethods.reset((formValues) => ({
+      ...formValues,
+      blocks: loaderBlocks,
+    }))
+  }, [formMethods, loaderBlocks])
 
   const handleDownload = async (formData) => {
     downloadFetcher.submit(
@@ -286,7 +298,9 @@ const TemplateTitle = () => {
 
 const EditView = () => {
   const dispatch = useActiveBlockDispatch()
-  const blockFetcher = useFetcher()
+  const reorderFetcher = useFetcher()
+  const createFetcher = useFetcher()
+  const { templateId } = useParams()
 
   const [activeItem, setActiveItem] = useState(null)
   const { control, getValues, watch } = useFormContext()
@@ -318,7 +332,7 @@ const EditView = () => {
       move(activeIdx, overIdx)
 
       const reorderedBlocks = arrayMove(fields, activeIdx, overIdx)
-      blockFetcher.submit(
+      reorderFetcher.submit(
         {
           payload: JSON.stringify(
             reorderedBlocks.map((b, idx) => ({
@@ -361,17 +375,44 @@ const EditView = () => {
 
   const handleAddItem = (idx, payload) => {
     // TODO: POST to create new block in DB
-    insert(idx, payload)
-    handleSetActiveBlock(idx)
+
+    createFetcher.submit(
+      {
+        payload: JSON.stringify({
+          position: idx,
+          templateId,
+          ...payload,
+          value: '<p>Test</p>',
+        }),
+      },
+      { method: 'post', action: `/api/blocks?index` }
+    )
+    // insert(idx, payload)
+    // handleSetActiveBlock(idx)
   }
 
   const handleDuplicateItem = (idx) => {
     const item = getValues(`blocks.${idx}`)
-    // TODO: POST to create new block in DB
-    insert(idx + 1, {
-      ...item,
-      id: getNanoId(),
-    })
+
+    // TODO: Figure out how to "insert" an item into an array. Might need to "reorder" on duplicate
+
+    createFetcher.submit(
+      {
+        payload: JSON.stringify({
+          position: idx + 1,
+          templateId,
+          type: item.type,
+          value: item.value,
+          attributes: item.attributes,
+        }),
+      },
+      { method: 'post', action: `/api/blocks/duplicate` }
+    )
+
+    // insert(idx + 1, {
+    //   ...item,
+    //   id: getNanoId(),
+    // })
   }
 
   return (
@@ -444,7 +485,7 @@ const ItemBlock = ({
 }) => {
   const dispatch = useActiveBlockDispatch()
   const { data: activeBlock } = useActiveBlockState()
-  const blockFetcher = useFetcher()
+  const updateFetcher = useFetcher()
 
   const [isActive, setIsActive] = useState(false)
   const [isMenuActive, setIsMenuActive] = useState(false)
@@ -482,7 +523,7 @@ const ItemBlock = ({
     () =>
       debounce(() => {
         const { id, value, attributes } = getValues(`blocks.${itemIndex}`)
-        blockFetcher.submit(
+        updateFetcher.submit(
           {
             payload: JSON.stringify({
               value,
@@ -498,6 +539,7 @@ const ItemBlock = ({
 
   useEffect(() => {
     // Would also like to see if I can avoid this from saving on initial load
+
     if (activeBlock?.index === itemIndex && formState.isDirty) {
       autoSaveDebounce()
     }
@@ -569,9 +611,7 @@ const ItemBlock = ({
                     onClick={(e) => {
                       e.stopPropagation() // This is a hacky fix that prevents the items behind this button from receiving a click event: https://github.com/radix-ui/primitives/issues/1658
                       addItem({
-                        id: getNanoId(),
                         type: blockTypeValue,
-                        value: '',
                         attributes: {
                           ...defaultAttributes.GLOBAL,
                           ...(defaultAttributes?.[blockTypeValue] || {}),

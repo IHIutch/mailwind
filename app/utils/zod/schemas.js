@@ -35,6 +35,7 @@ export const blockSchema = z
   .object({
     id: z.coerce.number(),
     templateId: z.coerce.number(),
+    type: z.string(),
     position: z.coerce.number(),
     attributes: z.union([
       textBlockSchema,
