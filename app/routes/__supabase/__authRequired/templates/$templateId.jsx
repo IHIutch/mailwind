@@ -16,6 +16,7 @@ import {
   useSensors,
 } from '@dnd-kit/core'
 import {
+  arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
@@ -318,6 +319,8 @@ const TemplateTitle = () => {
 
 const EditView = () => {
   const dispatch = useActiveBlockDispatch()
+  const blockFetcher = useFetcher()
+
   const [activeItem, setActiveItem] = useState(null)
   const { control, getValues, watch } = useFormContext()
   const { fields, remove, move, insert } = useFieldArray({
@@ -346,6 +349,19 @@ const EditView = () => {
     const overIdx = overData?.current?.sortable?.index
     if (overIdx && activeIdx !== overIdx) {
       move(activeIdx, overIdx)
+
+      const reorderedBlocks = arrayMove(fields, activeIdx, overIdx)
+      blockFetcher.submit(
+        {
+          payload: JSON.stringify(
+            reorderedBlocks.map((b, idx) => ({
+              id: b.id,
+              position: idx,
+            }))
+          ),
+        },
+        { method: 'post', action: `/api/blocks/reorder` }
+      )
     }
     setActiveItem(null)
 

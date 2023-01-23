@@ -64,6 +64,7 @@ export const prismaPutBlocks = async (payload) => {
             id: vp.id,
           },
           select: {
+            id: true,
             position: true,
           },
         })
