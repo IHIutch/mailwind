@@ -38,6 +38,7 @@ export const prismaPutTemplate = async (where, payload) => {
   try {
     const validPayload = templateSchema.parse(payload)
     const validWhere = templateSchema.parse(where)
+
     return await prisma.Template.update({
       data: validPayload,
       where: validWhere,

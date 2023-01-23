@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { getNanoId } from '~/utils/functions'
 import { BlockType, defaultAttributes } from '~/utils/types'
-import { useFetcher, useLoaderData } from '@remix-run/react'
+import { useFetcher, useLoaderData, useParams } from '@remix-run/react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import * as Dialog from '@radix-ui/react-dialog'
 import * as Label from '@radix-ui/react-label'
@@ -173,6 +173,7 @@ export default function TemplateEdit() {
 }
 const TemplateTitle = () => {
   const { template } = useLoaderData()
+  const { templateId } = useParams()
   const [open, setOpen] = useState(false)
 
   const fetcher = useFetcher()
@@ -225,7 +226,10 @@ const TemplateTitle = () => {
                     <X />
                   </button>
                 </Dialog.Close>
-                <fetcher.Form method="post">
+                <fetcher.Form
+                  method="post"
+                  action={`/api/templates/${templateId}`}
+                >
                   <div className="p-4">
                     <Label.Root
                       htmlFor="template-title"
