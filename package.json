@@ -43,7 +43,8 @@
     "redaxios": "^0.5.1",
     "server-only": "^0.0.1",
     "stripe": "^11.7.0",
-    "typescript": "4.9.4"
+    "typescript": "4.9.4",
+    "zod": "^3.20.2"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.13",
