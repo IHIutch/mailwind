@@ -7,7 +7,6 @@ import { createContext, useContext, useMemo } from 'react'
 const SortableItemContext = createContext({
   attributes: {},
   listeners: undefined,
-  ref() {},
 })
 
 export const SortableItem = ({ id, children }) => {

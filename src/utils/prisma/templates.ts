@@ -1,5 +1,5 @@
-import prisma from '@/utils/prisma/index.server'
 import { templateSchema } from '../zod/schemas'
+import prisma from '@/server/prisma'
 
 export const prismaGetTemplates = async (where) => {
   try {

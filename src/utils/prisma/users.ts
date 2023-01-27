@@ -1,5 +1,5 @@
-import prisma from '@/utils/prisma/index.server'
 import { userSchema } from '../zod/schemas'
+import prisma from '@/server/prisma'
 
 export const prismaGetUsers = async (where) => {
   try {

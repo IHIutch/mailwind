@@ -1,5 +1,5 @@
-import prisma from '@/utils/prisma/index.server'
 import { organizationSchema } from '../zod/schemas'
+import prisma from '@/server/prisma'
 
 export const prismaGetOrganizations = async (where) => {
   try {

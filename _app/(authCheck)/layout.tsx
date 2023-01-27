@@ -1,10 +1,9 @@
 import 'server-only'
-
 import SupabaseListener from '@/components/SupabaseListener'
 import SupabaseProvider from '@/components/SupabaseProvider'
 import { createServerClient } from '@/utils/supabase/supabase-server'
 import type { SupabaseClient } from '@supabase/auth-helpers-nextjs'
-import { Database } from '@/types/supabase.types'
+import { Database } from 'types/supabase.types'
 
 export type TypedSupabaseClient = SupabaseClient<Database>
 

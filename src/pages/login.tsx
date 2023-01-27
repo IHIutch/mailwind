@@ -1,4 +1,3 @@
-import { Database } from '@/types/supabase.types'
 import { getErrorMessage } from '@/utils/functions'
 import * as Label from '@radix-ui/react-label'
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
@@ -8,6 +7,7 @@ import { GetServerSidePropsContext } from 'next'
 import Link from 'next/link'
 import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { Database } from 'types/supabase.types'
 
 type FormValues = {
   email: string

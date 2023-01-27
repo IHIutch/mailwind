@@ -1,5 +1,5 @@
-import prisma from '@/utils/prisma/index.server'
 import { blockSchema } from '../zod/schemas'
+import prisma from '@/server/prisma'
 
 export const prismaGetBlocks = async (where) => {
   try {

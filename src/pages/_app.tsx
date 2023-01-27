@@ -1,4 +1,3 @@
-import { Database } from '@/types/supabase.types'
 import {
   createBrowserSupabaseClient,
   Session,
@@ -6,7 +5,9 @@ import {
 import { SessionContextProvider } from '@supabase/auth-helpers-react'
 import type { AppProps } from 'next/app'
 import { useState } from 'react'
+import { Database } from 'types/supabase.types'
 import '@/styles/main.css'
+import { trpc } from '@/utils/trpc'
 
 function MyApp({
   Component,
@@ -26,4 +27,4 @@ function MyApp({
   )
 }
 
-export default MyApp
+export default trpc.withTRPC(MyApp)

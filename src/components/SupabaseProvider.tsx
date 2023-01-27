@@ -1,10 +1,9 @@
 'use client'
 
-import { createContext, useContext, useState } from 'react'
 import { createServerClient } from '@/utils/supabase/supabase-browser'
-
 import type { Session, SupabaseClient } from '@supabase/auth-helpers-nextjs'
-import type { Database } from '@/types/supabase.types'
+import { createContext, useContext, useState } from 'react'
+import type { Database } from 'types/supabase.types'
 
 type MaybeSession = Session | null
 type SupabaseContext = {
