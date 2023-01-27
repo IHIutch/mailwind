@@ -7,6 +7,7 @@ import { prisma } from '@/server/prisma'
 import { templateSchema } from '@/utils/zod/schemas'
 import { Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
+import { z } from 'zod'
 
 /**
  * Default selector for Block.
@@ -23,60 +24,78 @@ const defaultTemplateSelect = Prisma.validator<Prisma.TemplateSelect>()({
 })
 
 export const blockRouter = router({
-  byOrgId: publicProcedure.input(templateSchema).query(async ({ input }) => {
-    const { membershipId } = input
-    const data = await prisma.template.findMany({
-      select: defaultTemplateSelect,
-      where: { membershipId },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    })
-
-    return data
-  }),
-  byId: publicProcedure.input(templateSchema).query(async ({ input }) => {
-    const { id } = input
-    const data = await prisma.template.findUnique({
-      where: { id },
-      select: defaultTemplateSelect,
-    })
-    if (!data) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: `No block with id '${id}'`,
+  byMembershipId: publicProcedure
+    .input(
+      z.object({
+        membershipId: z.number(),
       })
-    }
-    return data
-  }),
-  create: publicProcedure.input(templateSchema).mutation(async ({ input }) => {
-    const data = await prisma.template.create({
-      data: {
-        membershipId: input.membershipId,
-        title: input.title,
-      },
-      select: defaultTemplateSelect,
-    })
-    return data
-  }),
+    )
+    .query(async ({ input }) => {
+      const { membershipId } = input
+      const data = await prisma.template.findMany({
+        select: defaultTemplateSelect,
+        where: { membershipId },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      })
+
+      return data
+    }),
+  byId: publicProcedure
+    .input(
+      z.object({
+        id: z.number(),
+      })
+    )
+    .query(async ({ input }) => {
+      const { id } = input
+      const data = await prisma.template.findUnique({
+        where: { id },
+        select: defaultTemplateSelect,
+      })
+      if (!data) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: `No block with id '${id}'`,
+        })
+      }
+      return data
+    }),
+  create: publicProcedure
+    .input(
+      templateSchema.omit({
+        id: true,
+      })
+    )
+    .mutation(async ({ input }) => {
+      const data = await prisma.template.create({
+        data: input,
+        select: defaultTemplateSelect,
+      })
+      return data
+    }),
   update: publicProcedure.input(templateSchema).mutation(async ({ input }) => {
     const { id } = input
     const data = await prisma.template.update({
       where: { id },
-      data: {
-        membershipId: input.membershipId,
-        title: input.title,
-      },
+      data: input,
       select: defaultTemplateSelect,
     })
     return data
   }),
-  delete: publicProcedure.input(templateSchema).mutation(async ({ input }) => {
-    const { id } = input
-    const data = await prisma.template.delete({
-      where: { id },
-      select: defaultTemplateSelect,
-    })
-    return data
-  }),
+  delete: publicProcedure
+    .input(
+      z.object({
+        id: z.number(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { id } = input
+      const data = await prisma.template.delete({
+        where: { id },
+        select: defaultTemplateSelect,
+      })
+      return data
+    }),
 })
