@@ -13,6 +13,7 @@ specifiers:
   '@radix-ui/react-select': ^1.0.0
   '@radix-ui/react-toggle-group': ^1.0.0
   '@supabase/auth-helpers-nextjs': ^0.5.4
+  '@supabase/auth-helpers-react': ^0.3.1
   '@supabase/supabase-js': ^2.4.1
   '@tanstack/react-query': ^4.23.0
   '@trpc/client': ^10.9.0
@@ -58,6 +59,7 @@ dependencies:
   '@radix-ui/react-select': 1.2.0_5ndqzdd6t4rivxsukjv3i3ak2q
   '@radix-ui/react-toggle-group': 1.0.2_biqbaboplfbrettd7655fr4n2y
   '@supabase/auth-helpers-nextjs': 0.5.4_l3gewy5tlkgvrrn24rowenxrli
+  '@supabase/auth-helpers-react': 0.3.1_l3gewy5tlkgvrrn24rowenxrli
   '@supabase/supabase-js': 2.4.1
   '@tanstack/react-query': 4.23.0_biqbaboplfbrettd7655fr4n2y
   '@trpc/client': 10.9.0_@trpc+server@10.9.0
@@ -1013,6 +1015,14 @@ packages:
       '@supabase/supabase-js': ^2.0.4
     dependencies:
       '@supabase/auth-helpers-shared': 0.2.4_l3gewy5tlkgvrrn24rowenxrli
+      '@supabase/supabase-js': 2.4.1
+    dev: false
+
+  /@supabase/auth-helpers-react/0.3.1_l3gewy5tlkgvrrn24rowenxrli:
+    resolution: {integrity: sha512-g3SFv08Dz9FapNif/ZY1b7qKGlMJDyTLSayHBz3kb3FuYxg7aLWgQtydDhm5AGbc0XtvpIBuhGTIOVevwpdosA==}
+    peerDependencies:
+      '@supabase/supabase-js': ^2.0.4
+    dependencies:
       '@supabase/supabase-js': 2.4.1
     dev: false
 
