@@ -1,12 +1,13 @@
-import { useState } from 'react'
-import * as Label from '@radix-ui/react-label'
-import { SubmitHandler, useForm } from 'react-hook-form'
-import clsx from 'clsx'
-import { getErrorMessage } from '@/utils/functions'
-import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import { Database } from '@/types/supabase.types'
+import { getErrorMessage } from '@/utils/functions'
+import * as Label from '@radix-ui/react-label'
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
+import { useSupabaseClient } from '@supabase/auth-helpers-react'
+import clsx from 'clsx'
 import { GetServerSidePropsContext } from 'next'
+import Link from 'next/link'
+import { useState } from 'react'
+import { SubmitHandler, useForm } from 'react-hook-form'
 
 type FormValues = {
   email: string
@@ -61,7 +62,7 @@ export default function Login() {
               It expires in 24 hours and can only be used once.
             </p>
             <p>
-              Didn't get the link? <a href="/login">Try Again</a>.
+              Didn&apos;t get the link? <Link href="/login">Try Again</Link>.
             </p>
           </div>
         ) : (

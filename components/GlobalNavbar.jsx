@@ -1,5 +1,5 @@
-import { Link, useOutletContext } from '@remix-run/react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+import { Link, useOutletContext } from '@remix-run/react'
 import { LogOut } from 'lucide-react'
 
 export default function GlobalNavbar({ className, children }) {

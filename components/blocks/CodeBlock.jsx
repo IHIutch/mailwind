@@ -1,9 +1,8 @@
-import Editor from 'react-simple-code-editor'
-
-import { useCallback, useState } from 'react'
 import debounce from 'lodash/debounce'
 import Highlight, { defaultProps } from 'prism-react-renderer'
 import theme from 'prism-react-renderer/themes/nightOwl'
+import { useCallback, useState } from 'react'
+import Editor from 'react-simple-code-editor'
 
 export default function CodeBlock({ value, onChange = () => null }) {
   const [code, setCode] = useState(value)

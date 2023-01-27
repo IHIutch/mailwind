@@ -15,7 +15,7 @@ export default function Logout() {
     }
 
     router.replace('/login')
-  }, [supabaseClient.auth])
+  }, [supabaseClient.auth, router])
 
   useEffect(() => {
     handleLogout()

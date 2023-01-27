@@ -1,9 +1,9 @@
-import * as Label from '@radix-ui/react-label'
-import { useFormContext } from 'react-hook-form'
-import { useActiveBlockState } from '@/context/activeBlock'
+import LinkInput from '../inputs/LinkInput'
 import PaddingInput from '../inputs/PaddingInput'
 import SpacingInput from '../inputs/SpacingInput'
-import LinkInput from '../inputs/LinkInput'
+import { useActiveBlockState } from '@/context/activeBlock'
+import * as Label from '@radix-ui/react-label'
+import { useFormContext } from 'react-hook-form'
 
 export default function ImageSidebar({ heading }) {
   const { data: activeBlock } = useActiveBlockState()

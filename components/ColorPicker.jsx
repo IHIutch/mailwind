@@ -7,6 +7,7 @@ import {
   PopoverTrigger,
 } from '@chakra-ui/react'
 import { HexColorPicker } from 'react-colorful'
+
 export default function ColorPicker({ value, onChange }) {
   return (
     <Popover>

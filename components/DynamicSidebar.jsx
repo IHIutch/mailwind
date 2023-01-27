@@ -1,10 +1,10 @@
-import { X } from 'lucide-react'
 import {
   setActiveBlock,
   useActiveBlockDispatch,
   useActiveBlockState,
 } from '@/context/activeBlock'
 import { sidebars } from '@/utils/types'
+import { X } from 'lucide-react'
 
 export default function DynamicSidebar() {
   const { data: activeBlock } = useActiveBlockState()

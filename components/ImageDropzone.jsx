@@ -1,7 +1,7 @@
+import clsx from 'clsx'
+import { X } from 'lucide-react'
 import { useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { X } from 'lucide-react'
-import clsx from 'clsx'
 
 export default function ImageDropzone({ onChange, value = '' }) {
   const [preview, setPreview] = useState(value)

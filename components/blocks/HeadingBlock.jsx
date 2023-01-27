@@ -1,6 +1,6 @@
-import clsx from 'clsx'
-import { BlockType } from '@/utils/types'
 import Editor from '../Editor'
+import { BlockType } from '@/utils/types'
+import clsx from 'clsx'
 
 export default function HeadingBlock({ type, value, onChange }) {
   return (

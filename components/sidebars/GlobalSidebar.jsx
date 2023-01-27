@@ -1,9 +1,9 @@
-import * as ToggleGroup from '@radix-ui/react-toggle-group'
-import * as Label from '@radix-ui/react-label'
-import { Controller, useFormContext } from 'react-hook-form'
-import { AlignCenter, AlignLeft, AlignRight } from 'lucide-react'
 import ColorInput from '../inputs/ColorInput'
 import SpacingInput from '../inputs/SpacingInput'
+import * as Label from '@radix-ui/react-label'
+import * as ToggleGroup from '@radix-ui/react-toggle-group'
+import { AlignCenter, AlignLeft, AlignRight } from 'lucide-react'
+import { Controller, useFormContext } from 'react-hook-form'
 
 export default function GlobalSidebar({ heading }) {
   const { control } = useFormContext()

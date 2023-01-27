@@ -1,16 +1,11 @@
-import { useRouter } from 'next/router'
+import { Database } from '@/types/supabase.types'
 import {
   createBrowserSupabaseClient,
   Session,
 } from '@supabase/auth-helpers-nextjs'
-import {
-  SessionContextProvider,
-  useSessionContext,
-  useUser,
-} from '@supabase/auth-helpers-react'
+import { SessionContextProvider } from '@supabase/auth-helpers-react'
 import type { AppProps } from 'next/app'
-import { useEffect, useState } from 'react'
-import { Database } from '@/types/supabase.types'
+import { useState } from 'react'
 import '@/styles/main.css'
 
 function MyApp({

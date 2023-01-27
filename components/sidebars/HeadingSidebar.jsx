@@ -1,11 +1,11 @@
-import * as Label from '@radix-ui/react-label'
-import { useFormContext } from 'react-hook-form'
-import { useActiveBlockState } from '@/context/activeBlock'
 import ColorInput from '../inputs/ColorInput'
 import FontSizeInput from '../inputs/FontSizeInput'
 import FontWeightInput from '../inputs/FontWeightInput'
 import LineHeightInput from '../inputs/LineHeightInput'
 import PaddingInput from '../inputs/PaddingInput'
+import { useActiveBlockState } from '@/context/activeBlock'
+import * as Label from '@radix-ui/react-label'
+import { useFormContext } from 'react-hook-form'
 
 export default function HeadingSidebar({ heading }) {
   const { data: activeBlock } = useActiveBlockState()

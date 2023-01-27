@@ -1,8 +1,8 @@
-import { Send, X } from 'lucide-react'
-import * as ToggleGroup from '@radix-ui/react-toggle-group'
-import * as Popover from '@radix-ui/react-popover'
-import * as Label from '@radix-ui/react-label'
 import * as Dialog from '@radix-ui/react-dialog'
+import * as Label from '@radix-ui/react-label'
+import * as Popover from '@radix-ui/react-popover'
+import * as ToggleGroup from '@radix-ui/react-toggle-group'
+import { Send, X } from 'lucide-react'
 
 export default function EditorNavbar({
   handleDownload,
