@@ -49,7 +49,10 @@ export const trpc = createTRPCNext<AppRouter, SSRContext>({
             (opts.direction === 'down' && opts.result instanceof Error),
         }),
         httpBatchLink({
-          url: `${getBaseUrl()}/api/trpc`,
+          url:
+            typeof window !== 'undefined' // This might not work (or be necessary?)
+              ? '/api/trpc'
+              : `${getBaseUrl()}/api/trpc`,
           /**
            * Set custom request headers on every request from tRPC
            * @link https://trpc.io/docs/ssr

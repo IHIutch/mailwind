@@ -8,14 +8,12 @@ const dividerBlockSchema = z.any()
 const quoteBlockSchema = z.any()
 // TODO: Define schemas
 
-export const userSchema = z
-  .object({
-    id: z.coerce.string().uuid(),
-    stripeCustomerId: z.string(),
-    stripeSubscriptionId: z.coerce.string().nullable(),
-    role: z.enum(['SUPERADMIN', 'CUSTOMER']),
-  })
-  .partial()
+export const userSchema = z.object({
+  id: z.string().uuid(),
+  stripeCustomerId: z.string(),
+  stripeSubscriptionId: z.string().nullable(),
+  role: z.enum(['SUPERADMIN', 'CUSTOMER']),
+})
 
 export const templateSchema = z.object({
   id: z.coerce.number(),

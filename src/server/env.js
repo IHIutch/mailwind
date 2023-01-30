@@ -8,7 +8,7 @@ const { z } = require('zod')
 
 /*eslint sort-keys: "error"*/
 const envSchema = z.object({
-  DATABASE_URL: z.string().url(),
+  DB_CONNECTION_STRING: z.string().url(),
   NODE_ENV: z.enum(['development', 'test', 'production']),
 })
 

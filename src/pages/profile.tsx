@@ -1,42 +1,78 @@
-import {
-  createServerSupabaseClient,
-  Session,
-  User,
-} from '@supabase/auth-helpers-nextjs'
-import { useSessionContext, useUser } from '@supabase/auth-helpers-react'
-import { GetServerSidePropsContext } from 'next'
+import GlobalNavbar from '@/components/GlobalNavbar'
+import { trpc } from '@/utils/trpc'
+import { useSessionContext } from '@supabase/auth-helpers-react'
+import dayjs from 'dayjs'
+import { Plus } from 'lucide-react'
+import Link from 'next/link'
+import { ReactNode } from 'react'
 
 export default function Profile() {
   const { isLoading, session, error } = useSessionContext()
-  const user = useUser()
+  const { data: user } = trpc.user.byId.useQuery({ id: session?.user.id || '' })
+  const { data: templates } = trpc.template.byMembershipId.useQuery({
+    membershipId: user?.memberships[0].id || -1,
+  })
 
   return (
-    <div>{JSON.stringify({ isLoading, session, error, user }, null, 2)}</div>
+    <div className="h-full bg-neutral-50">
+      <GlobalNavbar className="shadow-sm" />
+      <div className="pt-16">
+        <div className="container-xl mx-auto py-12 px-4">
+          <h1 className="mb-8 text-3xl font-bold">Your Templates</h1>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
+            <TemplateLink pathname="/templates/new">
+              <div className="flex h-full items-center justify-center">
+                <div>
+                  <div className="mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded-full bg-neutral-200">
+                    <Plus className="h-5 w-5" />
+                  </div>
+                  <span className="text-lg font-medium">New Template</span>
+                </div>
+              </div>
+            </TemplateLink>
+            {templates
+              ? templates.map((template, idx) => (
+                  <TemplateLink
+                    key={idx}
+                    pathname={`/templates/${template.id}`}
+                  >
+                    <div className="h-32 w-full bg-neutral-300" />
+                    <div className="p-4">
+                      <div className="mb-0.5">
+                        <span className="text-lg font-medium">
+                          {template.title ?? 'Untitled Template'}
+                        </span>
+                      </div>
+                      <div className="text-xs text-neutral-500">
+                        <span>Last Modified: </span>
+                        <span>{dayjs(template.updatedAt).format('MMM D')}</span>
+                      </div>
+                    </div>
+                  </TemplateLink>
+                ))
+              : null}
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
 
-// export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-//   // Create authenticated Supabase Client
-//   const supabase = createServerSupabaseClient(ctx)
-//   // Check if we have a session
-//   const {
-//     data: { session },
-//   } = await supabase.auth.getSession()
-
-//   console.log('profile', { session })
-
-//   // if (!session)
-//   //   return {
-//   //     redirect: {
-//   //       destination: '/',
-//   //       permanent: false,
-//   //     },
-//   //   }
-
-//   return {
-//     props: {
-//       initialSession: session,
-//       user: session?.user || null,
-//     },
-//   }
-// }
+const TemplateLink = ({
+  pathname,
+  children,
+}: {
+  pathname: string
+  children: ReactNode
+}) => {
+  return (
+    <div
+      className="relative overflow-hidden rounded border border-gray-200 bg-white shadow-sm transition-all
+      hover:-translate-y-1 hover:shadow-md"
+    >
+      <Link className="after:absolute after:inset-0" href={pathname}>
+        {children}
+      </Link>
+    </div>
+  )
+}

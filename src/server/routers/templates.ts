@@ -23,7 +23,7 @@ const defaultTemplateSelect = Prisma.validator<Prisma.TemplateSelect>()({
   updatedAt: true,
 })
 
-export const blockRouter = router({
+export const templateRouter = router({
   byMembershipId: publicProcedure
     .input(
       z.object({
