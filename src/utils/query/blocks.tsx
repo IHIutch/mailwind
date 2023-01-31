@@ -68,7 +68,6 @@ export const useUpdateBlock = (templateId: number) => {
         const previous = blockUtils.byTemplateId.getData({ templateId })
         blockUtils.byTemplateId.setData({ templateId }, (old: any) => {
           return old.map((o: any) => {
-            console.log({ o, payload })
             if (o.id === id) {
               return {
                 ...o,

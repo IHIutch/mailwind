@@ -42,28 +42,25 @@ export default function DynamicSidebar() {
   const autoSaveDebounce = useMemo(
     () =>
       debounce(({ id, payload }: { id: number; payload: any }) => {
-        updateBlock.mutateAsync({
-          id,
-          payload,
-        })
+        if (formMethods.formState.isValid) {
+          updateBlock.mutateAsync({
+            id,
+            payload,
+          })
+        }
       }, 750),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   )
 
   useEffect(() => {
-    if (
-      formMethods.formState.isDirty &&
-      formMethods.formState.isValid &&
-      activeBlock?.id
-    ) {
+    if (formMethods.formState.isDirty && activeBlock?.id) {
       autoSaveDebounce({ id: activeBlock?.id, payload: { attributes } })
     }
   }, [
     activeBlock?.id,
     attributes,
     autoSaveDebounce,
-    formMethods.formState.isValid,
     formMethods.formState.isDirty,
   ])
 
