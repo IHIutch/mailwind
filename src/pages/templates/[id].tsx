@@ -14,6 +14,7 @@ import {
 } from '@/context/activeBlock'
 import { SingleBlockPayloadType } from '@/server/routers/blocks'
 import { defaultAttributes } from '@/utils/defaults'
+import { useGetBlocksByTemplateId } from '@/utils/query/blocks'
 import { trpc } from '@/utils/trpc'
 import {
   Active,
@@ -155,9 +156,7 @@ const EditView = () => {
   const {
     query: { id },
   } = useRouter()
-  const { data: blocks } = trpc.block.byTemplateId.useQuery({
-    templateId: Number(id),
-  })
+  const { data: blocks } = useGetBlocksByTemplateId(Number(id))
 
   const dispatch = useActiveBlockDispatch()
   const memoizedBlocks = useMemo(() => {

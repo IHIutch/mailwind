@@ -4,11 +4,12 @@ import {
   useActiveBlockState,
 } from '@/context/activeBlock'
 import { sidebars } from '@/utils/defaults'
-import { trpc } from '@/utils/trpc'
 import { X } from 'lucide-react'
 import { useEffect, useMemo } from 'react'
 import { FormProvider, useForm, useWatch } from 'react-hook-form'
 import debounce from 'lodash/debounce'
+import { useRouter } from 'next/router'
+import { useUpdateBlock } from '@/utils/query/blocks'
 
 export default function DynamicSidebar() {
   const { data: activeBlock } = useActiveBlockState()
@@ -18,7 +19,10 @@ export default function DynamicSidebar() {
     dispatch(setActiveBlock(null))
   }
 
-  const { mutateAsync: handleUpdateBlock } = trpc.block.update.useMutation()
+  const {
+    query: { id },
+  } = useRouter()
+  const updateBlock = useUpdateBlock(Number(id))
 
   const formMethods = useForm({
     mode: 'onChange',
@@ -38,8 +42,7 @@ export default function DynamicSidebar() {
   const autoSaveDebounce = useMemo(
     () =>
       debounce(({ id, payload }: { id: number; payload: any }) => {
-        console.log({ id, payload })
-        handleUpdateBlock({
+        updateBlock.mutateAsync({
           id,
           payload,
         })
@@ -49,13 +52,18 @@ export default function DynamicSidebar() {
   )
 
   useEffect(() => {
-    if (formMethods.formState.isDirty && activeBlock?.id) {
+    if (
+      formMethods.formState.isDirty &&
+      formMethods.formState.isValid &&
+      activeBlock?.id
+    ) {
       autoSaveDebounce({ id: activeBlock?.id, payload: { attributes } })
     }
   }, [
     activeBlock?.id,
     attributes,
     autoSaveDebounce,
+    formMethods.formState.isValid,
     formMethods.formState.isDirty,
   ])
 

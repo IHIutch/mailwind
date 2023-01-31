@@ -90,13 +90,16 @@ export const blockRouter = router({
       }
       return data
     }),
-  create: publicProcedure.input(blockSchema).mutation(async ({ input }) => {
-    const data = await prisma.block.create({
-      data: input,
-      select: defaultBlockSelect,
-    })
-    return data
-  }),
+  create: publicProcedure
+    .input(z.object({ payload: blockSchema }))
+    .mutation(async ({ input }) => {
+      const { payload } = input
+      const data = await prisma.block.create({
+        data: payload,
+        select: defaultBlockSelect,
+      })
+      return data
+    }),
   update: publicProcedure
     .input(
       z.object({
@@ -131,7 +134,6 @@ export const blockRouter = router({
     )
     .mutation(async ({ input }) => {
       const { id, payload } = input
-      console.log(2, { id, payload })
       const data = await prisma.block.update({
         where: { id },
         data: payload,
