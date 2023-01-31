@@ -2,17 +2,16 @@ import ColorInput from '../inputs/ColorInput'
 import FontSizeInput from '../inputs/FontSizeInput'
 import LineHeightInput from '../inputs/LineHeightInput'
 import PaddingInput from '../inputs/PaddingInput'
-import { useActiveBlockState } from '@/context/activeBlock'
 import * as Label from '@radix-ui/react-label'
 import { useFormContext } from 'react-hook-form'
+import { type ReactNode } from 'react'
 
-export default function TextSidebar({ heading }) {
-  const { data: activeBlock } = useActiveBlockState()
+export default function TextSidebar({ children }: { children: ReactNode }) {
   const { control } = useFormContext()
 
   return (
     <div>
-      <div>{heading}</div>
+      <div>{children}</div>
       <div className="relative px-3">
         <div className="mb-4">
           <Label.Root
@@ -23,7 +22,7 @@ export default function TextSidebar({ heading }) {
           </Label.Root>
           <FontSizeInput
             id="fontSizeField"
-            name={`blocks.${activeBlock.index}.attributes.fontSize`}
+            name="attributes.fontSize"
             control={control}
             className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
             errorClassName="mt-1 text-xs text-red-500"
@@ -38,7 +37,7 @@ export default function TextSidebar({ heading }) {
           </Label.Root>
           <LineHeightInput
             id="lineHeightField"
-            name={`blocks.${activeBlock.index}.attributes.lineHeight`}
+            name="attributes.lineHeight"
             control={control}
             className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
             errorClassName="mt-1 text-xs text-red-500"
@@ -54,7 +53,7 @@ export default function TextSidebar({ heading }) {
             </Label.Root>
             <PaddingInput
               id="paddingTopField"
-              name={`blocks.${activeBlock.index}.attributes.paddingTop`}
+              name="attributes.paddingTop"
               control={control}
               className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
               errorClassName="mt-1 text-xs text-red-500"
@@ -69,7 +68,7 @@ export default function TextSidebar({ heading }) {
             </Label.Root>
             <PaddingInput
               id="paddingRightField"
-              name={`blocks.${activeBlock.index}.attributes.paddingRight`}
+              name="attributes.paddingRight"
               control={control}
               className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
               errorClassName="mt-1 text-xs text-red-500"
@@ -84,7 +83,7 @@ export default function TextSidebar({ heading }) {
             </Label.Root>
             <PaddingInput
               id="paddingBottomField"
-              name={`blocks.${activeBlock.index}.attributes.paddingBottom`}
+              name="attributes.paddingBottom"
               control={control}
               className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
               errorClassName="mt-1 text-xs text-red-500"
@@ -99,7 +98,7 @@ export default function TextSidebar({ heading }) {
             </Label.Root>
             <PaddingInput
               id="paddingLeftField"
-              name={`blocks.${activeBlock.index}.attributes.paddingLeft`}
+              name="attributes.paddingLeft"
               control={control}
               className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
               errorClassName="mt-1 text-xs text-red-500"
@@ -115,7 +114,7 @@ export default function TextSidebar({ heading }) {
           </Label.Root>
           <ColorInput
             id="backgroundColorField"
-            name={`blocks.${activeBlock.index}.attributes.backgroundColor`}
+            name="attributes.backgroundColor"
             control={control}
           />
         </div>

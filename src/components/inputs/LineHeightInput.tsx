@@ -1,4 +1,4 @@
-import { useController } from 'react-hook-form'
+import { Control, useController } from 'react-hook-form'
 
 export default function LineHeightInput({
   id,
@@ -6,6 +6,12 @@ export default function LineHeightInput({
   control,
   className,
   errorClassName,
+}: {
+  id: string
+  name: string
+  control: Control
+  className?: string
+  errorClassName?: string
 }) {
   const {
     field: { onChange, onBlur, name: inputName, value, ref },
@@ -78,7 +84,7 @@ export default function LineHeightInput({
         value={value}
         name={inputName}
         ref={ref}
-        aria-describedby={error ?? `${id}-error-message`}
+        aria-describedby={error ? `${id}-error-message` : ''}
         aria-invalid={error ? 'true' : 'false'}
       />
       {error ? (

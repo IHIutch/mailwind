@@ -4,7 +4,16 @@
  */
 import { router, publicProcedure } from '../trpc'
 import { prisma } from '@/server/prisma'
-import { blockSchema } from '@/utils/zod/schemas'
+import {
+  blockSchema,
+  codeBlockSchema,
+  defaultBlockSchema,
+  dividerBlockSchema,
+  headingBlockSchema,
+  imageBlockSchema,
+  quoteBlockSchema,
+  textBlockSchema,
+} from '@/utils/zod/schemas'
 import { Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
@@ -22,6 +31,10 @@ const defaultBlockSelect = Prisma.validator<Prisma.BlockSelect>()({
   templateId: true,
   position: true,
 })
+
+export type SingleBlockPayloadType = Prisma.BlockGetPayload<{
+  select: typeof defaultBlockSelect
+}>
 
 // const validWhereParams = blockSchema.pick({ id: true, templateId: true })
 // type validWhereParams = z.infer<typeof validWhereParams>
@@ -84,15 +97,48 @@ export const blockRouter = router({
     })
     return data
   }),
-  update: publicProcedure.input(blockSchema).mutation(async ({ input }) => {
-    const { id } = input
-    const data = await prisma.block.update({
-      where: { id },
-      data: input,
-      select: defaultBlockSelect,
-    })
-    return data
-  }),
+  update: publicProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        payload: z.union([
+          textBlockSchema
+            .merge(defaultBlockSchema)
+            .omit({ id: true })
+            .partial(),
+          headingBlockSchema
+            .merge(defaultBlockSchema)
+            .omit({ id: true })
+            .partial(),
+          imageBlockSchema
+            .merge(defaultBlockSchema)
+            .omit({ id: true })
+            .partial(),
+          codeBlockSchema
+            .merge(defaultBlockSchema)
+            .omit({ id: true })
+            .partial(),
+          dividerBlockSchema
+            .merge(defaultBlockSchema)
+            .omit({ id: true })
+            .partial(),
+          quoteBlockSchema
+            .merge(defaultBlockSchema)
+            .omit({ id: true })
+            .partial(),
+        ]),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { id, payload } = input
+      console.log(2, { id, payload })
+      const data = await prisma.block.update({
+        where: { id },
+        data: payload,
+        select: defaultBlockSelect,
+      })
+      return data
+    }),
   delete: publicProcedure
     .input(
       z.object({

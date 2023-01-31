@@ -12,6 +12,7 @@ import {
   setActiveBlock,
   useActiveBlockDispatch,
 } from '@/context/activeBlock'
+import { SingleBlockPayloadType } from '@/server/routers/blocks'
 import { defaultAttributes } from '@/utils/defaults'
 import { trpc } from '@/utils/trpc'
 import {
@@ -50,7 +51,9 @@ import type { ReactNode } from 'react'
 import { useMemo, useState } from 'react'
 
 export default function TemplateId() {
-  const [previewSize, setPreviewSize] = useState('desktop')
+  const [previewSize, setPreviewSize] = useState<'desktop' | 'mobile'>(
+    'desktop'
+  )
 
   const offset = '80px'
   const mobileSize = '480px'
@@ -106,7 +109,7 @@ export default function TemplateId() {
   return (
     <>
       <GlobalNavbar />
-      <ActiveBlockProvider>
+      <ActiveBlockProvider initialValue={{ data: null }}>
         <div className="relative pt-16">
           {/* <FormProvider {...formMethods}> */}
           <div className="fixed inset-y-0 top-16 w-[calc(100%-300px)]">
@@ -157,14 +160,12 @@ const EditView = () => {
   })
 
   const dispatch = useActiveBlockDispatch()
-
   const memoizedBlocks = useMemo(() => {
     return blocks || []
   }, [blocks])
-  // const dispatch = useActiveBlockDispatch()
-  const [activeDraggingBlock, setActiveDraggingBlock] = useState<
-    (typeof memoizedBlocks)[number] | null
-  >(null)
+
+  const [activeDraggingBlock, setActiveDraggingBlock] =
+    useState<SingleBlockPayloadType | null>(null)
   // const { control, getValues, watch } = useFormContext()
   // const { fields, remove, move, insert } = useFieldArray({
   //   keyName: 'uuid', // Prevent overwriting "id" key
@@ -199,9 +200,7 @@ const EditView = () => {
     setActiveDraggingBlock(null)
   }
 
-  const handleSetSelectedBlock = (
-    block: (typeof memoizedBlocks)[number] | null
-  ) => {
+  const handleSetSelectedBlock = (block: SingleBlockPayloadType | null) => {
     // const { id, type } = getValues(`blocks.${itemIndex}`)
     dispatch(setActiveBlock(block))
   }

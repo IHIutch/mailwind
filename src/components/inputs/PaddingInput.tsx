@@ -1,4 +1,5 @@
-import { useController } from 'react-hook-form'
+import { KeyboardEvent } from 'react'
+import { type Control, useController } from 'react-hook-form'
 
 export default function PaddingInput({
   id,
@@ -6,6 +7,12 @@ export default function PaddingInput({
   control,
   className,
   errorClassName,
+}: {
+  id: string
+  name: string
+  control: Control
+  className?: string
+  errorClassName?: string
 }) {
   const {
     field: { onChange, onBlur, name: inputName, value, ref },
@@ -38,11 +45,16 @@ export default function PaddingInput({
     },
   })
 
-  const handleShiftSpinner = (e, callback) => {
+  const handleShiftSpinner = (
+    e: KeyboardEvent & {
+      target: HTMLInputElement
+    },
+    callback: (v: string) => void
+  ) => {
     if (['ArrowUp', 'ArrowDown'].includes(e.key)) {
       e.preventDefault()
 
-      const { value = '', unit = '' } = e.target.value.match(
+      const { value = '', unit = '' } = (e?.target?.value || '').match(
         /(?<value>^-?\d+)(?<unit>\S+|)/
       ).groups
 
@@ -55,8 +67,8 @@ export default function PaddingInput({
     }
   }
 
-  const handleMatch = (val) => {
-    const { value = '', unit = '' } = val.match(
+  const handleMatch = (val: string) => {
+    const { value = '', unit = '' } = (val || '').match(
       /(?<value>^-?\d+)(?<unit>\S+|)/
     ).groups
     return { value, unit }
@@ -69,7 +81,7 @@ export default function PaddingInput({
         type="text"
         className={className}
         onKeyDown={(e) => {
-          handleShiftSpinner(e, (value) => {
+          handleShiftSpinner(e, (value: string) => {
             onChange(value.replace(/\s/g, '').trim())
           })
         }}
@@ -78,7 +90,7 @@ export default function PaddingInput({
         value={value}
         name={inputName}
         ref={ref}
-        aria-describedby={error ?? `${id}-error-message`}
+        aria-describedby={error ? `${id}-error-message` : ''}
         aria-invalid={error ? 'true' : 'false'}
       />
       {error ? (

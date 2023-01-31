@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { type ReactNode } from 'react'
 
-export default function QuoteSidebar({ heading }) {
+export default function QuoteSidebar({ children }: { children: ReactNode }) {
   return (
     <div>
-      <div>{heading}</div>
+      <div>{children}</div>
       QuoteSidebar
     </div>
   )

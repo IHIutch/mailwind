@@ -2,7 +2,7 @@ import * as Popover from '@radix-ui/react-popover'
 import * as RadioGroup from '@radix-ui/react-radio-group'
 import { Palette } from 'lucide-react'
 import { HexColorPicker } from 'react-colorful'
-import { useController } from 'react-hook-form'
+import { type Control, useController } from 'react-hook-form'
 
 export default function ColorInput({
   id,
@@ -10,6 +10,12 @@ export default function ColorInput({
   control,
   className,
   errorClassName,
+}: {
+  id: string
+  name: string
+  control: Control
+  className?: string
+  errorClassName?: string
 }) {
   const {
     field: { onChange, name: inputName, value, ref },
@@ -35,7 +41,13 @@ export default function ColorInput({
   )
 }
 
-const InputColorPicker = ({ value, onChange }) => {
+const InputColorPicker = ({
+  value,
+  onChange,
+}: {
+  value: string
+  onChange: () => void
+}) => {
   return (
     <Popover.Root>
       <Popover.Trigger className="h-full w-full rounded-l-md border border-zinc-300 py-2 px-3 text-left shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 [&[data-state=open]]:border-indigo-300 [&[data-state=open]]:ring [&[data-state=open]]:ring-indigo-200">
@@ -60,7 +72,13 @@ const InputColorPicker = ({ value, onChange }) => {
   )
 }
 
-const SwatchColorPicker = ({ value, onChange }) => {
+const SwatchColorPicker = ({
+  value,
+  onChange,
+}: {
+  value: string
+  onChange: () => void
+}) => {
   const colorsList = [
     { label: 'zinc.50', value: '#fafafa' },
     { label: 'zinc.100', value: '#f5f5f5' },

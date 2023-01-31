@@ -12,7 +12,7 @@ export default function EditorNavbar({
 }: {
   handleDownload?: () => void
   previewSize: string
-  setPreviewSize: (value: string) => void
+  setPreviewSize: (value: 'mobile' | 'desktop') => void
   title?: string
 }) {
   const handleSendEmail = () => {
@@ -95,7 +95,9 @@ export default function EditorNavbar({
           id="containerAlignField"
           type="single"
           value={previewSize}
-          onValueChange={(value) => (value ? setPreviewSize(value) : null)}
+          onValueChange={(value: 'desktop' | 'mobile') =>
+            value ? setPreviewSize(value) : null
+          }
           className="flex h-8 rounded-md shadow-sm"
         >
           <ToggleGroup.Item

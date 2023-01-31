@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { type ReactNode } from 'react'
 
-export default function CodeSidebar({ heading }) {
+export default function CodeSidebar({ children }: { children: ReactNode }) {
   return (
     <div>
-      <div>{heading}</div>
+      <div>{children}</div>
       CodeSidebar
     </div>
   )

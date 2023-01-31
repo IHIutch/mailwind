@@ -4,13 +4,14 @@ import * as Label from '@radix-ui/react-label'
 import * as ToggleGroup from '@radix-ui/react-toggle-group'
 import { AlignCenter, AlignLeft, AlignRight } from 'lucide-react'
 import { Controller, useFormContext } from 'react-hook-form'
+import { type ReactNode } from 'react'
 
-export default function GlobalSidebar({ heading }) {
-  // const { control } = useFormContext()
+export default function GlobalSidebar({ children }: { children: ReactNode }) {
+  const { control } = useFormContext()
 
   return (
     <div>
-      {heading}
+      {children}
       <div className="mb-4 px-3">
         <fieldset>
           <Label.Root htmlFor="containerAlignField" asChild>
@@ -18,7 +19,7 @@ export default function GlobalSidebar({ heading }) {
               Container Align
             </legend>
           </Label.Root>
-          {/* <Controller
+          <Controller
             name={'global.containerAlign'}
             control={control}
             render={({ field: { value, onChange } }) => (
@@ -49,7 +50,7 @@ export default function GlobalSidebar({ heading }) {
                 </ToggleGroup.Item>
               </ToggleGroup.Root>
             )}
-          /> */}
+          />
         </fieldset>
       </div>
       <div className="mb-4 px-3">
@@ -59,20 +60,25 @@ export default function GlobalSidebar({ heading }) {
         >
           Container Width
         </Label.Root>
-        {/* <SpacingInput
+        <SpacingInput
           id="globalWidthField"
           name="global.containerWidth"
           control={control}
           className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
-        /> */}
+        />
       </div>
       <div className="border-t border-zinc-200 px-3 pt-4">
-        <div className="mb-1">
-          <span className="text-sm font-semibold text-zinc-700">
-            Text Color
-          </span>
-        </div>
-        {/* <ColorInput control={control} name="global.color" /> */}
+        <Label.Root
+          className="mb-1 text-sm font-semibold text-zinc-700"
+          htmlFor="globalBackgroundColorField"
+        >
+          Background Color
+        </Label.Root>
+        <ColorInput
+          id="globalBackgroundColorField"
+          name="global.backgroundColor"
+          control={control}
+        />
       </div>
     </div>
   )

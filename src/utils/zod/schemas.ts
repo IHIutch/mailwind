@@ -1,33 +1,33 @@
 import { BlockType } from '@prisma/client'
 import { z } from 'zod'
 
-const textBlockSchema = z.object({
+export const textBlockSchema = z.object({
   type: z.literal(BlockType.TEXT),
-  attributes: z.object({}),
+  attributes: z.any(),
 })
-const headingBlockSchema = z.object({
+export const headingBlockSchema = z.object({
   type: z.union([
     z.literal(BlockType.H1),
     z.literal(BlockType.H2),
     z.literal(BlockType.H3),
   ]),
-  attributes: z.object({}),
+  attributes: z.any(),
 })
-const imageBlockSchema = z.object({
+export const imageBlockSchema = z.object({
   type: z.literal(BlockType.IMAGE),
-  attributes: z.object({}),
+  attributes: z.any(),
 })
-const codeBlockSchema = z.object({
+export const codeBlockSchema = z.object({
   type: z.literal(BlockType.CODE),
-  attributes: z.object({}),
+  attributes: z.any(),
 })
-const dividerBlockSchema = z.object({
+export const dividerBlockSchema = z.object({
   type: z.literal(BlockType.DIVIDER),
-  attributes: z.object({}),
+  attributes: z.any(),
 })
-const quoteBlockSchema = z.object({
+export const quoteBlockSchema = z.object({
   type: z.literal(BlockType.QUOTE),
-  attributes: z.object({}),
+  attributes: z.any(),
 })
 
 export const defaultBlockSchema = z.object({

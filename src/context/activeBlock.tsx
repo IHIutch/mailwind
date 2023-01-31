@@ -1,26 +1,35 @@
 import { useReducer, useContext, createContext } from 'react'
 import type { ReactNode, Dispatch } from 'react'
+import { SingleBlockPayloadType } from '@/server/routers/blocks'
 
 // Action Defs
 const SET = 'activeBlock/SET' // This is a place for enums probably
 
 // Initial State Def
-const initialState = null //This should either become a blockId or a block Object entirely
+const initialState = {
+  data: null,
+} //This should either become a blockId or a block Object entirely
 
-type ActiveBlockState = object | null
+type ActiveBlockDataType = SingleBlockPayloadType | null
+
+type ActiveBlockState = {
+  data: ActiveBlockDataType
+}
 type ActiveBlockAction = {
   type: string
-  data: ActiveBlockState
+  data: ActiveBlockDataType
 }
 type ActiveBlockProviderProps = {
   children: ReactNode
-  initialValue?: typeof initialState
+  initialValue: typeof initialState
 }
 
 const reducer = (state: ActiveBlockState, action: ActiveBlockAction) => {
   switch (action.type) {
     case SET:
-      return action.data
+      return {
+        data: action.data,
+      }
 
     default:
       throw Error(`Unknown action: ${action.type}`)
@@ -51,6 +60,6 @@ export const useActiveBlockDispatch = () =>
   useContext(ActiveBlockDispatchContext)
 
 // Actions
-export function setActiveBlock(activeBlock: ActiveBlockState) {
+export function setActiveBlock(activeBlock: ActiveBlockDataType) {
   return { type: SET, data: activeBlock }
 }

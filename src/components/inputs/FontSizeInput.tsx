@@ -1,4 +1,4 @@
-import { useController } from 'react-hook-form'
+import { type Control, useController } from 'react-hook-form'
 
 export default function FontSizeInput({
   id,
@@ -6,6 +6,12 @@ export default function FontSizeInput({
   control,
   className,
   errorClassName,
+}: {
+  id: string
+  name: string
+  control: Control
+  className?: string
+  errorClassName?: string
 }) {
   const {
     field: { onChange, onBlur, name: inputName, value, ref },
@@ -38,7 +44,7 @@ export default function FontSizeInput({
     },
   })
 
-  const handleShiftSpinner = (e, callback) => {
+  const handleShiftSpinner = (e: any, callback: any) => {
     if (['ArrowUp', 'ArrowDown'].includes(e.key)) {
       e.preventDefault()
 
@@ -55,7 +61,7 @@ export default function FontSizeInput({
     }
   }
 
-  const handleMatch = (val) => {
+  const handleMatch = (val: any) => {
     const { value = '', unit = '' } = val.match(
       /(?<value>^-?\d+)(?<unit>\S+|)/
     ).groups
@@ -69,7 +75,7 @@ export default function FontSizeInput({
         type="text"
         className={className}
         onKeyDown={(e) => {
-          handleShiftSpinner(e, (value) => {
+          handleShiftSpinner(e, (value: any) => {
             onChange(value.replace(/\s/g, '').trim())
           })
         }}
@@ -78,7 +84,7 @@ export default function FontSizeInput({
         value={value}
         name={inputName}
         ref={ref}
-        aria-describedby={error ?? `${id}-error-message`}
+        aria-describedby={error ? `${id}-error-message` : ''}
         aria-invalid={error ? 'true' : 'false'}
       />
       {error ? (
