@@ -3,8 +3,17 @@ import Highlight, { defaultProps } from 'prism-react-renderer'
 import theme from 'prism-react-renderer/themes/nightOwl'
 import { useCallback, useState } from 'react'
 import Editor from 'react-simple-code-editor'
+import { JSONValue } from 'superjson/dist/types'
 
-export default function CodeBlock({ value, onChange = () => null }) {
+export default function CodeBlock({
+  attributes,
+  value,
+  onChange = () => null,
+}: {
+  attributes: JSONValue
+  value: string
+  onChange?: (value: any) => void
+}) {
   const [code, setCode] = useState(value)
 
   // eslint-disable-next-line react-hooks/exhaustive-deps

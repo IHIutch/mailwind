@@ -3,18 +3,18 @@ import {
   useActiveBlockDispatch,
   useActiveBlockState,
 } from '@/context/activeBlock'
-import { sidebars } from '@/utils/types'
+import { sidebars } from '@/utils/defaults'
 import { X } from 'lucide-react'
 
 export default function DynamicSidebar() {
-  const { data: activeBlock } = useActiveBlockState()
+  const activeBlock = useActiveBlockState()
 
   const Component = sidebars[activeBlock?.type ?? 'GLOBAL']
   return <Component key={activeBlock?.id} heading={<Heading />} />
 }
 
 const Heading = () => {
-  const { data: activeBlock } = useActiveBlockState()
+  const activeBlock = useActiveBlockState()
   const dispatch = useActiveBlockDispatch()
 
   const handleUnsetActiveBlock = () => {

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { getNanoId } from '@/utils/functions'
-import { BlockType, defaultAttributes } from '@/utils/types'
+import { BlockType, defaultAttributes } from '@/utils/defaults'
 import { useFetcher, useLoaderData } from '@remix-run/react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import {

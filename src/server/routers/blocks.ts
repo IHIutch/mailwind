@@ -18,6 +18,7 @@ const defaultBlockSelect = Prisma.validator<Prisma.BlockSelect>()({
   id: true,
   type: true,
   attributes: true,
+  value: true,
   templateId: true,
   position: true,
 })
@@ -76,19 +77,13 @@ export const blockRouter = router({
       }
       return data
     }),
-  create: publicProcedure
-    .input(
-      blockSchema.omit({
-        id: true,
-      })
-    )
-    .mutation(async ({ input }) => {
-      const data = await prisma.block.create({
-        data: input,
-        select: defaultBlockSelect,
-      })
-      return data
-    }),
+  create: publicProcedure.input(blockSchema).mutation(async ({ input }) => {
+    const data = await prisma.block.create({
+      data: input,
+      select: defaultBlockSelect,
+    })
+    return data
+  }),
   update: publicProcedure.input(blockSchema).mutation(async ({ input }) => {
     const { id } = input
     const data = await prisma.block.update({

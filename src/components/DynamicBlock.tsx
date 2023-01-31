@@ -1,6 +1,18 @@
-import { blocks } from '@/utils/types'
+import { blocks } from '@/utils/defaults'
+import { BlockType } from '@prisma/client'
+import { JSONValue } from 'superjson/dist/types'
 
-export default function DynamicBlock({ type, attributes, value, onChange }) {
+export default function DynamicBlock({
+  type,
+  attributes,
+  value,
+  onChange,
+}: {
+  type: BlockType
+  attributes: JSONValue
+  value: string
+  onChange?: (value: any) => void
+}) {
   const Component = blocks[type]
   return (
     <Component

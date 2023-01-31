@@ -23,7 +23,7 @@ model User {
 
 model Block {
   id         Int       @id @default(autoincrement())
-  type       String    @db.VarChar
+  type       BlockType
   templateId Int
   position   Int       @db.SmallInt
   attributes Json?     @db.Json
@@ -77,4 +77,15 @@ enum MembershipRole {
 enum GlobalRole {
   SUPERADMIN
   CUSTOMER
+}
+
+enum BlockType {
+  TEXT
+  H1
+  H2
+  H3
+  DIVIDER
+  QUOTE
+  IMAGE
+  CODE
 }

@@ -1,8 +1,19 @@
 import Editor from '../Editor'
-import { BlockType } from '@/utils/types'
+import { BlockType } from '@prisma/client'
 import clsx from 'clsx'
+import { JSONValue } from 'superjson/dist/types'
 
-export default function HeadingBlock({ type, value, onChange }) {
+export default function HeadingBlock({
+  type,
+  attributes,
+  value,
+  onChange = () => null,
+}: {
+  type: BlockType
+  attributes: JSONValue
+  value: string
+  onChange?: (value: any) => void
+}) {
   return (
     <div
       className={clsx(

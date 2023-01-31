@@ -6,7 +6,7 @@ import { AlignCenter, AlignLeft, AlignRight } from 'lucide-react'
 import { Controller, useFormContext } from 'react-hook-form'
 
 export default function GlobalSidebar({ heading }) {
-  const { control } = useFormContext()
+  // const { control } = useFormContext()
 
   return (
     <div>
@@ -18,7 +18,7 @@ export default function GlobalSidebar({ heading }) {
               Container Align
             </legend>
           </Label.Root>
-          <Controller
+          {/* <Controller
             name={'global.containerAlign'}
             control={control}
             render={({ field: { value, onChange } }) => (
@@ -49,7 +49,7 @@ export default function GlobalSidebar({ heading }) {
                 </ToggleGroup.Item>
               </ToggleGroup.Root>
             )}
-          />
+          /> */}
         </fieldset>
       </div>
       <div className="mb-4 px-3">
@@ -59,12 +59,12 @@ export default function GlobalSidebar({ heading }) {
         >
           Container Width
         </Label.Root>
-        <SpacingInput
+        {/* <SpacingInput
           id="globalWidthField"
           name="global.containerWidth"
           control={control}
           className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
-        />
+        /> */}
       </div>
       <div className="border-t border-zinc-200 px-3 pt-4">
         <div className="mb-1">
@@ -72,7 +72,7 @@ export default function GlobalSidebar({ heading }) {
             Text Color
           </span>
         </div>
-        <ColorInput control={control} name="global.color" />
+        {/* <ColorInput control={control} name="global.color" /> */}
       </div>
     </div>
   )

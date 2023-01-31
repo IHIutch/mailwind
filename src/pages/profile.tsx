@@ -10,7 +10,7 @@ export default function Profile() {
   const { isLoading, session, error } = useSessionContext()
   const { data: user } = trpc.user.byId.useQuery({ id: session?.user.id || '' })
   const { data: templates } = trpc.template.byMembershipId.useQuery({
-    membershipId: user?.memberships[0].id || -1,
+    membershipId: Number(user?.memberships[0]?.id || 0),
   })
 
   return (

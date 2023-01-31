@@ -9,6 +9,11 @@ export default function EditorNavbar({
   previewSize,
   setPreviewSize,
   title,
+}: {
+  handleDownload?: () => void
+  previewSize: string
+  setPreviewSize: (value: string) => void
+  title?: string
 }) {
   const handleSendEmail = () => {
     console.log('send email')
@@ -125,7 +130,7 @@ export default function EditorNavbar({
             <Popover.Portal>
               <Popover.Content
                 align="end"
-                sideOffset="1"
+                sideOffset={1}
                 className="rounded-md border border-zinc-200 bg-white p-2 shadow-lg"
               >
                 <Label.Root

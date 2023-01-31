@@ -21,13 +21,14 @@ const defaultTemplateSelect = Prisma.validator<Prisma.TemplateSelect>()({
   organizationId: true,
   createdAt: true,
   updatedAt: true,
+  blocks: true,
 })
 
 export const templateRouter = router({
   byMembershipId: publicProcedure
     .input(
       z.object({
-        membershipId: z.number(),
+        membershipId: z.coerce.number(),
       })
     )
     .query(async ({ input }) => {
@@ -45,7 +46,7 @@ export const templateRouter = router({
   byId: publicProcedure
     .input(
       z.object({
-        id: z.number(),
+        id: z.coerce.number(),
       })
     )
     .query(async ({ input }) => {

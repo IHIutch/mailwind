@@ -15,39 +15,29 @@ import {
   QuoteSidebar,
   TextSidebar,
 } from '@/components/sidebars'
-
-export const BlockType = {
-  Text: 'TEXT',
-  H1: 'H1',
-  H2: 'H2',
-  H3: 'H3',
-  Divider: 'DIVIDER',
-  Quote: 'QUOTE',
-  Image: 'IMAGE',
-  Code: 'CODE',
-}
+import { BlockType } from '@prisma/client'
 
 export const blocks = {
-  [BlockType.Text]: TextBlock,
+  [BlockType.TEXT]: TextBlock,
   [BlockType.H1]: HeadingBlock,
   [BlockType.H2]: HeadingBlock,
   [BlockType.H3]: HeadingBlock,
-  [BlockType.Divider]: DividerBlock,
-  [BlockType.Quote]: QuoteBlock,
-  [BlockType.Image]: ImageBlock,
-  [BlockType.Code]: CodeBlock,
+  [BlockType.DIVIDER]: DividerBlock,
+  [BlockType.QUOTE]: QuoteBlock,
+  [BlockType.IMAGE]: ImageBlock,
+  [BlockType.CODE]: CodeBlock,
 }
 
 export const sidebars = {
   GLOBAL: GlobalSidebar,
-  [BlockType.Text]: TextSidebar,
+  [BlockType.TEXT]: TextSidebar,
   [BlockType.H1]: HeadingSidebar,
   [BlockType.H2]: HeadingSidebar,
   [BlockType.H3]: HeadingSidebar,
-  [BlockType.Divider]: DividerSidebar,
-  [BlockType.Quote]: QuoteSidebar,
-  [BlockType.Image]: ImageSidebar,
-  [BlockType.Code]: CodeSidebar,
+  [BlockType.DIVIDER]: DividerSidebar,
+  [BlockType.QUOTE]: QuoteSidebar,
+  [BlockType.IMAGE]: ImageSidebar,
+  [BlockType.CODE]: CodeSidebar,
 }
 
 export const defaultAttributes = {
@@ -62,7 +52,7 @@ export const defaultAttributes = {
     lineHeight: '1.5',
     backgroundColor: '#ffffff',
   },
-  H1: {
+  [BlockType.H1]: {
     paddingTop: '0',
     paddingRight: '0',
     paddingBottom: '28px',
@@ -71,7 +61,7 @@ export const defaultAttributes = {
     lineHeight: '40px',
     fontWeight: '800',
   },
-  H2: {
+  [BlockType.H2]: {
     paddingTop: '26px',
     paddingRight: '0',
     paddingBottom: '20px',
@@ -80,7 +70,7 @@ export const defaultAttributes = {
     lineHeight: '32px',
     fontWeight: '700',
   },
-  H3: {
+  [BlockType.H3]: {
     paddingTop: '32px',
     paddingRight: '0',
     paddingBottom: '8px',
@@ -89,7 +79,7 @@ export const defaultAttributes = {
     lineHeight: '28px',
     fontWeight: '600',
   },
-  TEXT: {
+  [BlockType.TEXT]: {
     paddingTop: '12px',
     paddingRight: '0',
     paddingBottom: '12px',
@@ -98,7 +88,7 @@ export const defaultAttributes = {
     lineHeight: '18px',
     fontWeight: '400',
   },
-  CODE: {
+  [BlockType.CODE]: {
     paddingTop: '8px',
     paddingRight: '0',
     paddingBottom: '8px',
@@ -107,13 +97,13 @@ export const defaultAttributes = {
     lineHeight: '18px',
     fontWeight: '400',
   },
-  DIVIDER: {
+  [BlockType.DIVIDER]: {
     paddingTop: '8px',
     paddingRight: '0',
     paddingBottom: '8px',
     paddingLeft: '0',
   },
-  IMAGE: {
+  [BlockType.IMAGE]: {
     paddingTop: '8px',
     paddingRight: '0',
     paddingBottom: '8px',
