@@ -1,17 +1,16 @@
 import GlobalNavbar from '@/components/GlobalNavbar'
-import { trpc } from '@/utils/trpc'
-import { useSessionContext } from '@supabase/auth-helpers-react'
+import { useGetTemplatesByMembershipId } from '@/utils/query/templates'
+import { useAuthUser } from '@/utils/query/user'
 import dayjs from 'dayjs'
 import { Plus } from 'lucide-react'
 import Link from 'next/link'
 import { ReactNode } from 'react'
 
 export default function Profile() {
-  const { isLoading, session, error } = useSessionContext()
-  const { data: user } = trpc.user.byId.useQuery({ id: session?.user.id || '' })
-  const { data: templates } = trpc.template.byMembershipId.useQuery({
-    membershipId: Number(user?.memberships[0]?.id || 0),
-  })
+  const { data: user } = useAuthUser()
+  const { data: templates } = useGetTemplatesByMembershipId(
+    Number(user?.memberships?.[0]?.id)
+  )
 
   return (
     <div className="h-full bg-neutral-50">

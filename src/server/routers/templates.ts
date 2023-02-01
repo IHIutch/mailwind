@@ -64,27 +64,31 @@ export const templateRouter = router({
       return data
     }),
   create: publicProcedure
+    .input(z.object({ payload: templateSchema.omit({ id: true }) }))
+    .mutation(async ({ input }) => {
+      const { payload } = input
+      const data = await prisma.template.create({
+        data: payload,
+        select: defaultTemplateSelect,
+      })
+      return data
+    }),
+  update: publicProcedure
     .input(
-      templateSchema.omit({
-        id: true,
+      z.object({
+        id: z.number(),
+        payload: templateSchema.partial(),
       })
     )
     .mutation(async ({ input }) => {
-      const data = await prisma.template.create({
+      const { id } = input
+      const data = await prisma.template.update({
+        where: { id },
         data: input,
         select: defaultTemplateSelect,
       })
       return data
     }),
-  update: publicProcedure.input(templateSchema).mutation(async ({ input }) => {
-    const { id } = input
-    const data = await prisma.template.update({
-      where: { id },
-      data: input,
-      select: defaultTemplateSelect,
-    })
-    return data
-  }),
   delete: publicProcedure
     .input(
       z.object({

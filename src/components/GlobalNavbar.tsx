@@ -1,5 +1,5 @@
+import { useAuthUser } from '@/utils/query/user'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
-import { useSessionContext } from '@supabase/auth-helpers-react'
 import { LogOut } from 'lucide-react'
 import Link from 'next/link'
 import { ReactNode } from 'react'
@@ -11,7 +11,7 @@ export default function GlobalNavbar({
   children?: ReactNode
   className?: string
 }) {
-  const { isLoading, session, error } = useSessionContext()
+  const { data: user } = useAuthUser()
 
   return (
     <div
@@ -32,7 +32,7 @@ export default function GlobalNavbar({
             <DropdownMenu.Trigger asChild>
               <button className="ml-auto flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600">
                 <span className="font-medium uppercase text-white">
-                  {(session?.user.email || '').substring(0, 1)}
+                  {(user?.email || '').substring(0, 1)}
                 </span>
               </button>
             </DropdownMenu.Trigger>
