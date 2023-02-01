@@ -172,11 +172,11 @@ const TemplateTitle = () => {
 
   const { register, handleSubmit, formState } = useForm({
     defaultValues: {
-      title: template?.title ?? 'Untitled Template',
+      title: template?.title || '',
     },
   })
 
-  const onSubmit = async ({ title }: { title?: string }) => {
+  const onSubmit = async ({ title }: { title: string }) => {
     await handleUpdateTemplate({
       id: Number(id),
       payload: { title },
@@ -187,10 +187,10 @@ const TemplateTitle = () => {
   return (
     <div className="mx-4 flex items-center border-l border-gray-300 px-4">
       <div>
-        <p className="font-medium">{template?.title ?? 'Untitled Template'}</p>
+        <p className="font-medium">{template?.title || 'Untitled Template'}</p>
         <div className="text-xs text-neutral-500">
           <span>Last Modified: </span>
-          <span>{dayjs(template?.updatedAt).format('MMM D h:mma')}</span>
+          <span>{dayjs(template?.updatedAt).format('MMM D, h:mma')}</span>
         </div>
       </div>
       <div className="ml-4">
@@ -240,6 +240,7 @@ const TemplateTitle = () => {
                       type="text"
                       className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
                       {...register('title')}
+                      placeholder="Untitled Template"
                       aria-describedby={
                         formState.errors.title ? `email-error-message` : ''
                       }

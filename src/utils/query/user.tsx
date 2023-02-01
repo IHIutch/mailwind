@@ -5,6 +5,7 @@ export const useAuthUser = () => {
   const user = useUser()
   const { isLoading, isError, isSuccess, data, error } =
     trpc.user.byId.useQuery({ id: user?.id || '' })
+
   return {
     isLoading,
     isError,

@@ -40,7 +40,7 @@ export const defaultBlockSchema = z.object({
 
 export const userSchema = z.object({
   id: z.string().uuid(),
-  stripeCustomerId: z.string(),
+  stripeCustomerId: z.string().nullable(),
   stripeSubscriptionId: z.string().nullable(),
   role: z.enum(['SUPERADMIN', 'CUSTOMER']),
 })
@@ -48,7 +48,7 @@ export const userSchema = z.object({
 export const templateSchema = z.object({
   id: z.coerce.number(),
   membershipId: z.coerce.number(),
-  title: z.string(),
+  title: z.string().nullable(),
 })
 
 export const blockSchema = z.union([
@@ -60,18 +60,14 @@ export const blockSchema = z.union([
   quoteBlockSchema.merge(defaultBlockSchema),
 ])
 
-export const membershipSchema = z
-  .object({
-    id: z.coerce.number(),
-    role: z.enum(['OWNER', 'ADMIN', 'USER']),
-    organizationId: z.coerce.number(),
-    userId: z.string().uuid(),
-  })
-  .partial()
+export const membershipSchema = z.object({
+  id: z.coerce.number(),
+  role: z.enum(['OWNER', 'ADMIN', 'USER']),
+  organizationId: z.coerce.number(),
+  userId: z.string().uuid(),
+})
 
-export const organizationSchema = z
-  .object({
-    id: z.coerce.number(),
-    name: z.string(),
-  })
-  .partial()
+export const organizationSchema = z.object({
+  id: z.coerce.number(),
+  name: z.string(),
+})
