@@ -81,10 +81,10 @@ export const templateRouter = router({
       })
     )
     .mutation(async ({ input }) => {
-      const { id } = input
+      const { id, payload } = input
       const data = await prisma.template.update({
         where: { id },
-        data: input,
+        data: payload,
         select: defaultTemplateSelect,
       })
       return data

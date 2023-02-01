@@ -15,7 +15,7 @@ import {
 import { SingleBlockPayloadType } from '@/server/routers/blocks'
 import { defaultAttributes } from '@/utils/defaults'
 import { useGetBlocksByTemplateId } from '@/utils/query/blocks'
-import { trpc } from '@/utils/trpc'
+import { useGetTemplateById, useUpdateTemplate } from '@/utils/query/templates'
 import {
   Active,
   DndContext,
@@ -33,6 +33,9 @@ import {
 } from '@dnd-kit/sortable'
 import { BlockType } from '@prisma/client'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+import * as Dialog from '@radix-ui/react-dialog'
+import * as Label from '@radix-ui/react-label'
+
 import clsx from 'clsx'
 import {
   Code2,
@@ -46,10 +49,13 @@ import {
   Settings,
   Trash2,
   Copy,
+  X,
 } from 'lucide-react'
 import { useRouter } from 'next/router'
 import type { ReactNode } from 'react'
 import { useMemo, useState } from 'react'
+import dayjs from 'dayjs'
+import { useForm } from 'react-hook-form'
 
 export default function TemplateId() {
   const [previewSize, setPreviewSize] = useState<'desktop' | 'mobile'>(
@@ -109,7 +115,9 @@ export default function TemplateId() {
 
   return (
     <>
-      <GlobalNavbar />
+      <GlobalNavbar>
+        <TemplateTitle />
+      </GlobalNavbar>
       <ActiveBlockProvider initialValue={{ data: null }}>
         <div className="relative pt-16">
           {/* <FormProvider {...formMethods}> */}
@@ -149,6 +157,125 @@ export default function TemplateId() {
         {/* </FormProvider> */}
       </ActiveBlockProvider>
     </>
+  )
+}
+
+const TemplateTitle = () => {
+  const [isOpen, setIsOpen] = useState(false)
+  const {
+    query: { id },
+  } = useRouter()
+  const { data: template } = useGetTemplateById(Number(id))
+  const { mutateAsync: handleUpdateTemplate, isLoading } = useUpdateTemplate(
+    Number(id)
+  )
+
+  const { register, handleSubmit, formState } = useForm({
+    defaultValues: {
+      title: template?.title ?? 'Untitled Template',
+    },
+  })
+
+  const onSubmit = async ({ title }: { title?: string }) => {
+    await handleUpdateTemplate({
+      id: Number(id),
+      payload: { title },
+    })
+    setIsOpen(false)
+  }
+
+  return (
+    <div className="mx-4 flex items-center border-l border-gray-300 px-4">
+      <div>
+        <p className="font-medium">{template?.title ?? 'Untitled Template'}</p>
+        <div className="text-xs text-neutral-500">
+          <span>Last Modified: </span>
+          <span>{dayjs(template?.updatedAt).format('MMM D h:mma')}</span>
+        </div>
+      </div>
+      <div className="ml-4">
+        <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
+          <Dialog.Trigger
+            className={clsx(
+              'flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-100 p-1 transition-colors',
+              'hover:bg-neutral-200'
+            )}
+          >
+            <Settings className="h-5 w-5" />
+          </Dialog.Trigger>
+          <Dialog.Portal>
+            <Dialog.Overlay
+              className={clsx(
+                'fixed inset-0 z-40 bg-neutral-900',
+                '[&[data-state=open]]:opacity-40'
+              )}
+            />
+            <div className="fixed inset-0 z-50 flex items-start justify-center">
+              <Dialog.Content className="relative my-16 flex w-full max-w-[28rem] flex-col rounded-md bg-white">
+                <header className="p-4">
+                  <Dialog.Title className="text-2xl font-semibold">
+                    Edit Template Title
+                  </Dialog.Title>
+                </header>
+                <Dialog.Close asChild className="absolute top-2 right-3">
+                  <button
+                    className={clsx(
+                      'rounded-lg bg-neutral-100 p-1 transition-colors',
+                      'hover:bg-neutral-200'
+                    )}
+                  >
+                    <X />
+                  </button>
+                </Dialog.Close>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                  <div className="p-4">
+                    <Label.Root
+                      htmlFor="template-title"
+                      className="mb-1 block text-sm font-semibold text-gray-700"
+                    >
+                      Title
+                    </Label.Root>
+                    <input
+                      id="template-title"
+                      type="text"
+                      className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
+                      {...register('title')}
+                      aria-describedby={
+                        formState.errors.title ? `email-error-message` : ''
+                      }
+                      aria-invalid={formState.errors.title ? 'true' : 'false'}
+                    />
+                    {formState.errors.title ? (
+                      <p
+                        id="email-error-message"
+                        className="mt-1 text-xs text-red-500"
+                      >
+                        {formState.errors.title.message}
+                      </p>
+                    ) : null}
+                  </div>
+                  <footer className="flex p-4">
+                    <div className="ml-auto">
+                      <Dialog.Close className="h-8 rounded border border-zinc-300 px-2 text-sm font-semibold text-zinc-500 hover:bg-indigo-50">
+                        Cancel
+                      </Dialog.Close>
+                      <button
+                        disabled={isLoading}
+                        type="submit"
+                        className="ml-2 h-8 rounded bg-indigo-500 px-2 text-sm font-semibold text-white hover:bg-indigo-600
+                        disabled:opacity-40"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </footer>
+                </form>
+              </Dialog.Content>
+            </div>
+          </Dialog.Portal>
+        </Dialog.Root>
+      </div>
+    </div>
   )
 }
 

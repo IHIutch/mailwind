@@ -60,34 +60,24 @@ export const useCreateTemplate = (membershipId: number) => {
   }
 }
 
-export const useUpdateTemplate = (membershipId: number) => {
+export const useUpdateTemplate = (id: number) => {
   const { template: templateUtils } = trpc.useContext()
   const { mutateAsync, isLoading, isError, isSuccess, data, error } =
     trpc.template.update.useMutation({
       // When mutate is called:
-      onMutate: async ({ id, payload }: { id: number; payload: any }) => {
+      onMutate: async ({ payload }: { payload: any }) => {
         // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-        await templateUtils.byMembershipId.cancel({ membershipId })
-        const previous = templateUtils.byMembershipId.getData({ membershipId })
-        templateUtils.byMembershipId.setData({ membershipId }, (old: any) => {
-          return old.map((o: any) => {
-            if (o.id === id) {
-              return {
-                ...o,
-                ...payload,
-              }
-            }
-            return o
-          })
-        })
+        await templateUtils.byId.cancel({ id })
+        const previous = templateUtils.byId.getData({ id })
+        templateUtils.byId.setData({ id }, (old: any) => ({
+          ...old,
+          ...payload,
+        }))
         return { previous, updated: payload }
       },
       // If the mutation fails, use the context we returned above
       onError: (err, updated, context) => {
-        templateUtils.byMembershipId.setData(
-          { membershipId },
-          context?.previous
-        )
+        templateUtils.byId.setData({ id }, context?.previous)
       },
       // Always refetch after error or success:
       //   onSettled: (updated) => {
