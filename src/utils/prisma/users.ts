@@ -1,64 +1,78 @@
 import { prisma } from '@/server/prisma'
+import { Prisma } from '@prisma/client'
 import { getErrorMessage } from '../functions'
-import { userSchema } from '../zod/schemas'
 
-export const prismaGetUsers = async (where) => {
-  try {
-    const validWhere = userSchema.parse(where)
-    return await prisma.user.findMany({
-      where: validWhere,
-      include: {
-        memberships: true,
-      },
-    })
-  } catch (error) {
-    throw Error(getErrorMessage(error))
-  }
-}
+/**
+ * Default selector for Block.
+ * It's important to always explicitly say which fields you want to return in order to not leak extra information
+ * @see https://github.com/prisma/prisma/issues/9353
+ */
+export const defaultUserSelect = Prisma.validator<Prisma.UserSelect>()({
+  id: true,
+  stripeSubscriptionId: true,
+  stripeCustomerId: true,
+  role: true,
+  memberships: {
+    select: {
+      id: true,
+    },
+  },
+})
 
-export const prismaGetUser = async (where) => {
+export const prismaGetUniqueUser = async ({
+  where,
+}: {
+  where: Prisma.UserWhereUniqueInput
+}) => {
   try {
-    const validWhere = userSchema.parse(where)
     return await prisma.user.findUnique({
-      where: validWhere,
-      include: {
-        memberships: true,
-      },
+      where,
+      select: defaultUserSelect,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))
   }
 }
 
-export const prismaPostUser = async (payload) => {
+export const prismaCreateUser = async ({
+  data,
+}: {
+  data: Prisma.UserCreateInput
+}) => {
   try {
-    const validPayload = userSchema.parse(payload)
     return await prisma.user.create({
-      data: validPayload,
+      data,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))
   }
 }
 
-export const prismaPutUser = async (where, payload) => {
+export const prismaUpdateUser = async ({
+  where,
+  data,
+}: {
+  where: Prisma.UserWhereUniqueInput
+  data: Prisma.UserUpdateWithoutMembershipsInput
+}) => {
   try {
-    const validPayload = userSchema.parse(payload)
-    const validWhere = userSchema.parse(where)
     return await prisma.user.update({
-      data: validPayload,
-      where: validWhere,
+      where,
+      data,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))
   }
 }
 
-export const prismaDeleteUser = async (where) => {
+export const prismaDeleteUser = async ({
+  where,
+}: {
+  where: Prisma.UserWhereUniqueInput
+}) => {
   try {
-    const validWhere = userSchema.parse(where)
     return await prisma.user.delete({
-      where: validWhere,
+      where,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))

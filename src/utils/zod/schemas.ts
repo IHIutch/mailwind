@@ -1,5 +1,6 @@
-import { BlockType } from '@prisma/client'
+import { BlockType, Prisma } from '@prisma/client'
 import { z } from 'zod'
+import { toZod } from 'tozod'
 
 export const textBlockSchema = z.object({
   type: z.literal(BlockType.TEXT),
@@ -44,6 +45,35 @@ export const userSchema = z.object({
   stripeSubscriptionId: z.string().nullable(),
   role: z.enum(['SUPERADMIN', 'CUSTOMER']),
 })
+
+export const UserWhereUniqueSchema: toZod<Prisma.UserWhereUniqueInput> =
+  z.object({
+    id: z.string().optional(),
+    stripeSubscriptionId: z.string().optional(),
+    stripeCustomerId: z.string().optional(),
+  })
+
+export const UserCreateSchema: toZod<Prisma.UserCreateWithoutMembershipsInput> =
+  z.object({
+    id: z.string(),
+    stripeSubscriptionId: z.string().optional(),
+    stripeCustomerId: z.string().optional(),
+    createdAt: z.date().optional(),
+    updatedAt: z.date().optional(),
+    deletedAt: z.date().optional(),
+    role: z.NEVER,
+  })
+
+export const UserUpdateSchema: toZod<Prisma.UserUpdateWithoutMembershipsInput> =
+  z.object({
+    id: z.string().optional(),
+    stripeSubscriptionId: z.string().optional(),
+    stripeCustomerId: z.string().optional(),
+    createdAt: z.date().optional(),
+    updatedAt: z.date().optional(),
+    deletedAt: z.date().optional(),
+    role: z.NEVER,
+  })
 
 export const templateSchema = z.object({
   id: z.coerce.number(),

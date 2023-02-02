@@ -21,7 +21,11 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   } = await supabase.auth.getSession()
 
   const caller = appRouter.createCaller({})
-  const user = await caller.user.byId({ id: session?.user.id ?? '' })
+  const user = await caller.user.byId({
+    where: {
+      id: session?.user.id ?? '',
+    },
+  })
 
   if (!user.memberships) {
     return {

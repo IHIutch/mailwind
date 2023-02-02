@@ -4,7 +4,11 @@ import { trpc } from '../trpc'
 export const useAuthUser = () => {
   const user = useUser()
   const { isLoading, isError, isSuccess, data, error } =
-    trpc.user.byId.useQuery({ id: user?.id || '' })
+    trpc.user.byId.useQuery({
+      where: {
+        id: user?.id || '',
+      },
+    })
 
   return {
     isLoading,

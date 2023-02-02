@@ -1,80 +1,91 @@
-/**
- *
- * This is an example router, you can delete this file and then update `../pages/api/trpc/[trpc].tsx`
- */
 import { router, publicProcedure } from '../trpc'
-import { prisma } from '@/server/prisma'
-import { userSchema } from '@/utils/zod/schemas'
-import { Prisma } from '@prisma/client'
+import {
+  UserCreateSchema,
+  UserUpdateSchema,
+  UserWhereUniqueSchema,
+} from '@/utils/zod/schemas'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
-
-/**
- * Default selector for Block.
- * It's important to always explicitly say which fields you want to return in order to not leak extra information
- * @see https://github.com/prisma/prisma/issues/9353
- */
-const defaultUserSelect = Prisma.validator<Prisma.UserSelect>()({
-  id: true,
-  stripeSubscriptionId: true,
-  stripeCustomerId: true,
-  role: true,
-  memberships: {
-    select: {
-      id: true,
-    },
-  },
-})
+import {
+  prismaCreateUser,
+  prismaDeleteUser,
+  prismaGetUniqueUser,
+  prismaUpdateUser,
+} from '@/utils/prisma/users'
 
 export const userRouter = router({
   byId: publicProcedure
     .input(
       z.object({
-        id: z.string().uuid(),
+        where: UserWhereUniqueSchema.pick({ id: true }).required(),
       })
     )
     .query(async ({ input }) => {
-      const { id } = input
-      const data = await prisma.user.findUnique({
-        where: { id },
-        select: defaultUserSelect,
+      const { where } = input
+      const data = await prismaGetUniqueUser({
+        where,
       })
       if (!data) {
         throw new TRPCError({
           code: 'NOT_FOUND',
-          message: `No block with id '${id}'`,
+          message: `No user found '${where.id}'`,
         })
       }
       return data
     }),
-  create: publicProcedure.input(userSchema).mutation(async ({ input }) => {
-    const data = await prisma.user.create({
-      data: input,
-      select: defaultUserSelect,
-    })
-    return data
-  }),
-  update: publicProcedure.input(userSchema).mutation(async ({ input }) => {
-    const { id } = input
-    const data = await prisma.user.update({
-      where: { id },
-      data: input,
-      select: defaultUserSelect,
-    })
-    return data
-  }),
-  delete: publicProcedure
+  create: publicProcedure
+    .input(z.object({ payload: UserCreateSchema }))
+    .mutation(async ({ input }) => {
+      const { payload } = input
+      const data = await prismaCreateUser({
+        data: payload,
+      })
+      if (!data) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: `Unable to create user`,
+        })
+      }
+      return data
+    }),
+  update: publicProcedure
     .input(
       z.object({
-        id: z.string().uuid(),
+        where: UserWhereUniqueSchema.pick({ id: true }).required(),
+        payload: UserUpdateSchema.omit({ id: true }),
       })
     )
     .mutation(async ({ input }) => {
-      const { id } = input
-      const data = await prisma.user.delete({
-        where: { id },
-        select: defaultUserSelect,
+      const { where, payload } = input
+      const data = await prismaUpdateUser({
+        where,
+        data: payload,
       })
+      if (!data) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: `No user found '${where.id}'`,
+        })
+      }
+      return data
+    }),
+  delete: publicProcedure
+    .input(
+      z.object({
+        where: UserWhereUniqueSchema.pick({ id: true }).required(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { where } = input
+      const data = await prismaDeleteUser({
+        where,
+      })
+      if (!data) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: `No user found '${where.id}'`,
+        })
+      }
       return data
     }),
 })
