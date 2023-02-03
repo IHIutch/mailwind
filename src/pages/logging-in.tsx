@@ -1,14 +1,18 @@
-import { prismaPostMembership } from '@/utils/prisma/memberships'
-import { prismaPostOrganization } from '@/utils/prisma/organizations'
-import { prismaGetUser, prismaPostUser } from '@/utils/prisma/users'
+import { prisma } from '@/server/prisma'
+import { prismaGetUniqueUser } from '@/utils/prisma/users'
 import { createStripeCustomer } from '@/utils/stripe'
-import { GlobalRole, MembershipRole } from '@prisma/client'
+import { BlockType, GlobalRole, MembershipRole } from '@prisma/client'
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
+import { useUser } from '@supabase/auth-helpers-react'
 import { Loader2 } from 'lucide-react'
 import { GetServerSidePropsContext } from 'next'
 import React from 'react'
+import { Database } from 'types/supabase.types'
 
 export default function LoggingIn() {
+  const user = useUser()
+  console.log({ user })
+
   return (
     <div className="flex h-full items-center justify-center">
       <div className="flex items-center">
@@ -20,41 +24,66 @@ export default function LoggingIn() {
 }
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const supabase = createServerSupabaseClient(ctx)
+  const supabase = createServerSupabaseClient<Database>(ctx)
   const {
-    data: { session },
-  } = await supabase.auth.getSession()
+    data: { user },
+  } = await supabase.auth.getUser()
 
-  // If session exists, but public.user doesn't, this is probably a new user
-  // In that case, we need to add them to stripe and add them to the public.user table
-  const authUser = await prismaGetUser({ id: session?.user.id })
-
-  if (!authUser) {
-    const stripeCustomer = await createStripeCustomer({
-      email: session?.user.email || '',
+  if (user) {
+    // If session exists, but public.user doesn't, this is probably a new user
+    // In that case, we need to add them to stripe and add them to the public.user table
+    const exisingUser = await prismaGetUniqueUser({
+      where: { id: user.id },
     })
 
-    const [userData, orgData] = await Promise.all([
-      await prismaPostUser({
-        id: session?.user.id,
-        stripeCustomerId: stripeCustomer.id,
-        role: GlobalRole.CUSTOMER,
-      }),
-      await prismaPostOrganization({
-        name: session?.user.email,
-      }),
-    ])
+    if (!exisingUser) {
+      const stripeCustomer = await createStripeCustomer({
+        email: user.email || '',
+      })
 
-    await prismaPostMembership({
-      role: MembershipRole.OWNER,
-      userId: session?.user.id,
-      organizationId: orgData.id,
-    })
+      const newUserMembership = await prisma.membership.create({
+        data: {
+          role: MembershipRole.OWNER,
+          Organization: {
+            create: {
+              name: user.email || '',
+            },
+          },
+          User: {
+            create: {
+              stripeCustomerId: stripeCustomer.id,
+              id: user.id,
+              role: GlobalRole.CUSTOMER,
+            },
+          },
+        },
+      })
 
-    // TODO: Maybe even create a default template
-  }
+      await prisma.template.create({
+        data: {
+          title: 'My First Template',
+          organizationId: newUserMembership.organizationId,
+          blocks: {
+            create: {
+              type: BlockType.H1,
+              value: '<p>Get Started</p>',
+              position: 0,
+              attributes: {
+                paddingTop: '0',
+                paddingRight: '0',
+                paddingBottom: '28px',
+                paddingLeft: '0',
+                fontSize: '36px',
+                lineHeight: '40px',
+                fontWeight: '800',
+                backgroundColor: '#ffffff',
+              },
+            },
+          },
+        },
+      })
+    }
 
-  if (session) {
     return {
       redirect: {
         destination: '/profile',
@@ -64,9 +93,6 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   }
 
   return {
-    redirect: {
-      destination: '/login',
-      permanent: false,
-    },
+    props: {},
   }
 }

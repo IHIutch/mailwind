@@ -13,7 +13,6 @@ import { z } from 'zod'
 const defaultTemplateSelect = Prisma.validator<Prisma.TemplateSelect>()({
   id: true,
   title: true,
-  membershipId: true,
   organizationId: true,
   createdAt: true,
   updatedAt: true,
@@ -21,17 +20,17 @@ const defaultTemplateSelect = Prisma.validator<Prisma.TemplateSelect>()({
 })
 
 export const templateRouter = router({
-  byMembershipId: publicProcedure
+  byOrganizationId: publicProcedure
     .input(
       z.object({
-        membershipId: z.coerce.number(),
+        organizationId: z.coerce.number(),
       })
     )
     .query(async ({ input }) => {
-      const { membershipId } = input
+      const { organizationId } = input
       const data = await prisma.template.findMany({
         select: defaultTemplateSelect,
-        where: { membershipId },
+        where: { organizationId },
         orderBy: {
           createdAt: 'desc',
         },

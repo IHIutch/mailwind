@@ -77,7 +77,7 @@ export const UserUpdateSchema: toZod<Prisma.UserUpdateWithoutMembershipsInput> =
 
 export const templateSchema = z.object({
   id: z.coerce.number(),
-  membershipId: z.coerce.number(),
+  organizationId: z.coerce.number(),
   title: z.string().nullable(),
 })
 

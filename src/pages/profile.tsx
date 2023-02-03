@@ -1,5 +1,5 @@
 import GlobalNavbar from '@/components/GlobalNavbar'
-import { useGetTemplatesByMembershipId } from '@/utils/query/templates'
+import { useGetTemplatesByOrganizationId } from '@/utils/query/templates'
 import { useAuthUser } from '@/utils/query/user'
 import dayjs from 'dayjs'
 import { Plus } from 'lucide-react'
@@ -8,8 +8,8 @@ import { ReactNode } from 'react'
 
 export default function Profile() {
   const { data: user } = useAuthUser()
-  const { data: templates } = useGetTemplatesByMembershipId(
-    Number(user.memberships?.[0]?.id)
+  const { data: templates } = useGetTemplatesByOrganizationId(
+    Number(user.memberships?.[0]?.organizationId)
   )
 
   return (

@@ -23,22 +23,13 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const caller = appRouter.createCaller({})
   const user = await caller.user.byId({
     where: {
-      id: session?.user.id ?? '',
+      id: session?.user.id || '',
     },
   })
 
-  if (!user.memberships) {
-    return {
-      redirect: {
-        destination: `/logout`,
-        permanent: false,
-      },
-    }
-  }
-
   const template = await caller.template.create({
     payload: {
-      membershipId: user.memberships[0]?.id ?? -1,
+      organizationId: Number(user.memberships[0]?.organizationId),
       title: null,
     },
   })

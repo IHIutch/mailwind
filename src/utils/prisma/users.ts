@@ -15,6 +15,7 @@ export const defaultUserSelect = Prisma.validator<Prisma.UserSelect>()({
   memberships: {
     select: {
       id: true,
+      organizationId: true,
     },
   },
 })

@@ -1,8 +1,8 @@
 import { trpc } from '../trpc'
 
-export const useGetTemplatesByMembershipId = (membershipId: number) => {
+export const useGetTemplatesByOrganizationId = (organizationId: number) => {
   const { isLoading, isError, isSuccess, data, error } =
-    trpc.template.byMembershipId.useQuery({ membershipId })
+    trpc.template.byOrganizationId.useQuery({ organizationId })
   return {
     data,
     error,
@@ -24,30 +24,35 @@ export const useGetTemplateById = (id: number) => {
   }
 }
 
-export const useCreateTemplate = (membershipId: number) => {
+export const useCreateTemplate = (organizationId: number) => {
   const { template: templateUtils } = trpc.useContext()
   const { mutateAsync, isLoading, isError, isSuccess, data, error } =
     trpc.template.create.useMutation({
       // When mutate is called:
       onMutate: async ({ payload }: { payload: any }) => {
         // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-        await templateUtils.byMembershipId.cancel({ membershipId })
-        const previous = templateUtils.byMembershipId.getData({ membershipId })
-        templateUtils.byMembershipId.setData({ membershipId }, (old: any) => {
-          return [...old, payload]
+        await templateUtils.byOrganizationId.cancel({ organizationId })
+        const previous = templateUtils.byOrganizationId.getData({
+          organizationId,
         })
+        templateUtils.byOrganizationId.setData(
+          { organizationId },
+          (old: any) => {
+            return [...old, payload]
+          }
+        )
         return { previous, updated: payload }
       },
       // If the mutation fails, use the context we returned above
       onError: (err, updated, context) => {
-        templateUtils.byMembershipId.setData(
-          { membershipId },
+        templateUtils.byOrganizationId.setData(
+          { organizationId },
           context?.previous
         )
       },
       // Always refetch after error or success:
       onSettled: (updated) => {
-        templateUtils.byMembershipId.invalidate({ membershipId })
+        templateUtils.byOrganizationId.invalidate({ organizationId })
       },
     })
   return {
@@ -81,7 +86,7 @@ export const useUpdateTemplate = (id: number) => {
       },
       // Always refetch after error or success:
       //   onSettled: (updated) => {
-      // templateUtils.byMembershipId.invalidate({ membershipId })
+      // templateUtils.byOrganizationId.invalidate({ organizationId })
       //   },
     })
   return {
