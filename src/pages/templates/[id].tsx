@@ -296,6 +296,10 @@ const EditView = () => {
     blocks || []
   )
 
+  useEffect(() => {
+    setLocalBlocks(blocks || [])
+  }, [blocks])
+
   const [activeDraggingBlock, setActiveDraggingBlock] =
     useState<SingleBlockPayloadType | null>(null)
   // const { control, getValues, watch } = useFormContext()
@@ -324,22 +328,30 @@ const EditView = () => {
     active: Active
     over: Over | null
   }) => {
-    setActiveDraggingBlock(null)
-
     const oldIndex = localBlocks.findIndex((mb) => mb.id === active.id)
     const newIndex = localBlocks.findIndex((mb) => mb.id === over?.id)
 
-    const reorderedBlocks = arrayMove(localBlocks, oldIndex, newIndex)
-    setLocalBlocks(reorderedBlocks)
+    // Do nothing if nothing moves
+    if (oldIndex === newIndex) return
 
-    const newOrder = reorderedBlocks.map((r, idx) => ({
-      id: r.id,
-      position: idx,
-    }))
+    const reorderedBlocks = arrayMove(localBlocks, oldIndex, newIndex)
+    const newOrder = reorderedBlocks
+      .map((r, idx) => ({
+        id: r.id,
+        position: idx,
+        type: r.type,
+      }))
+      .filter((r) => {
+        // Filter out blocks that havent moved
+        return r.position !== localBlocks.find((lb) => lb.id === r.id)?.position
+      })
 
     handleReorderBlocks({
       payload: newOrder,
     })
+
+    setLocalBlocks(reorderedBlocks)
+    setActiveDraggingBlock(null)
   }
 
   const handleSetSelectedBlock = (block: SingleBlockPayloadType | null) => {
