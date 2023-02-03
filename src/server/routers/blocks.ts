@@ -32,6 +32,19 @@ export type SingleBlockPayloadType = Prisma.BlockGetPayload<{
   select: typeof defaultBlockSelect
 }>
 
+const partialBlockSchemas = z.union([
+  textBlockSchema.merge(defaultBlockSchema).omit({ id: true }).partial(),
+  headingBlockSchema.merge(defaultBlockSchema).omit({ id: true }).partial(),
+  imageBlockSchema.merge(defaultBlockSchema).omit({ id: true }).partial(),
+  codeBlockSchema.merge(defaultBlockSchema).omit({ id: true }).partial(),
+  dividerBlockSchema.merge(defaultBlockSchema).omit({ id: true }).partial(),
+  quoteBlockSchema.merge(defaultBlockSchema).omit({ id: true }).partial(),
+])
+
+const ReorderBlockSchemas = z.array(
+  defaultBlockSchema.pick({ id: true, position: true })
+)
+
 // const validWhereParams = blockSchema.pick({ id: true, templateId: true })
 // type validWhereParams = z.infer<typeof validWhereParams>
 
@@ -55,7 +68,7 @@ export const blockRouter = router({
         select: defaultBlockSelect,
         where: { templateId },
         orderBy: {
-          position: 'desc',
+          position: 'asc',
         },
       })
       if (!data) {
@@ -100,32 +113,7 @@ export const blockRouter = router({
     .input(
       z.object({
         id: z.number(),
-        payload: z.union([
-          textBlockSchema
-            .merge(defaultBlockSchema)
-            .omit({ id: true })
-            .partial(),
-          headingBlockSchema
-            .merge(defaultBlockSchema)
-            .omit({ id: true })
-            .partial(),
-          imageBlockSchema
-            .merge(defaultBlockSchema)
-            .omit({ id: true })
-            .partial(),
-          codeBlockSchema
-            .merge(defaultBlockSchema)
-            .omit({ id: true })
-            .partial(),
-          dividerBlockSchema
-            .merge(defaultBlockSchema)
-            .omit({ id: true })
-            .partial(),
-          quoteBlockSchema
-            .merge(defaultBlockSchema)
-            .omit({ id: true })
-            .partial(),
-        ]),
+        payload: partialBlockSchemas,
       })
     )
     .mutation(async ({ input }) => {
@@ -149,6 +137,27 @@ export const blockRouter = router({
         where: { id },
         select: defaultBlockSelect,
       })
+      return data
+    }),
+  reorder: publicProcedure
+    .input(
+      z.object({
+        payload: ReorderBlockSchemas,
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { payload } = input
+      const data = await prisma.$transaction(
+        payload.map((b) =>
+          prisma.block.update({
+            data: b,
+            where: {
+              id: b.id,
+            },
+            select: defaultBlockSelect,
+          })
+        )
+      )
       return data
     }),
 })

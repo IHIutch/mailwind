@@ -84,9 +84,49 @@ export const useUpdateBlock = (templateId: number) => {
         blockUtils.byTemplateId.setData({ templateId }, context?.previous)
       },
       // Always refetch after error or success:
-      //   onSettled: (updated) => {
-      // blockUtils.byTemplateId.invalidate({ templateId })
-      //   },
+      // onSettled: (updated) => {
+      //   blockUtils.byTemplateId.invalidate({ templateId })
+      // },
+    })
+  return {
+    mutateAsync,
+    data,
+    error,
+    isLoading,
+    isError,
+    isSuccess,
+  }
+}
+
+export const useReorderMenuItems = (templateId: number) => {
+  const { block: blockUtils } = trpc.useContext()
+  const { mutateAsync, isLoading, isError, isSuccess, data, error } =
+    trpc.block.reorder.useMutation({
+      // When mutate is called:
+      onMutate: async ({ payload }: { payload: any[] }) => {
+        // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+        await blockUtils.byTemplateId.cancel({ templateId })
+        const previous = blockUtils.byTemplateId.getData({ templateId })
+        blockUtils.byTemplateId.setData({ templateId }, (old: any) => {
+          return old
+            .map((o: any) => {
+              return {
+                ...o,
+                ...payload.find((p) => p.id === o.id),
+              }
+            })
+            .sort((a: any, b: any) => a.position - b.position)
+        })
+        return { previous, updated: payload }
+      },
+      // If the mutation fails, use the context we returned above
+      onError: (err, updated, context) => {
+        blockUtils.byTemplateId.setData({ templateId }, context?.previous)
+      },
+      // Always refetch after error or success:
+      // onSettled: (updated) => {
+      //   blockUtils.byTemplateId.invalidate({ templateId })
+      // },
     })
   return {
     mutateAsync,

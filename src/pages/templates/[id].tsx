@@ -14,19 +14,23 @@ import {
 } from '@/context/activeBlock'
 import { SingleBlockPayloadType } from '@/server/routers/blocks'
 import { defaultAttributes } from '@/utils/defaults'
-import { useGetBlocksByTemplateId } from '@/utils/query/blocks'
+import {
+  useGetBlocksByTemplateId,
+  useReorderMenuItems,
+} from '@/utils/query/blocks'
 import { useGetTemplateById, useUpdateTemplate } from '@/utils/query/templates'
 import {
-  Active,
+  type Active,
+  type Over,
   DndContext,
   KeyboardSensor,
   MouseSensor,
-  Over,
   TouchSensor,
   useSensor,
   useSensors,
 } from '@dnd-kit/core'
 import {
+  arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
@@ -52,7 +56,7 @@ import {
   X,
 } from 'lucide-react'
 import { useRouter } from 'next/router'
-import type { ReactNode } from 'react'
+import { ReactNode, useEffect } from 'react'
 import { useMemo, useState } from 'react'
 import dayjs from 'dayjs'
 import { useForm } from 'react-hook-form'
@@ -281,15 +285,16 @@ const TemplateTitle = () => {
 }
 
 const EditView = () => {
+  const dispatch = useActiveBlockDispatch()
   const {
     query: { id },
   } = useRouter()
   const { data: blocks } = useGetBlocksByTemplateId(Number(id))
+  const { mutateAsync: handleReorderBlocks } = useReorderMenuItems(Number(id))
 
-  const dispatch = useActiveBlockDispatch()
-  const memoizedBlocks = useMemo(() => {
-    return blocks || []
-  }, [blocks])
+  const [localBlocks, setLocalBlocks] = useState<SingleBlockPayloadType[]>(
+    blocks || []
+  )
 
   const [activeDraggingBlock, setActiveDraggingBlock] =
     useState<SingleBlockPayloadType | null>(null)
@@ -319,12 +324,22 @@ const EditView = () => {
     active: Active
     over: Over | null
   }) => {
-    const activeIdx = active.data?.current?.sortable?.index
-    const overIdx = over?.data?.current?.sortable?.index
-    // if (overIdx && activeIdx !== overIdx) {
-    //   move(activeIdx, overIdx)
-    // }
     setActiveDraggingBlock(null)
+
+    const oldIndex = localBlocks.findIndex((mb) => mb.id === active.id)
+    const newIndex = localBlocks.findIndex((mb) => mb.id === over?.id)
+
+    const reorderedBlocks = arrayMove(localBlocks, oldIndex, newIndex)
+    setLocalBlocks(reorderedBlocks)
+
+    const newOrder = reorderedBlocks.map((r, idx) => ({
+      id: r.id,
+      position: idx,
+    }))
+
+    handleReorderBlocks({
+      payload: newOrder,
+    })
   }
 
   const handleSetSelectedBlock = (block: SingleBlockPayloadType | null) => {
@@ -338,13 +353,13 @@ const EditView = () => {
     active: Active
   }) => {
     const activeIndex = activeData.current?.sortable?.index || 0
-    setActiveDraggingBlock(memoizedBlocks[activeIndex] ?? null)
+    setActiveDraggingBlock(localBlocks[activeIndex] ?? null)
   }
 
   const addItem = (idx: number, payload: object) => {
     // Probably can refactor this so object attributes arent "payload" and we can just get the default values based on the block type
     // insert(idx, payload)
-    handleSetSelectedBlock(memoizedBlocks[idx] ?? null)
+    handleSetSelectedBlock(localBlocks[idx] ?? null)
   }
 
   const duplicateItem = (idx: number) => {
@@ -372,12 +387,12 @@ const EditView = () => {
         }}
       >
         <SortableContext
-          items={memoizedBlocks}
+          items={localBlocks}
           strategy={verticalListSortingStrategy}
         >
           <ul>
-            {memoizedBlocks
-              ? memoizedBlocks.map((block, idx) => (
+            {localBlocks
+              ? localBlocks.map((block, idx) => (
                   <li key={block.id}>
                     <SortableItem id={block.id}>
                       <div
