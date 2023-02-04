@@ -25,7 +25,7 @@ model Block {
   id         Int       @id @default(autoincrement())
   type       BlockType
   templateId Int
-  position   Int       @db.SmallInt
+  position   String    @db.VarChar
   attributes Json?     @db.Json
   value      String?   @db.VarChar
   createdAt  DateTime  @default(now()) @db.Timestamptz()

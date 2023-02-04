@@ -14,10 +14,7 @@ import {
 } from '@/context/activeBlock'
 import { SingleBlockPayloadType } from '@/server/routers/blocks'
 import { defaultAttributes } from '@/utils/defaults'
-import {
-  useGetBlocksByTemplateId,
-  useReorderMenuItems,
-} from '@/utils/query/blocks'
+import { useGetBlocksByTemplateId, useUpdateBlock } from '@/utils/query/blocks'
 import { useGetTemplateById, useUpdateTemplate } from '@/utils/query/templates'
 import {
   type Active,
@@ -57,9 +54,10 @@ import {
 } from 'lucide-react'
 import { useRouter } from 'next/router'
 import { ReactNode, useEffect } from 'react'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import dayjs from 'dayjs'
 import { useForm } from 'react-hook-form'
+import { LexoRank } from 'lexorank'
 
 export default function TemplateId() {
   const [previewSize, setPreviewSize] = useState<'desktop' | 'mobile'>(
@@ -290,7 +288,7 @@ const EditView = () => {
     query: { id },
   } = useRouter()
   const { data: blocks } = useGetBlocksByTemplateId(Number(id))
-  const { mutateAsync: handleReorderBlocks } = useReorderMenuItems(Number(id))
+  const { mutateAsync: handleUpdateBlock } = useUpdateBlock(Number(id))
 
   const [localBlocks, setLocalBlocks] = useState<SingleBlockPayloadType[]>(
     blocks || []
@@ -321,6 +319,32 @@ const EditView = () => {
     useSensor(TouchSensor)
   )
 
+  const reorderList = (list: any[], activeIndex: number, overIndex: number) => {
+    // TODO: Properly type 'list'
+    if (activeIndex === overIndex) return list
+
+    const moved = list[activeIndex]
+    if (overIndex === 0) {
+      const next = list[overIndex]
+      // if (!moved?.position || !next?.position) return list
+      moved.position = LexoRank.parse(next.position).genPrev().toString()
+    } else if (overIndex === list.length - 1) {
+      const prev = list[overIndex]
+      // if (!moved?.position || !prev?.position) return list
+      moved.position = LexoRank.parse(prev.position).genNext().toString()
+    } else {
+      const prev = list[overIndex]
+      const offset = activeIndex > overIndex ? -1 : 1
+      const next = list[overIndex + offset]
+      // if (!moved?.position || !next?.position || !prev?.position) return list
+      moved.position = LexoRank.parse(next.position)
+        .between(LexoRank.parse(prev.position))
+        .toString()
+    }
+
+    return arrayMove(list, activeIndex, overIndex)
+  }
+
   const handleDragEnd = ({
     active,
     over,
@@ -328,26 +352,16 @@ const EditView = () => {
     active: Active
     over: Over | null
   }) => {
-    const oldIndex = localBlocks.findIndex((mb) => mb.id === active.id)
-    const newIndex = localBlocks.findIndex((mb) => mb.id === over?.id)
+    const activeIndex = localBlocks.findIndex((i) => i.id === active.id)
+    const overIndex = localBlocks.findIndex((i) => i.id === over?.id)
 
-    // Do nothing if nothing moves
-    if (oldIndex === newIndex) return
+    const reorderedBlocks = reorderList(localBlocks, activeIndex, overIndex)
 
-    const reorderedBlocks = arrayMove(localBlocks, oldIndex, newIndex)
-    const newOrder = reorderedBlocks
-      .map((r, idx) => ({
-        id: r.id,
-        position: idx,
-        type: r.type,
-      }))
-      .filter((r) => {
-        // Filter out blocks that havent moved
-        return r.position !== localBlocks.find((lb) => lb.id === r.id)?.position
-      })
-
-    handleReorderBlocks({
-      payload: newOrder,
+    handleUpdateBlock({
+      id: reorderedBlocks[overIndex].id,
+      payload: {
+        position: reorderedBlocks[overIndex].position,
+      },
     })
 
     setLocalBlocks(reorderedBlocks)

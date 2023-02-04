@@ -35,7 +35,7 @@ export const defaultBlockSchema = z.object({
   id: z.coerce.number(),
   templateId: z.coerce.number(),
   value: z.string(),
-  position: z.coerce.number(),
+  position: z.string(),
 })
 // TODO: Define schemas
 
