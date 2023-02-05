@@ -53,10 +53,10 @@ import {
   X,
 } from 'lucide-react'
 import { useRouter } from 'next/router'
-import { ReactNode, useEffect } from 'react'
+import { ReactNode, useMemo } from 'react'
 import { useState } from 'react'
 import dayjs from 'dayjs'
-import { useForm } from 'react-hook-form'
+import { useFieldArray, useForm } from 'react-hook-form'
 import { LexoRank } from 'lexorank'
 
 export default function TemplateId() {
@@ -290,22 +290,29 @@ const EditView = () => {
   const { data: blocks } = useGetBlocksByTemplateId(Number(id))
   const { mutateAsync: handleUpdateBlock } = useUpdateBlock(Number(id))
 
-  const [localBlocks, setLocalBlocks] = useState<SingleBlockPayloadType[]>(
-    blocks || []
-  )
-
-  useEffect(() => {
-    setLocalBlocks(blocks || [])
+  const sortedBlocks = useMemo(() => {
+    return blocks
+      ? blocks.sort((a, b) => a.position.localeCompare(b.position))
+      : []
   }, [blocks])
+
+  const { control } = useForm({
+    defaultValues: {
+      blocks: sortedBlocks,
+    },
+    values: {
+      blocks: sortedBlocks,
+    },
+  })
+
+  const { fields, move } = useFieldArray({
+    keyName: 'uuid', // Prevent overwriting "id" key
+    name: 'blocks',
+    control,
+  })
 
   const [activeDraggingBlock, setActiveDraggingBlock] =
     useState<SingleBlockPayloadType | null>(null)
-  // const { control, getValues, watch } = useFormContext()
-  // const { fields, remove, move, insert } = useFieldArray({
-  //   keyName: 'uuid', // Prevent overwriting "id" key
-  //   control,
-  //   name: 'blocks',
-  // })
 
   const sensors = useSensors(
     useSensor(KeyboardSensor, {
@@ -319,30 +326,16 @@ const EditView = () => {
     useSensor(TouchSensor)
   )
 
-  const reorderList = (list: any[], activeIndex: number, overIndex: number) => {
-    // TODO: Properly type 'list'
-    if (activeIndex === overIndex) return list
-
-    const moved = list[activeIndex]
-    if (overIndex === 0) {
-      const next = list[overIndex]
-      // if (!moved?.position || !next?.position) return list
-      moved.position = LexoRank.parse(next.position).genPrev().toString()
-    } else if (overIndex === list.length - 1) {
-      const prev = list[overIndex]
-      // if (!moved?.position || !prev?.position) return list
-      moved.position = LexoRank.parse(prev.position).genNext().toString()
+  const getNewPosition = (start?: string, end?: string) => {
+    if (start && end) {
+      return LexoRank.parse(start).between(LexoRank.parse(end)).toString()
+    } else if (end) {
+      return LexoRank.parse(end).genPrev().toString()
+    } else if (start) {
+      return LexoRank.parse(start).genNext().toString()
     } else {
-      const prev = list[overIndex]
-      const offset = activeIndex > overIndex ? -1 : 1
-      const next = list[overIndex + offset]
-      // if (!moved?.position || !next?.position || !prev?.position) return list
-      moved.position = LexoRank.parse(next.position)
-        .between(LexoRank.parse(prev.position))
-        .toString()
+      return ''
     }
-
-    return arrayMove(list, activeIndex, overIndex)
   }
 
   const handleDragEnd = ({
@@ -352,19 +345,23 @@ const EditView = () => {
     active: Active
     over: Over | null
   }) => {
-    const activeIndex = localBlocks.findIndex((i) => i.id === active.id)
-    const overIndex = localBlocks.findIndex((i) => i.id === over?.id)
+    const activeIndex = fields.findIndex((i) => i.id === active.id)
+    const overIndex = fields.findIndex((i) => i.id === over?.id)
 
-    const reorderedBlocks = reorderList(localBlocks, activeIndex, overIndex)
+    const offset = activeIndex > overIndex ? -1 : 1
+    const start = fields[Math.min(overIndex, overIndex + offset)]
+    const end = fields[Math.max(overIndex, overIndex + offset)]
+
+    const position = getNewPosition(start?.position, end?.position)
 
     handleUpdateBlock({
-      id: reorderedBlocks[overIndex].id,
+      id: fields[activeIndex]?.id,
       payload: {
-        position: reorderedBlocks[overIndex].position,
+        position,
       },
     })
 
-    setLocalBlocks(reorderedBlocks)
+    move(activeIndex, overIndex)
     setActiveDraggingBlock(null)
   }
 
@@ -379,13 +376,13 @@ const EditView = () => {
     active: Active
   }) => {
     const activeIndex = activeData.current?.sortable?.index || 0
-    setActiveDraggingBlock(localBlocks[activeIndex] ?? null)
+    setActiveDraggingBlock(fields[activeIndex] || null)
   }
 
   const addItem = (idx: number, payload: object) => {
     // Probably can refactor this so object attributes arent "payload" and we can just get the default values based on the block type
     // insert(idx, payload)
-    handleSetSelectedBlock(localBlocks[idx] ?? null)
+    // handleSetSelectedBlock(localBlocks[idx] ?? null)
   }
 
   const duplicateItem = (idx: number) => {
@@ -412,13 +409,10 @@ const EditView = () => {
           setActiveDraggingBlock(null)
         }}
       >
-        <SortableContext
-          items={localBlocks}
-          strategy={verticalListSortingStrategy}
-        >
+        <SortableContext items={fields} strategy={verticalListSortingStrategy}>
           <ul>
-            {localBlocks
-              ? localBlocks.map((block, idx) => (
+            {fields
+              ? fields.map((block, idx) => (
                   <li key={block.id}>
                     <SortableItem id={block.id}>
                       <div

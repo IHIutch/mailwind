@@ -9,7 +9,7 @@ import { ReactNode } from 'react'
 export default function Profile() {
   const { data: user } = useAuthUser()
   const { data: templates } = useGetTemplatesByOrganizationId(
-    Number(user.memberships?.[0]?.organizationId)
+    Number(user?.memberships?.[0]?.organizationId)
   )
 
   return (

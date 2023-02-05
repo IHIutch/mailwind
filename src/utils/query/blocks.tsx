@@ -62,7 +62,7 @@ export const useUpdateBlock = (templateId: number) => {
   const { mutateAsync, isLoading, isError, isSuccess, data, error } =
     trpc.block.update.useMutation({
       // When mutate is called:
-      onMutate: async ({ id, payload }: { id: number; payload: any }) => {
+      onMutate: async ({ id, payload }: { id?: number; payload: any }) => {
         // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
         await blockUtils.byTemplateId.cancel({ templateId })
         const previous = blockUtils.byTemplateId.getData({ templateId })

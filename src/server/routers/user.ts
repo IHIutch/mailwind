@@ -17,7 +17,7 @@ export const userRouter = router({
   byId: publicProcedure
     .input(
       z.object({
-        where: UserWhereUniqueSchema.pick({ id: true }).required(),
+        where: UserWhereUniqueSchema.pick({ id: true }),
       })
     )
     .query(async ({ input }) => {

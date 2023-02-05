@@ -112,7 +112,7 @@ export const blockRouter = router({
   update: publicProcedure
     .input(
       z.object({
-        id: z.number(),
+        id: z.number().optional(),
         payload: partialBlockSchemas,
       })
     )
