@@ -26,7 +26,6 @@ export default function FontFamilyInput({
     fieldState: { error },
   } = useController({
     name,
-    defaultValue: '',
     control,
     rules: {
       required: true,

@@ -26,7 +26,6 @@ export default function FontWeightInput({
     fieldState: { error },
   } = useController({
     name,
-    defaultValue: '',
     control,
     rules: {
       required: true,

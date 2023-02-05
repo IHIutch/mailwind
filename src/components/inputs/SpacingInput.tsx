@@ -18,7 +18,6 @@ export default function SpacingInput({
     fieldState: { error },
   } = useController({
     name,
-    defaultValue: '',
     control,
     rules: {
       required: true,

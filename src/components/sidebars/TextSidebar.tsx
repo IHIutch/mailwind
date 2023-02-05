@@ -4,9 +4,11 @@ import LineHeightInput from '../inputs/LineHeightInput'
 import PaddingInput from '../inputs/PaddingInput'
 import * as Label from '@radix-ui/react-label'
 import { useFormContext } from 'react-hook-form'
-import { type ReactNode } from 'react'
+import { useSelectedBlockState } from '@/context/selectedBlock'
+import { ReactNode } from 'react'
 
 export default function TextSidebar({ children }: { children: ReactNode }) {
+  const { data: selectedBlockIndex } = useSelectedBlockState()
   const { control } = useFormContext()
 
   return (
@@ -22,7 +24,9 @@ export default function TextSidebar({ children }: { children: ReactNode }) {
           </Label.Root>
           <FontSizeInput
             id="fontSizeField"
-            name="attributes.fontSize"
+            name={
+              `blocks.${selectedBlockIndex}.attributes.fontSize` as 'blocks.0.attributes.fontSize'
+            }
             control={control}
             className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
             errorClassName="mt-1 text-xs text-red-500"
@@ -37,7 +41,9 @@ export default function TextSidebar({ children }: { children: ReactNode }) {
           </Label.Root>
           <LineHeightInput
             id="lineHeightField"
-            name="attributes.lineHeight"
+            name={
+              `blocks.${selectedBlockIndex}.attributes.lineHeight` as 'blocks.0.attributes.lineHeight'
+            }
             control={control}
             className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
             errorClassName="mt-1 text-xs text-red-500"
@@ -53,7 +59,9 @@ export default function TextSidebar({ children }: { children: ReactNode }) {
             </Label.Root>
             <PaddingInput
               id="paddingTopField"
-              name="attributes.paddingTop"
+              name={
+                `blocks.${selectedBlockIndex}.attributes.paddingTop` as 'blocks.0.attributes.paddingTop'
+              }
               control={control}
               className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
               errorClassName="mt-1 text-xs text-red-500"
@@ -68,7 +76,9 @@ export default function TextSidebar({ children }: { children: ReactNode }) {
             </Label.Root>
             <PaddingInput
               id="paddingRightField"
-              name="attributes.paddingRight"
+              name={
+                `blocks.${selectedBlockIndex}.attributes.paddingRight` as 'blocks.0.attributes.paddingRight'
+              }
               control={control}
               className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
               errorClassName="mt-1 text-xs text-red-500"
@@ -83,7 +93,9 @@ export default function TextSidebar({ children }: { children: ReactNode }) {
             </Label.Root>
             <PaddingInput
               id="paddingBottomField"
-              name="attributes.paddingBottom"
+              name={
+                `blocks.${selectedBlockIndex}.attributes.paddingBottom` as 'blocks.0.attributes.paddingBottom'
+              }
               control={control}
               className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
               errorClassName="mt-1 text-xs text-red-500"
@@ -98,7 +110,9 @@ export default function TextSidebar({ children }: { children: ReactNode }) {
             </Label.Root>
             <PaddingInput
               id="paddingLeftField"
-              name="attributes.paddingLeft"
+              name={
+                `blocks.${selectedBlockIndex}.attributes.paddingLeft` as 'blocks.0.attributes.paddingLeft'
+              }
               control={control}
               className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
               errorClassName="mt-1 text-xs text-red-500"
@@ -114,7 +128,9 @@ export default function TextSidebar({ children }: { children: ReactNode }) {
           </Label.Root>
           <ColorInput
             id="backgroundColorField"
-            name="attributes.backgroundColor"
+            name={
+              `blocks.${selectedBlockIndex}.attributes.backgroundColor` as 'blocks.0.attributes.backgroundColor'
+            }
             control={control}
           />
         </div>

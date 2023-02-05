@@ -74,7 +74,7 @@ export const BlockUpdateSchema = z.object({
   type: z.nativeEnum(BlockType).optional(),
   templateId: z.number().optional(),
   position: z.string().optional(),
-  attributes: z.object({}).optional(),
+  attributes: z.any().optional(),
   value: z.string().optional(),
 })
 

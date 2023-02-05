@@ -51,18 +51,38 @@ import {
   X,
 } from 'lucide-react'
 import { useRouter } from 'next/router'
-import { ReactNode, useMemo } from 'react'
+import { ReactNode, useEffect, useMemo } from 'react'
 import { useState } from 'react'
 import dayjs from 'dayjs'
-import { useFieldArray, useForm } from 'react-hook-form'
+import {
+  FormProvider,
+  useFieldArray,
+  useForm,
+  useFormContext,
+} from 'react-hook-form'
 import {
   SelectedBlockProvider,
   setSelectedBlock,
   useSelectedBlockDispatch,
 } from '@/context/selectedBlock'
 import { getNewLexoPosition } from '@/utils/functions'
+import { SingleBlockPayloadType } from '@/utils/prisma/blocks'
+
+type FormValues = {
+  blocks: SingleBlockPayloadType[]
+  global: any
+}
 
 export default function TemplateId() {
+  const {
+    query: { id },
+  } = useRouter()
+  const { data: blocks } = useGetBlocksByTemplateId(Number(id))
+  const sortedBlocks = useMemo(() => {
+    return blocks
+      ? blocks.sort((a, b) => a.position.localeCompare(b.position))
+      : []
+  }, [blocks])
   const [previewSize, setPreviewSize] = useState<'desktop' | 'mobile'>(
     'desktop'
   )
@@ -75,17 +95,17 @@ export default function TemplateId() {
     color: '#000000',
   }
 
-  // const formMethods = useForm({
-  //   mode: 'onChange',
-  //   defaultValues: {
-  //     global: {
-  //       containerAlign: 'center',
-  //       containerWidth: '600px',
-  //       color: '#000000',
-  //     },
-  //     blocks: loaderBlocks,
-  //   },
-  // })
+  const formMethods = useForm<FormValues>({
+    mode: 'onChange',
+    defaultValues: {
+      global,
+      blocks: sortedBlocks,
+    },
+  })
+
+  useEffect(() => {
+    formMethods.reset({ ...formMethods.getValues(), blocks: sortedBlocks })
+  }, [formMethods.reset, sortedBlocks, formMethods.getValues, formMethods])
 
   const handleDownload = async () => {
     console.log('download')
@@ -126,38 +146,40 @@ export default function TemplateId() {
       <SelectedBlockProvider initialValue={{ data: null }}>
         <div className="relative pt-16">
           {/* <FormProvider {...formMethods}> */}
-          <div className="fixed inset-y-0 top-16 w-[calc(100%-300px)]">
-            <EditorNavbar
-              previewSize={previewSize}
-              setPreviewSize={setPreviewSize}
-              handleDownload={handleDownload}
-            />
-            <div className="flex h-full overflow-y-auto">
-              <div
-                className={clsx('relative py-12 px-4', [
-                  global.containerAlign === 'left' && 'mr-auto',
-                  global.containerAlign === 'center' && 'mx-auto',
-                  global.containerAlign === 'right' && 'ml-auto',
-                ])}
-                style={{
-                  width:
-                    previewSize === 'desktop'
-                      ? `calc(${global.containerWidth} + ${offset})`
-                      : `calc(${mobileSize} + ${offset})`,
-                  left: offset,
-                }}
-              >
-                <EditView />
+          <FormProvider {...formMethods}>
+            <div className="fixed inset-y-0 top-16 w-[calc(100%-300px)]">
+              <EditorNavbar
+                previewSize={previewSize}
+                setPreviewSize={setPreviewSize}
+                handleDownload={handleDownload}
+              />
+              <div className="flex h-full overflow-y-auto">
+                <div
+                  className={clsx('relative py-12 px-4', [
+                    global.containerAlign === 'left' && 'mr-auto',
+                    global.containerAlign === 'center' && 'mx-auto',
+                    global.containerAlign === 'right' && 'ml-auto',
+                  ])}
+                  style={{
+                    width:
+                      previewSize === 'desktop'
+                        ? `calc(${global.containerWidth} + ${offset})`
+                        : `calc(${mobileSize} + ${offset})`,
+                    left: offset,
+                  }}
+                >
+                  <EditView />
+                </div>
               </div>
             </div>
-          </div>
-          <div className="fixed inset-y-0 right-0 w-[300px] border-l border-zinc-200 bg-white pt-16">
-            <div className="h-full overflow-y-auto">
-              <div className="py-4">
-                <DynamicSidebar />
+            <div className="fixed inset-y-0 right-0 w-[300px] border-l border-zinc-200 bg-white pt-16">
+              <div className="h-full overflow-y-auto">
+                <div className="py-4">
+                  <DynamicSidebar />
+                </div>
               </div>
             </div>
-          </div>
+          </FormProvider>
         </div>
         {/* </FormProvider> */}
       </SelectedBlockProvider>
@@ -290,33 +312,18 @@ const EditView = () => {
   const {
     query: { id },
   } = useRouter()
-  const { data: blocks } = useGetBlocksByTemplateId(Number(id))
   const { mutateAsync: handleUpdateBlock } = useUpdateBlock(Number(id))
   const { mutateAsync: handleCreateBlock } = useCreateBlock(Number(id))
   const { mutateAsync: handleDeleteBlock } = useDeleteBlock(Number(id))
 
-  const sortedBlocks = useMemo(() => {
-    return blocks
-      ? blocks.sort((a, b) => a.position.localeCompare(b.position))
-      : []
-  }, [blocks])
+  const [draggingIdx, setDraggingIdx] = useState<number | null>(null)
 
-  const { control } = useForm({
-    defaultValues: {
-      blocks: sortedBlocks,
-    },
-    values: {
-      blocks: sortedBlocks,
-    },
-  })
-
+  const { control } = useFormContext<FormValues>()
   const { fields, move } = useFieldArray({
     keyName: 'uuid', // Prevent overwriting "id" key
     name: 'blocks',
     control,
   })
-
-  const [draggingIdx, setDraggingIdx] = useState<number | null>(null)
 
   const sensors = useSensors(
     useSensor(KeyboardSensor, {
@@ -391,10 +398,10 @@ const EditView = () => {
 
     handleCreateBlock({
       payload: {
-        type: blocks?.[idx]?.type || BlockType.TEXT,
-        templateId: Number(blocks?.[idx]?.templateId),
-        value: blocks?.[idx]?.value || '',
-        attributes: blocks?.[idx]?.attributes || {},
+        type: fields?.[idx]?.type || BlockType.TEXT,
+        templateId: Number(fields?.[idx]?.templateId),
+        value: fields?.[idx]?.value || '',
+        attributes: fields?.[idx]?.attributes || {},
         position,
       },
     })
@@ -434,7 +441,7 @@ const EditView = () => {
                       handleDeleteItem={() => deleteItem(block.id)}
                       handleDuplicateItem={() => duplicateItem(idx)}
                       handleSetSelectedBlock={() =>
-                        dispatch(setSelectedBlock(block.id))
+                        dispatch(setSelectedBlock(idx))
                       }
                     >
                       <DynamicBlock

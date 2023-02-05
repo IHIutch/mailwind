@@ -18,7 +18,6 @@ export default function FontSizeInput({
     fieldState: { error },
   } = useController({
     name,
-    defaultValue: '',
     control,
     rules: {
       required: true,

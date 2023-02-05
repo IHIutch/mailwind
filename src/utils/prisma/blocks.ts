@@ -11,6 +11,10 @@ const BlockSelect = Prisma.validator<Prisma.BlockSelect>()({
   position: true,
 })
 
+export type SingleBlockPayloadType = Prisma.BlockGetPayload<{
+  select: typeof BlockSelect
+}>
+
 export const prismaFindBlocks = async ({
   where,
 }: {

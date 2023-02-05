@@ -19,7 +19,6 @@ export default function PaddingInput({
     fieldState: { error },
   } = useController({
     name,
-    defaultValue: '',
     control,
     rules: {
       required: true,

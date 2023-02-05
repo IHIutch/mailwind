@@ -18,7 +18,6 @@ export default function LineHeightInput({
     fieldState: { error },
   } = useController({
     name,
-    defaultValue: '',
     control,
     rules: {
       required: true,
