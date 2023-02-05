@@ -10,6 +10,7 @@ import {
 import { defaultAttributes } from '@/utils/defaults'
 import {
   useCreateBlock,
+  useDeleteBlock,
   useGetBlocksByTemplateId,
   useUpdateBlock,
 } from '@/utils/query/blocks'
@@ -54,12 +55,12 @@ import { ReactNode, useMemo } from 'react'
 import { useState } from 'react'
 import dayjs from 'dayjs'
 import { useFieldArray, useForm } from 'react-hook-form'
-import { LexoRank } from 'lexorank'
 import {
   SelectedBlockProvider,
   setSelectedBlock,
   useSelectedBlockDispatch,
 } from '@/context/selectedBlock'
+import { getNewLexoPosition } from '@/utils/functions'
 
 export default function TemplateId() {
   const [previewSize, setPreviewSize] = useState<'desktop' | 'mobile'>(
@@ -292,6 +293,7 @@ const EditView = () => {
   const { data: blocks } = useGetBlocksByTemplateId(Number(id))
   const { mutateAsync: handleUpdateBlock } = useUpdateBlock(Number(id))
   const { mutateAsync: handleCreateBlock } = useCreateBlock(Number(id))
+  const { mutateAsync: handleDeleteBlock } = useDeleteBlock(Number(id))
 
   const sortedBlocks = useMemo(() => {
     return blocks
@@ -328,18 +330,6 @@ const EditView = () => {
     useSensor(TouchSensor)
   )
 
-  const getNewPosition = (start?: string, end?: string) => {
-    if (start && end) {
-      return LexoRank.parse(start).between(LexoRank.parse(end)).toString()
-    } else if (end) {
-      return LexoRank.parse(end).genPrev().toString()
-    } else if (start) {
-      return LexoRank.parse(start).genNext().toString()
-    } else {
-      return ''
-    }
-  }
-
   const handleDragEnd = ({
     active,
     over,
@@ -354,7 +344,7 @@ const EditView = () => {
     const start = fields[Math.min(overIndex, overIndex + offset)]
     const end = fields[Math.max(overIndex, overIndex + offset)]
 
-    const position = getNewPosition(start?.position, end?.position)
+    const position = getNewLexoPosition(start?.position, end?.position)
 
     handleUpdateBlock({
       where: { id: fields[activeIndex]?.id },
@@ -378,7 +368,7 @@ const EditView = () => {
 
     const start = fields[idx]
     const end = fields[idx + 1]
-    const position = getNewPosition(start?.position, end?.position)
+    const position = getNewLexoPosition(start?.position, end?.position)
 
     handleCreateBlock({
       payload: {
@@ -394,17 +384,24 @@ const EditView = () => {
     })
   }
 
-  const duplicateItem = ({ idx }: { idx: number }) => {
-    console.log({ duplicate: idx })
-    // const item = getValues(`blocks.${idx}`)
-    // insert(idx + 1, {
-    //   ...item,
-    //   id: nanoid(),
-    // })
+  const duplicateItem = (idx: number) => {
+    const start = fields[idx]
+    const end = fields[idx + 1]
+    const position = getNewLexoPosition(start?.position, end?.position)
+
+    handleCreateBlock({
+      payload: {
+        type: blocks?.[idx]?.type || BlockType.TEXT,
+        templateId: Number(blocks?.[idx]?.templateId),
+        value: blocks?.[idx]?.value || '',
+        attributes: blocks?.[idx]?.attributes || {},
+        position,
+      },
+    })
   }
 
-  const deleteItem = ({ idx }: { idx: number }) => {
-    console.log({ delete: idx })
+  const deleteItem = (blockId: number) => {
+    handleDeleteBlock({ where: { id: Number(blockId) } })
   }
 
   return (
@@ -434,8 +431,8 @@ const EditView = () => {
                     <ItemBlock
                       type={block.type}
                       handleAddItem={addItem}
-                      handleDeleteItem={() => deleteItem({ idx })}
-                      handleDuplicateItem={() => duplicateItem({ idx })}
+                      handleDeleteItem={() => deleteItem(block.id)}
+                      handleDuplicateItem={() => duplicateItem(idx)}
                       handleSetSelectedBlock={() =>
                         dispatch(setSelectedBlock(block.id))
                       }

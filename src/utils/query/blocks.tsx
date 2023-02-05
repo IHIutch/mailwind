@@ -33,7 +33,7 @@ export const useCreateBlock = (templateId: number) => {
   const { mutateAsync, isLoading, isError, isSuccess, data, error } =
     trpc.block.create.useMutation({
       // When mutate is called:
-      onMutate: async ({ payload }: { payload: any }) => {
+      onMutate: async ({ payload }) => {
         // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
         await blockUtils.byTemplateId.cancel({
           where: { templateId },
@@ -80,7 +80,7 @@ export const useUpdateBlock = (templateId: number) => {
   const { mutateAsync, isLoading, isError, isSuccess, data, error } =
     trpc.block.update.useMutation({
       // When mutate is called:
-      onMutate: async ({ id, payload }: { id?: number; payload: any }) => {
+      onMutate: async ({ where: { id }, payload }) => {
         // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
         await blockUtils.byTemplateId.cancel({
           where: { templateId },
@@ -92,8 +92,8 @@ export const useUpdateBlock = (templateId: number) => {
           {
             where: { templateId },
           },
-          (old: any) => {
-            return old.map((o: any) => {
+          (old) => {
+            return old?.map((o) => {
               if (o.id === id) {
                 return {
                   ...o,
@@ -105,6 +105,55 @@ export const useUpdateBlock = (templateId: number) => {
           }
         )
         return { previous, updated: payload }
+      },
+      // If the mutation fails, use the context we returned above
+      onError: (err, updated, context) => {
+        blockUtils.byTemplateId.setData(
+          {
+            where: { templateId },
+          },
+          context?.previous
+        )
+      },
+      // Always refetch after error or success:
+      // onSettled: () => {
+      //   blockUtils.byTemplateId.invalidate({
+      //     where: { templateId },
+      //   })
+      // },
+    })
+  return {
+    mutateAsync,
+    data,
+    error,
+    isLoading,
+    isError,
+    isSuccess,
+  }
+}
+
+export const useDeleteBlock = (templateId: number) => {
+  const { block: blockUtils } = trpc.useContext()
+  const { mutateAsync, isLoading, isError, isSuccess, data, error } =
+    trpc.block.delete.useMutation({
+      // When mutate is called:
+      onMutate: async ({ where: { id } }) => {
+        // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+        await blockUtils.byTemplateId.cancel({
+          where: { templateId },
+        })
+        const previous = blockUtils.byTemplateId.getData({
+          where: { templateId },
+        })
+        blockUtils.byTemplateId.setData(
+          {
+            where: { templateId },
+          },
+          (old) => {
+            return old?.filter((o) => o.id !== id)
+          }
+        )
+        return { previous, updated: id }
       },
       // If the mutation fails, use the context we returned above
       onError: (err, updated, context) => {
