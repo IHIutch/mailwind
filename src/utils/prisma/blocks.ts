@@ -2,6 +2,15 @@ import { getErrorMessage } from '../functions'
 import { prisma } from '@/server/prisma'
 import { Prisma } from '@prisma/client'
 
+const BlockSelect = Prisma.validator<Prisma.BlockSelect>()({
+  id: true,
+  type: true,
+  attributes: true,
+  value: true,
+  templateId: true,
+  position: true,
+})
+
 export const prismaFindBlocks = async ({
   where,
 }: {
@@ -10,6 +19,7 @@ export const prismaFindBlocks = async ({
   try {
     return await prisma.block.findMany({
       where,
+      select: BlockSelect,
       orderBy: {
         position: 'asc',
       },
@@ -27,6 +37,7 @@ export const prismaFindUniqueBlock = async ({
   try {
     return await prisma.block.findUnique({
       where,
+      select: BlockSelect,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))
@@ -41,6 +52,7 @@ export const prismaCreateBlock = async ({
   try {
     return await prisma.block.create({
       data,
+      select: BlockSelect,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))
@@ -58,6 +70,7 @@ export const prismaUpdateBlock = async ({
     return await prisma.block.update({
       where,
       data,
+      select: BlockSelect,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))

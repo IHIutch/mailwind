@@ -7,14 +7,12 @@ import {
   SortableItem,
   SortOverlay,
 } from '@/components/sortable/SortableItem'
-import {
-  ActiveBlockProvider,
-  setActiveBlock,
-  useActiveBlockDispatch,
-} from '@/context/activeBlock'
-import { SingleBlockPayloadType } from '@/server/routers/blocks'
 import { defaultAttributes } from '@/utils/defaults'
-import { useGetBlocksByTemplateId, useUpdateBlock } from '@/utils/query/blocks'
+import {
+  useCreateBlock,
+  useGetBlocksByTemplateId,
+  useUpdateBlock,
+} from '@/utils/query/blocks'
 import { useGetTemplateById, useUpdateTemplate } from '@/utils/query/templates'
 import {
   type Active,
@@ -27,7 +25,6 @@ import {
   useSensors,
 } from '@dnd-kit/core'
 import {
-  arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
@@ -58,6 +55,11 @@ import { useState } from 'react'
 import dayjs from 'dayjs'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { LexoRank } from 'lexorank'
+import {
+  SelectedBlockProvider,
+  setSelectedBlock,
+  useSelectedBlockDispatch,
+} from '@/context/selectedBlock'
 
 export default function TemplateId() {
   const [previewSize, setPreviewSize] = useState<'desktop' | 'mobile'>(
@@ -120,7 +122,7 @@ export default function TemplateId() {
       <GlobalNavbar>
         <TemplateTitle />
       </GlobalNavbar>
-      <ActiveBlockProvider initialValue={{ data: null }}>
+      <SelectedBlockProvider initialValue={{ data: null }}>
         <div className="relative pt-16">
           {/* <FormProvider {...formMethods}> */}
           <div className="fixed inset-y-0 top-16 w-[calc(100%-300px)]">
@@ -157,7 +159,7 @@ export default function TemplateId() {
           </div>
         </div>
         {/* </FormProvider> */}
-      </ActiveBlockProvider>
+      </SelectedBlockProvider>
     </>
   )
 }
@@ -180,7 +182,7 @@ const TemplateTitle = () => {
 
   const onSubmit = async ({ title }: { title: string }) => {
     await handleUpdateTemplate({
-      id: Number(id),
+      where: { id: Number(id) },
       payload: { title },
     })
     setIsOpen(false)
@@ -283,12 +285,13 @@ const TemplateTitle = () => {
 }
 
 const EditView = () => {
-  const dispatch = useActiveBlockDispatch()
+  const dispatch = useSelectedBlockDispatch()
   const {
     query: { id },
   } = useRouter()
   const { data: blocks } = useGetBlocksByTemplateId(Number(id))
   const { mutateAsync: handleUpdateBlock } = useUpdateBlock(Number(id))
+  const { mutateAsync: handleCreateBlock } = useCreateBlock(Number(id))
 
   const sortedBlocks = useMemo(() => {
     return blocks
@@ -311,8 +314,7 @@ const EditView = () => {
     control,
   })
 
-  const [activeDraggingBlock, setActiveDraggingBlock] =
-    useState<SingleBlockPayloadType | null>(null)
+  const [draggingIdx, setDraggingIdx] = useState<number | null>(null)
 
   const sensors = useSensors(
     useSensor(KeyboardSensor, {
@@ -355,37 +357,44 @@ const EditView = () => {
     const position = getNewPosition(start?.position, end?.position)
 
     handleUpdateBlock({
-      id: fields[activeIndex]?.id,
+      where: { id: fields[activeIndex]?.id },
       payload: {
         position,
       },
     })
 
     move(activeIndex, overIndex)
-    setActiveDraggingBlock(null)
+    setDraggingIdx(null)
   }
 
-  const handleSetSelectedBlock = (block: SingleBlockPayloadType | null) => {
-    // const { id, type } = getValues(`blocks.${itemIndex}`)
-    dispatch(setActiveBlock(block))
+  const handleDragStart = ({ active }: { active: Active }) => {
+    const activeIndex = fields.findIndex((i) => i.id === active.id)
+    setDraggingIdx(activeIndex)
   }
 
-  const handleDragStart = ({
-    active: { data: activeData },
-  }: {
-    active: Active
-  }) => {
-    const activeIndex = activeData.current?.sortable?.index || 0
-    setActiveDraggingBlock(fields[activeIndex] || null)
-  }
-
-  const addItem = (idx: number, payload: object) => {
+  const addItem = ({ idx, type }: { idx: number; type: BlockType }) => {
     // Probably can refactor this so object attributes arent "payload" and we can just get the default values based on the block type
     // insert(idx, payload)
-    // handleSetSelectedBlock(localBlocks[idx] ?? null)
+
+    const start = fields[idx]
+    const end = fields[idx + 1]
+    const position = getNewPosition(start?.position, end?.position)
+
+    handleCreateBlock({
+      payload: {
+        templateId: Number(id),
+        value: '',
+        position,
+        type,
+        attributes: {
+          ...defaultAttributes['GLOBAL'],
+          ...defaultAttributes[type],
+        },
+      },
+    })
   }
 
-  const duplicateItem = (idx: number) => {
+  const duplicateItem = ({ idx }: { idx: number }) => {
     console.log({ duplicate: idx })
     // const item = getValues(`blocks.${idx}`)
     // insert(idx + 1, {
@@ -394,7 +403,7 @@ const EditView = () => {
     // })
   }
 
-  const deleteItem = (idx: number) => {
+  const deleteItem = ({ idx }: { idx: number }) => {
     console.log({ delete: idx })
   }
 
@@ -406,61 +415,54 @@ const EditView = () => {
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
         onDragCancel={() => {
-          setActiveDraggingBlock(null)
+          setDraggingIdx(null)
         }}
       >
         <SortableContext items={fields} strategy={verticalListSortingStrategy}>
           <ul>
-            {fields
-              ? fields.map((block, idx) => (
-                  <li key={block.id}>
-                    <SortableItem id={block.id}>
-                      <div
-                        className={clsx(
-                          'overflow-hidden rounded-lg transition-all',
-                          activeDraggingBlock?.id === block.id
-                            ? 'ring-2 ring-offset-2'
-                            : 'ring-0 ring-offset-0'
-                        )}
-                      >
-                        <ItemBlock
-                          block={block}
-                          handleAddItem={(payload) => addItem(idx + 1, payload)}
-                          handleDeleteItem={() => deleteItem(idx)}
-                          handleDuplicateItem={() => duplicateItem(idx)}
-                          handleSetSelectedBlock={() =>
-                            handleSetSelectedBlock(block)
-                          }
-                        >
-                          {/* <Controller
-                        name={`blocks.${idx}.value`}
-                        control={control}
-                        render={({ field: { value, onChange } }) => ( */}
-                          {/* <pre>{JSON.stringify({ block }, null, 2)}</pre> */}
-                          <DynamicBlock
-                            // id={block.id}
-                            attributes={block.attributes}
-                            type={block.type}
-                            value={block.value ?? ''}
-                            onChange={(val) => console.log({ val })}
-                          />
-                          {/* )}
+            {fields.map((block, idx) => (
+              <li key={block.id}>
+                <SortableItem id={block.id}>
+                  <div
+                    className={clsx(
+                      'overflow-hidden rounded-lg transition-all',
+                      draggingIdx && fields[draggingIdx]?.id === block.id
+                        ? 'ring-2 ring-offset-2'
+                        : 'ring-0 ring-offset-0'
+                    )}
+                  >
+                    <ItemBlock
+                      type={block.type}
+                      handleAddItem={addItem}
+                      handleDeleteItem={() => deleteItem({ idx })}
+                      handleDuplicateItem={() => duplicateItem({ idx })}
+                      handleSetSelectedBlock={() =>
+                        dispatch(setSelectedBlock(block.id))
+                      }
+                    >
+                      <DynamicBlock
+                        // id={block.id}
+                        attributes={block.attributes}
+                        type={block.type}
+                        value={block.value ?? ''}
+                        onChange={(val) => console.log({ val })}
+                      />
+                      {/* )}
                       /> */}
-                        </ItemBlock>
-                      </div>
-                    </SortableItem>
-                  </li>
-                ))
-              : null}
+                    </ItemBlock>
+                  </div>
+                </SortableItem>
+              </li>
+            ))}
           </ul>
         </SortableContext>
         <SortOverlay>
-          {activeDraggingBlock ? (
+          {draggingIdx ? (
             <ItemBlock>
               <DynamicBlock
-                type={activeDraggingBlock.type}
-                value={activeDraggingBlock.value || ''}
-                attributes={activeDraggingBlock.attributes}
+                type={fields[draggingIdx]?.type || BlockType.TEXT}
+                value={fields[draggingIdx]?.value || ''}
+                attributes={fields[draggingIdx]?.attributes}
               />
             </ItemBlock>
           ) : null}
@@ -471,17 +473,17 @@ const EditView = () => {
 }
 
 const ItemBlock = ({
-  block,
+  type,
   handleAddItem = () => null,
   handleDeleteItem = () => null,
   handleDuplicateItem = () => null,
   handleSetSelectedBlock = () => null,
   children,
 }: {
-  block?: object
-  handleAddItem?: (v: object) => void
-  handleDeleteItem?: () => void
-  handleDuplicateItem?: () => void
+  type?: BlockType
+  handleAddItem?: ({ idx, type }: { idx: number; type: BlockType }) => void
+  handleDeleteItem?: ({ idx }: { idx: number }) => void
+  handleDuplicateItem?: ({ idx }: { idx: number }) => void
   handleSetSelectedBlock?: () => void
   children?: ReactNode
 }) => {
@@ -529,12 +531,12 @@ const ItemBlock = ({
     >
       <div
         className={clsx(
-          'pr-2'
-          // block?.type === BlockType['H1'] ||
-          //   block?.type === BlockType['H2'] ||
-          //   block?.type === BlockType['H3']
-          //   ? 'pt-2'
-          //   : 'pt-0'
+          'pr-2',
+          type === BlockType['H1'] ||
+            type === BlockType['H2'] ||
+            type === BlockType['H3']
+            ? 'pt-2'
+            : 'pt-0'
         )}
       >
         <div
@@ -556,24 +558,19 @@ const ItemBlock = ({
                 align="start"
                 className="w-48 rounded-md border border-zinc-200 bg-white py-2 shadow-lg"
               >
-                {Object.entries(BlockType).map(([key, blockTypeValue], idx) => (
+                {Object.entries(BlockType).map(([key, optionType], idx) => (
                   <DropdownMenu.Item
                     key={idx}
                     className="flex cursor-pointer items-center py-1 px-2 outline-none hover:bg-zinc-100"
                     onClick={(e) => {
                       e.stopPropagation() // This is a hacky fix that prevents the items behind this button from receiving a click event: https://github.com/radix-ui/primitives/issues/1658
                       handleAddItem({
-                        id: '-1',
-                        type: blockTypeValue,
-                        value: '',
-                        attributes: {
-                          ...defaultAttributes.GLOBAL,
-                          // ...defaultAttributes.[blockTypeValue], //Need to fix this. Maybe with an enum?
-                        },
+                        idx,
+                        type: optionType,
                       })
                     }}
                   >
-                    {getIcon(blockTypeValue)}
+                    {getIcon(optionType)}
                     <p className="pl-2">{key}</p>
                   </DropdownMenu.Item>
                 ))}

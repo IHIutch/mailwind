@@ -1,36 +1,39 @@
-import {
-  setActiveBlock,
-  useActiveBlockDispatch,
-  useActiveBlockState,
-} from '@/context/activeBlock'
 import { sidebars } from '@/utils/defaults'
 import { X } from 'lucide-react'
 import { useEffect, useMemo } from 'react'
 import { FormProvider, useForm, useWatch } from 'react-hook-form'
 import debounce from 'lodash/debounce'
 import { useRouter } from 'next/router'
-import { useUpdateBlock } from '@/utils/query/blocks'
+import { useGetBlocksByTemplateId, useUpdateBlock } from '@/utils/query/blocks'
+import {
+  setSelectedBlock,
+  useSelectedBlockDispatch,
+  useSelectedBlockState,
+} from '@/context/selectedBlock'
 
 export default function DynamicSidebar() {
-  const { data: activeBlock } = useActiveBlockState()
-  const dispatch = useActiveBlockDispatch()
-
-  const handleUnsetActiveBlock = () => {
-    dispatch(setActiveBlock(null))
-  }
-
   const {
     query: { id },
   } = useRouter()
-  const updateBlock = useUpdateBlock(Number(id))
+  const { data: selectedBlockId } = useSelectedBlockState()
+  const dispatch = useSelectedBlockDispatch()
+
+  const { data: blocks } = useGetBlocksByTemplateId(Number(id))
+  const selectedBlock = (blocks || []).find((b) => b.id === selectedBlockId)
+
+  const handleUnsetActiveBlock = () => {
+    dispatch(setSelectedBlock(null))
+  }
+
+  const { mutateAsync: handleUpdateBlock } = useUpdateBlock(Number(id))
 
   const formMethods = useForm({
     mode: 'onChange',
     defaultValues: {
-      ...activeBlock,
+      ...selectedBlock,
     },
     values: {
-      ...activeBlock,
+      ...selectedBlock,
     },
   })
 
@@ -41,10 +44,10 @@ export default function DynamicSidebar() {
 
   const autoSaveDebounce = useMemo(
     () =>
-      debounce(({ id, payload }: { id: number; payload: any }) => {
+      debounce((payload: any) => {
         if (formMethods.formState.isValid) {
-          updateBlock.mutateAsync({
-            id,
+          handleUpdateBlock({
+            where: { id: Number(selectedBlockId) },
             payload,
           })
         }
@@ -54,22 +57,22 @@ export default function DynamicSidebar() {
   )
 
   useEffect(() => {
-    if (formMethods.formState.isDirty && activeBlock?.id) {
-      autoSaveDebounce({ id: activeBlock?.id, payload: { attributes } })
+    if (formMethods.formState.isDirty && selectedBlockId) {
+      autoSaveDebounce(attributes)
     }
   }, [
-    activeBlock?.id,
+    selectedBlockId,
     attributes,
     autoSaveDebounce,
     formMethods.formState.isDirty,
   ])
 
-  const Component = sidebars[activeBlock?.type ?? 'GLOBAL']
+  const Component = sidebars[selectedBlock?.type ?? 'GLOBAL']
   return (
     <FormProvider {...formMethods}>
-      <Component key={activeBlock?.id}>
+      <Component key={selectedBlockId}>
         <div className="relative">
-          {activeBlock ? (
+          {selectedBlock ? (
             <button
               className="absolute right-2 flex h-8 w-8 items-center justify-center rounded bg-zinc-200 hover:bg-zinc-300"
               onClick={handleUnsetActiveBlock}
@@ -80,7 +83,7 @@ export default function DynamicSidebar() {
           <div>
             <div className="mb-4 px-3">
               <h2 className="font-semibold">
-                {activeBlock?.type ?? 'Global Attributes'}
+                {selectedBlock?.type ?? 'Global Attributes'}
               </h2>
             </div>
             {/* {activeBlock ? JSON.stringify(activeBlock, null, 2) : null} */}
