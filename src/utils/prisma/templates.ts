@@ -1,66 +1,74 @@
 import { getErrorMessage } from '../functions'
-import { templateSchema } from '../zod/schemas'
 import { prisma } from '@/server/prisma'
-import { z } from 'zod'
+import { Prisma } from '@prisma/client'
 
-type whereType = z.input<typeof templateSchema>
-type payloadType = z.input<typeof templateSchema>
-
-export const prismaGetTemplates = async (where: whereType) => {
+export const prismaFindTemplates = async ({
+  where,
+}: {
+  where: Prisma.TemplateWhereInput
+}) => {
   try {
-    const validWhere = templateSchema.parse(where)
     return await prisma.template.findMany({
-      where: validWhere,
+      where,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))
   }
 }
 
-export const prismaGetTemplate = async (where: whereType) => {
+export const prismaFindUniqueTemplate = async ({
+  where,
+}: {
+  where: Prisma.TemplateWhereUniqueInput
+}) => {
   try {
-    const validWhere = templateSchema.parse(where)
     return await prisma.template.findUnique({
-      where: validWhere,
+      where,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))
   }
 }
 
-export const prismaPostTemplate = async (payload: payloadType) => {
+export const prismaCreateTemplate = async ({
+  data,
+}: {
+  data: Prisma.TemplateUncheckedCreateInput
+}) => {
   try {
-    const validPayload = templateSchema.parse(payload)
     return await prisma.template.create({
-      data: validPayload,
+      data,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))
   }
 }
 
-export const prismaPutTemplate = async (
-  where: whereType,
-  payload: payloadType
-) => {
+export const prismaUpdateTemplate = async ({
+  where,
+  data,
+}: {
+  where: Prisma.TemplateWhereUniqueInput
+  data: Prisma.TemplateUncheckedUpdateInput
+}) => {
   try {
-    const validPayload = templateSchema.parse(payload)
-    const validWhere = templateSchema.parse(where)
-
     return await prisma.template.update({
-      data: validPayload,
-      where: validWhere,
+      where,
+      data,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))
   }
 }
 
-export const prismaDeleteTemplate = async (where: whereType) => {
+export const prismaDeleteTemplate = async ({
+  where,
+}: {
+  where: Prisma.TemplateWhereUniqueInput
+}) => {
   try {
-    const validWhere = templateSchema.parse(where)
     return await prisma.template.delete({
-      where: validWhere,
+      where,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))

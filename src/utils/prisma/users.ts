@@ -7,7 +7,7 @@ import { getErrorMessage } from '../functions'
  * It's important to always explicitly say which fields you want to return in order to not leak extra information
  * @see https://github.com/prisma/prisma/issues/9353
  */
-export const defaultUserSelect = Prisma.validator<Prisma.UserSelect>()({
+export const UserSelect = Prisma.validator<Prisma.UserSelect>()({
   id: true,
   stripeSubscriptionId: true,
   stripeCustomerId: true,
@@ -20,7 +20,7 @@ export const defaultUserSelect = Prisma.validator<Prisma.UserSelect>()({
   },
 })
 
-export const prismaGetUniqueUser = async ({
+export const prismaFindUniqueUser = async ({
   where,
 }: {
   where: Prisma.UserWhereUniqueInput
@@ -28,7 +28,7 @@ export const prismaGetUniqueUser = async ({
   try {
     return await prisma.user.findUnique({
       where,
-      select: defaultUserSelect,
+      select: UserSelect,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))
@@ -43,6 +43,7 @@ export const prismaCreateUser = async ({
   try {
     return await prisma.user.create({
       data,
+      select: UserSelect,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))
@@ -60,6 +61,7 @@ export const prismaUpdateUser = async ({
     return await prisma.user.update({
       where,
       data,
+      select: UserSelect,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))

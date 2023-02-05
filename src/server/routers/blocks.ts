@@ -1,7 +1,8 @@
 import { router, publicProcedure } from '../trpc'
-import { prisma } from '@/server/prisma'
 import {
-  blockSchema,
+  BlockCreateSchema,
+  BlockUpdateSchema,
+  BlockWhereSchema,
   codeBlockSchema,
   defaultBlockSchema,
   dividerBlockSchema,
@@ -10,27 +11,15 @@ import {
   quoteBlockSchema,
   textBlockSchema,
 } from '@/utils/zod/schemas'
-import { Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
-
-/**
- * Default selector for Block.
- * It's important to always explicitly say which fields you want to return in order to not leak extra information
- * @see https://github.com/prisma/prisma/issues/9353
- */
-const defaultBlockSelect = Prisma.validator<Prisma.BlockSelect>()({
-  id: true,
-  type: true,
-  attributes: true,
-  value: true,
-  templateId: true,
-  position: true,
-})
-
-export type SingleBlockPayloadType = Prisma.BlockGetPayload<{
-  select: typeof defaultBlockSelect
-}>
+import {
+  prismaCreateBlock,
+  prismaDeleteBlock,
+  prismaFindBlocks,
+  prismaFindUniqueBlock,
+  prismaUpdateBlock,
+} from '@/utils/prisma/blocks'
 
 const partialBlockSchemas = z.union([
   textBlockSchema.merge(defaultBlockSchema).omit({ id: true }).partial(),
@@ -41,40 +30,22 @@ const partialBlockSchemas = z.union([
   quoteBlockSchema.merge(defaultBlockSchema).omit({ id: true }).partial(),
 ])
 
-const ReorderBlockSchemas = z.array(
-  defaultBlockSchema.pick({ id: true, position: true })
-)
-
-// const validWhereParams = blockSchema.pick({ id: true, templateId: true })
-// type validWhereParams = z.infer<typeof validWhereParams>
-
-// const validWhere = ({ id, templateId }: validWhereParams) => {
-//   return Prisma.validator<Prisma.BlockWhereInput>()({
-//     id,
-//     templateId,
-//   })
-// }
-
 export const blockRouter = router({
   byTemplateId: publicProcedure
     .input(
       z.object({
-        templateId: z.number(),
+        where: BlockWhereSchema.pick({ templateId: true }),
       })
     )
     .query(async ({ input }) => {
-      const { templateId } = input
-      const data = await prisma.block.findMany({
-        select: defaultBlockSelect,
-        where: { templateId },
-        orderBy: {
-          position: 'asc',
-        },
+      const { where } = input
+      const data = prismaFindBlocks({
+        where,
       })
       if (!data) {
         throw new TRPCError({
           code: 'NOT_FOUND',
-          message: `No block with templateId '${templateId}'`,
+          message: `No block with templateId '${where.templateId}'`,
         })
       }
       return data
@@ -82,82 +53,61 @@ export const blockRouter = router({
   byId: publicProcedure
     .input(
       z.object({
-        id: z.number(),
+        where: BlockWhereSchema.pick({ id: true }),
       })
     )
     .query(async ({ input }) => {
-      const { id } = input
-      const data = await prisma.block.findUnique({
-        where: { id },
-        select: defaultBlockSelect,
+      const { where } = input
+      const data = prismaFindUniqueBlock({
+        where,
       })
       if (!data) {
         throw new TRPCError({
           code: 'NOT_FOUND',
-          message: `No block with id '${id}'`,
+          message: `No block with id '${where.id}'`,
         })
       }
       return data
     }),
   create: publicProcedure
-    .input(z.object({ payload: blockSchema }))
+    .input(
+      z.object({
+        payload: BlockCreateSchema,
+      })
+    )
     .mutation(async ({ input }) => {
       const { payload } = input
-      const data = await prisma.block.create({
+      const data = prismaCreateBlock({
         data: payload,
-        select: defaultBlockSelect,
       })
       return data
     }),
   update: publicProcedure
     .input(
       z.object({
-        id: z.number().optional(),
-        payload: partialBlockSchemas,
+        where: BlockWhereSchema.pick({ id: true }),
+        payload: BlockUpdateSchema.omit({ id: true }),
       })
     )
     .mutation(async ({ input }) => {
-      const { id, payload } = input
-      const data = await prisma.block.update({
-        where: { id },
+      const { where, payload } = input
+      const data = prismaUpdateBlock({
+        where,
         data: payload,
-        select: defaultBlockSelect,
       })
       return data
     }),
   delete: publicProcedure
     .input(
       z.object({
-        id: z.number(),
+        where: BlockWhereSchema.pick({ id: true }),
       })
     )
     .mutation(async ({ input }) => {
-      const { id } = input
-      const data = await prisma.block.delete({
-        where: { id },
-        select: defaultBlockSelect,
+      const { where } = input
+      const data = prismaDeleteBlock({
+        where,
       })
-      return data
-    }),
-  reorder: publicProcedure
-    .input(
-      z.object({
-        payload: ReorderBlockSchemas,
-      })
-    )
-    .mutation(async ({ input }) => {
-      const { payload } = input
-      const data = await prisma.$transaction(
-        payload.map((b) =>
-          prisma.block.update({
-            data: b,
-            where: {
-              id: b.id,
-            },
-            select: defaultBlockSelect,
-          })
-        )
-      )
       return data
     }),
 })

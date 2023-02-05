@@ -1,47 +1,74 @@
 import { prisma } from '@/server/prisma'
+import { Prisma } from '@prisma/client'
 import { getErrorMessage } from '../functions'
-import { membershipSchema } from '../zod/schemas'
 
-export const prismaGetMembership = async (where) => {
+export const MembershipSelect = Prisma.validator<Prisma.MembershipSelect>()({
+  id: true,
+  userId: true,
+  Organization: {
+    select: {
+      id: true,
+      name: true,
+    },
+  },
+})
+
+export const prismaFindUniqueMembership = async ({
+  where,
+}: {
+  where: Prisma.MembershipWhereUniqueInput
+}) => {
   try {
-    const validWhere = membershipSchema.parse(where)
     return await prisma.membership.findUnique({
-      where: validWhere,
+      where,
+      select: MembershipSelect,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))
   }
 }
 
-export const prismaPostMembership = async (payload) => {
+export const prismaCreateMembership = async ({
+  data,
+}: {
+  data: Prisma.MembershipUncheckedCreateInput
+}) => {
   try {
-    const validPayload = membershipSchema.parse(payload)
     return await prisma.membership.create({
-      data: validPayload,
+      data,
+      select: MembershipSelect,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))
   }
 }
 
-export const prismaPutMembership = async (where, payload) => {
+export const prismaUpdateMembership = async ({
+  where,
+  data,
+}: {
+  where: Prisma.MembershipWhereUniqueInput
+  data: Prisma.MembershipUncheckedUpdateInput
+}) => {
   try {
-    const validPayload = membershipSchema.parse(payload)
-    const validWhere = membershipSchema.parse(where)
     return await prisma.membership.update({
-      data: validPayload,
-      where: validWhere,
+      data,
+      where,
+      select: MembershipSelect,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))
   }
 }
 
-export const prismaDeleteMembership = async (where) => {
+export const prismaDeleteMembership = async ({
+  where,
+}: {
+  where: Prisma.MembershipWhereUniqueInput
+}) => {
   try {
-    const validWhere = membershipSchema.parse(where)
     return await prisma.membership.delete({
-      where: validWhere,
+      where,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))

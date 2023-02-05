@@ -2,14 +2,14 @@ import { router, publicProcedure } from '../trpc'
 import {
   UserCreateSchema,
   UserUpdateSchema,
-  UserWhereUniqueSchema,
+  UserWhereSchema,
 } from '@/utils/zod/schemas'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import {
   prismaCreateUser,
   prismaDeleteUser,
-  prismaGetUniqueUser,
+  prismaFindUniqueUser,
   prismaUpdateUser,
 } from '@/utils/prisma/users'
 
@@ -17,12 +17,12 @@ export const userRouter = router({
   byId: publicProcedure
     .input(
       z.object({
-        where: UserWhereUniqueSchema.pick({ id: true }),
+        where: UserWhereSchema.pick({ id: true }),
       })
     )
     .query(async ({ input }) => {
       const { where } = input
-      const data = await prismaGetUniqueUser({
+      const data = await prismaFindUniqueUser({
         where,
       })
       if (!data) {
@@ -34,7 +34,11 @@ export const userRouter = router({
       return data
     }),
   create: publicProcedure
-    .input(z.object({ payload: UserCreateSchema }))
+    .input(
+      z.object({
+        payload: UserCreateSchema,
+      })
+    )
     .mutation(async ({ input }) => {
       const { payload } = input
       const data = await prismaCreateUser({
@@ -51,7 +55,7 @@ export const userRouter = router({
   update: publicProcedure
     .input(
       z.object({
-        where: UserWhereUniqueSchema.pick({ id: true }).required(),
+        where: UserWhereSchema.pick({ id: true }).required(),
         payload: UserUpdateSchema.omit({ id: true }),
       })
     )
@@ -72,7 +76,7 @@ export const userRouter = router({
   delete: publicProcedure
     .input(
       z.object({
-        where: UserWhereUniqueSchema.pick({ id: true }).required(),
+        where: UserWhereSchema.pick({ id: true }).required(),
       })
     )
     .mutation(async ({ input }) => {

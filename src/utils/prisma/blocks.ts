@@ -1,16 +1,15 @@
 import { getErrorMessage } from '../functions'
-import { blockSchema } from '../zod/schemas'
 import { prisma } from '@/server/prisma'
-import { z } from 'zod'
+import { Prisma } from '@prisma/client'
 
-type whereType = z.input<typeof blockSchema>
-type payloadType = z.input<typeof blockSchema>
-
-export const prismaGetBlocks = async (where: whereType) => {
+export const prismaFindBlocks = async ({
+  where,
+}: {
+  where: Prisma.BlockWhereInput
+}) => {
   try {
-    const validWhere = blockSchema.parse(where)
     return await prisma.block.findMany({
-      where: validWhere,
+      where,
       orderBy: {
         position: 'asc',
       },
@@ -20,73 +19,59 @@ export const prismaGetBlocks = async (where: whereType) => {
   }
 }
 
-export const prismaGetBlock = async (where: whereType) => {
+export const prismaFindUniqueBlock = async ({
+  where,
+}: {
+  where: Prisma.BlockWhereUniqueInput
+}) => {
   try {
-    const validWhere = blockSchema.parse(where)
     return await prisma.block.findUnique({
-      where: validWhere,
+      where,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))
   }
 }
 
-export const prismaPostBlock = async (payload: payloadType) => {
+export const prismaCreateBlock = async ({
+  data,
+}: {
+  data: Prisma.BlockCreateWithoutTemplateInput
+}) => {
   try {
-    const validPayload = blockSchema.parse(payload)
     return await prisma.block.create({
-      data: validPayload,
+      data,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))
   }
 }
 
-export const prismaPutBlock = async (
-  where: whereType,
-  payload: payloadType
-) => {
+export const prismaUpdateBlock = async ({
+  where,
+  data,
+}: {
+  where: Prisma.BlockWhereUniqueInput
+  data: Prisma.BlockUpdateWithoutTemplateInput
+}) => {
   try {
-    const validPayload = blockSchema.parse(payload)
-    const validWhere = blockSchema.parse(where)
     return await prisma.block.update({
-      data: validPayload,
-      where: validWhere,
+      where,
+      data,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))
   }
 }
 
-export const prismaPutBlocks = async (payload: payloadType[]) => {
+export const prismaDeleteBlock = async ({
+  where,
+}: {
+  where: Prisma.BlockWhereUniqueInput
+}) => {
   try {
-    const validPayload = await Promise.all(
-      payload.map(async (p) => blockSchema.parse(p))
-    )
-    return await prisma.$transaction(
-      validPayload.map((vp) =>
-        prisma.block.update({
-          data: vp,
-          where: {
-            id: vp.id,
-          },
-          select: {
-            id: true,
-            position: true,
-          },
-        })
-      )
-    )
-  } catch (error) {
-    throw Error(getErrorMessage(error))
-  }
-}
-
-export const prismaDeleteBlock = async (where: whereType) => {
-  try {
-    const validWhere = blockSchema.parse(where)
     return await prisma.block.delete({
-      where: validWhere,
+      where,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))

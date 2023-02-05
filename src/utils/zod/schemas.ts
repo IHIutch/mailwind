@@ -1,6 +1,5 @@
-import { BlockType, Prisma } from '@prisma/client'
+import { BlockType, GlobalRole, MembershipRole } from '@prisma/client'
 import { z } from 'zod'
-import { toZod } from 'tozod'
 
 export const textBlockSchema = z.object({
   type: z.literal(BlockType.TEXT),
@@ -39,46 +38,90 @@ export const defaultBlockSchema = z.object({
 })
 // TODO: Define schemas
 
-export const userSchema = z.object({
-  id: z.string().uuid(),
-  stripeCustomerId: z.string().nullable(),
-  stripeSubscriptionId: z.string().nullable(),
-  role: z.enum(['SUPERADMIN', 'CUSTOMER']),
+export const UserWhereSchema = z.object({
+  id: z.coerce.string().optional(),
 })
 
-export const UserWhereUniqueSchema: toZod<Prisma.UserWhereUniqueInput> =
-  z.object({
-    id: z.string().optional(),
-    stripeSubscriptionId: z.string().optional(),
-    stripeCustomerId: z.string().optional(),
-  })
+export const UserCreateSchema = z.object({
+  id: z.coerce.string(),
+  stripeSubscriptionId: z.string().optional(),
+  stripeCustomerId: z.string().optional(),
+  role: z.nativeEnum(GlobalRole),
+})
 
-export const UserCreateSchema: toZod<Prisma.UserCreateWithoutMembershipsInput> =
-  z.object({
-    id: z.string(),
-    stripeSubscriptionId: z.string().optional(),
-    stripeCustomerId: z.string().optional(),
-    createdAt: z.date().optional(),
-    updatedAt: z.date().optional(),
-    deletedAt: z.date().optional(),
-    role: z.NEVER,
-  })
+export const UserUpdateSchema = z.object({
+  id: z.coerce.string().optional(),
+  stripeSubscriptionId: z.string().optional(),
+  stripeCustomerId: z.string().optional(),
+  role: z.nativeEnum(GlobalRole),
+})
 
-export const UserUpdateSchema: toZod<Prisma.UserUpdateWithoutMembershipsInput> =
-  z.object({
-    id: z.string().optional(),
-    stripeSubscriptionId: z.string().optional(),
-    stripeCustomerId: z.string().optional(),
-    createdAt: z.date().optional(),
-    updatedAt: z.date().optional(),
-    deletedAt: z.date().optional(),
-    role: z.NEVER,
-  })
+export const BlockWhereSchema = z.object({
+  id: z.coerce.number().optional(),
+  templateId: z.coerce.number().optional(),
+})
 
-export const templateSchema = z.object({
-  id: z.coerce.number(),
+export const BlockCreateSchema = z.object({
+  type: z.nativeEnum(BlockType),
+  templateId: z.number(),
+  position: z.string(),
+  attributes: z.object({}).optional(),
+  value: z.string().optional(),
+})
+
+export const BlockUpdateSchema = z.object({
+  id: z.coerce.number().optional(),
+  type: z.nativeEnum(BlockType).optional(),
+  templateId: z.number().optional(),
+  position: z.string().optional(),
+  attributes: z.object({}).optional(),
+  value: z.string().optional(),
+})
+
+export const TemplateWhereSchema = z.object({
+  id: z.coerce.number().optional(),
+  organizationId: z.coerce.number().optional(),
+})
+
+export const TemplateCreateSchema = z.object({
+  title: z.coerce.string().optional(),
   organizationId: z.coerce.number(),
-  title: z.string().nullable(),
+})
+
+export const TemplateUpdateSchema = z.object({
+  id: z.coerce.number().optional(),
+  title: z.coerce.string().optional(),
+  organizationId: z.coerce.number().optional(),
+})
+
+export const MembershipWhereSchema = z.object({
+  id: z.coerce.number().optional(),
+  organizationId: z.coerce.number().optional(),
+  userId: z.coerce.string().uuid().optional(),
+})
+
+export const MembershipCreateSchema = z.object({
+  userId: z.coerce.string().uuid(),
+  organizationId: z.coerce.number(),
+  role: z.nativeEnum(MembershipRole),
+})
+
+export const MembershipUpdateSchema = z.object({
+  userId: z.coerce.string().uuid().optional(),
+  organizationId: z.coerce.number().optional(),
+  role: z.nativeEnum(MembershipRole).optional(),
+})
+
+export const OrganizationWhereSchema = z.object({
+  id: z.coerce.number().optional(),
+})
+
+export const OrganizationCreateSchema = z.object({
+  name: z.coerce.string(),
+})
+
+export const OrganizationUpdateSchema = z.object({
+  name: z.coerce.string().optional(),
 })
 
 export const blockSchema = z.union([
@@ -89,15 +132,3 @@ export const blockSchema = z.union([
   dividerBlockSchema.merge(defaultBlockSchema),
   quoteBlockSchema.merge(defaultBlockSchema),
 ])
-
-export const membershipSchema = z.object({
-  id: z.coerce.number(),
-  role: z.enum(['OWNER', 'ADMIN', 'USER']),
-  organizationId: z.coerce.number(),
-  userId: z.string().uuid(),
-})
-
-export const organizationSchema = z.object({
-  id: z.coerce.number(),
-  name: z.string(),
-})

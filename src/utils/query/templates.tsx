@@ -2,7 +2,9 @@ import { trpc } from '../trpc'
 
 export const useGetTemplatesByOrganizationId = (organizationId: number) => {
   const { isLoading, isError, isSuccess, data, error } =
-    trpc.template.byOrganizationId.useQuery({ organizationId })
+    trpc.template.byOrganizationId.useQuery({
+      where: { organizationId },
+    })
   return {
     data,
     error,
@@ -14,7 +16,9 @@ export const useGetTemplatesByOrganizationId = (organizationId: number) => {
 
 export const useGetTemplateById = (id: number) => {
   const { isLoading, isError, isSuccess, data, error } =
-    trpc.template.byId.useQuery({ id })
+    trpc.template.byId.useQuery({
+      where: { id },
+    })
   return {
     data,
     error,
@@ -31,12 +35,16 @@ export const useCreateTemplate = (organizationId: number) => {
       // When mutate is called:
       onMutate: async ({ payload }: { payload: any }) => {
         // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-        await templateUtils.byOrganizationId.cancel({ organizationId })
+        await templateUtils.byOrganizationId.cancel({
+          where: { organizationId },
+        })
         const previous = templateUtils.byOrganizationId.getData({
-          organizationId,
+          where: { organizationId },
         })
         templateUtils.byOrganizationId.setData(
-          { organizationId },
+          {
+            where: { organizationId },
+          },
           (old: any) => {
             return [...old, payload]
           }
@@ -46,13 +54,17 @@ export const useCreateTemplate = (organizationId: number) => {
       // If the mutation fails, use the context we returned above
       onError: (err, updated, context) => {
         templateUtils.byOrganizationId.setData(
-          { organizationId },
+          {
+            where: { organizationId },
+          },
           context?.previous
         )
       },
       // Always refetch after error or success:
-      onSettled: (updated) => {
-        templateUtils.byOrganizationId.invalidate({ organizationId })
+      onSettled: () => {
+        templateUtils.byOrganizationId.invalidate({
+          where: { organizationId },
+        })
       },
     })
   return {
@@ -72,22 +84,38 @@ export const useUpdateTemplate = (id: number) => {
       // When mutate is called:
       onMutate: async ({ payload }: { payload: any }) => {
         // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-        await templateUtils.byId.cancel({ id })
-        const previous = templateUtils.byId.getData({ id })
-        templateUtils.byId.setData({ id }, (old: any) => ({
-          ...old,
-          ...payload,
-        }))
+        await templateUtils.byId.cancel({
+          where: { id },
+        })
+        const previous = templateUtils.byId.getData({
+          where: { id },
+        })
+        templateUtils.byId.setData(
+          {
+            where: { id },
+          },
+          (old: any) => ({
+            ...old,
+            ...payload,
+          })
+        )
         return { previous, updated: payload }
       },
       // If the mutation fails, use the context we returned above
       onError: (err, updated, context) => {
-        templateUtils.byId.setData({ id }, context?.previous)
+        templateUtils.byId.setData(
+          {
+            where: { id },
+          },
+          context?.previous
+        )
       },
       // Always refetch after error or success:
-      //   onSettled: (updated) => {
-      // templateUtils.byOrganizationId.invalidate({ organizationId })
-      //   },
+      onSettled: () => {
+        templateUtils.byId.invalidate({
+          where: { id },
+        })
+      },
     })
   return {
     mutateAsync,

@@ -1,64 +1,91 @@
 import { getErrorMessage } from '../functions'
 import { prisma } from '@/server/prisma'
-import { organizationSchema } from '../zod/schemas'
+import { Prisma } from '@prisma/client'
 
-export const prismaGetOrganizations = async (where) => {
+export const OrganizationSelect = Prisma.validator<Prisma.OrganizationSelect>()(
+  {
+    id: true,
+    name: true,
+    memberships: {
+      select: {
+        id: true,
+        organizationId: true,
+      },
+    },
+  }
+)
+
+export const prismaFindOrganizations = async ({
+  where,
+}: {
+  where: Prisma.OrganizationWhereInput
+}) => {
   try {
-    const validWhere = organizationSchema.parse(where)
     return await prisma.organization.findMany({
-      where: validWhere,
-      include: {
-        memberships: true,
-      },
+      where,
+      select: OrganizationSelect,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))
   }
 }
 
-export const prismaGetOrganization = async (where) => {
+export const prismaFindUniqueOrganization = async ({
+  where,
+}: {
+  where: Prisma.OrganizationWhereUniqueInput
+}) => {
   try {
-    const validWhere = organizationSchema.parse(where)
     return await prisma.organization.findUnique({
-      where: validWhere,
-      include: {
-        memberships: true,
-      },
+      where,
+      select: OrganizationSelect,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))
   }
 }
 
-export const prismaPostOrganization = async (payload) => {
+export const prismaCreateOrganization = async ({
+  data,
+}: {
+  data: Prisma.OrganizationUncheckedCreateInput
+}) => {
   try {
-    const validPayload = organizationSchema.parse(payload)
     return await prisma.organization.create({
-      data: validPayload,
+      data,
+      select: OrganizationSelect,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))
   }
 }
 
-export const prismaPutOrganization = async (where, payload) => {
+export const prismaUpdateOrganization = async ({
+  where,
+  data,
+}: {
+  where: Prisma.OrganizationWhereUniqueInput
+  data: Prisma.OrganizationUncheckedUpdateInput
+}) => {
   try {
-    const validPayload = organizationSchema.parse(payload)
-    const validWhere = organizationSchema.parse(where)
     return await prisma.organization.update({
-      data: validPayload,
-      where: validWhere,
+      data,
+      where,
+      select: OrganizationSelect,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))
   }
 }
 
-export const prismaDeleteOrganization = async (where) => {
+export const prismaDeleteOrganization = async ({
+  where,
+}: {
+  where: Prisma.OrganizationWhereUniqueInput
+}) => {
   try {
-    const validWhere = organizationSchema.parse(where)
     return await prisma.organization.delete({
-      where: validWhere,
+      where,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))

@@ -1,100 +1,90 @@
 import { router, publicProcedure } from '../trpc'
-import { prisma } from '@/server/prisma'
-import { templateSchema } from '@/utils/zod/schemas'
-import { Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
-
-/**
- * Default selector for Block.
- * It's important to always explicitly say which fields you want to return in order to not leak extra information
- * @see https://github.com/prisma/prisma/issues/9353
- */
-const defaultTemplateSelect = Prisma.validator<Prisma.TemplateSelect>()({
-  id: true,
-  title: true,
-  organizationId: true,
-  createdAt: true,
-  updatedAt: true,
-  blocks: true,
-})
+import {
+  TemplateCreateSchema,
+  TemplateUpdateSchema,
+  TemplateWhereSchema,
+} from '@/utils/zod/schemas'
+import {
+  prismaCreateTemplate,
+  prismaDeleteTemplate,
+  prismaFindTemplates,
+  prismaFindUniqueTemplate,
+  prismaUpdateTemplate,
+} from '@/utils/prisma/templates'
 
 export const templateRouter = router({
   byOrganizationId: publicProcedure
     .input(
       z.object({
-        organizationId: z.coerce.number(),
+        where: TemplateWhereSchema.pick({ organizationId: true }),
       })
     )
     .query(async ({ input }) => {
-      const { organizationId } = input
-      const data = await prisma.template.findMany({
-        select: defaultTemplateSelect,
-        where: { organizationId },
-        orderBy: {
-          createdAt: 'desc',
-        },
+      const { where } = input
+      const data = await prismaFindTemplates({
+        where,
       })
-
       return data
     }),
   byId: publicProcedure
     .input(
       z.object({
-        id: z.coerce.number(),
+        where: TemplateWhereSchema.pick({ id: true }),
       })
     )
     .query(async ({ input }) => {
-      const { id } = input
-      const data = await prisma.template.findUnique({
-        where: { id },
-        select: defaultTemplateSelect,
+      const { where } = input
+      const data = prismaFindUniqueTemplate({
+        where,
       })
       if (!data) {
         throw new TRPCError({
           code: 'NOT_FOUND',
-          message: `No block with id '${id}'`,
+          message: `No block with id '${where.id}'`,
         })
       }
       return data
     }),
   create: publicProcedure
-    .input(z.object({ payload: templateSchema.omit({ id: true }) }))
+    .input(
+      z.object({
+        payload: TemplateCreateSchema,
+      })
+    )
     .mutation(async ({ input }) => {
       const { payload } = input
-      const data = await prisma.template.create({
+      const data = prismaCreateTemplate({
         data: payload,
-        select: defaultTemplateSelect,
       })
       return data
     }),
   update: publicProcedure
     .input(
       z.object({
-        id: z.number(),
-        payload: templateSchema.partial(),
+        where: TemplateWhereSchema.pick({ id: true }),
+        payload: TemplateUpdateSchema.omit({ id: true }),
       })
     )
     .mutation(async ({ input }) => {
-      const { id, payload } = input
-      const data = await prisma.template.update({
-        where: { id },
+      const { where, payload } = input
+      const data = prismaUpdateTemplate({
+        where,
         data: payload,
-        select: defaultTemplateSelect,
       })
       return data
     }),
   delete: publicProcedure
     .input(
       z.object({
-        id: z.number(),
+        where: TemplateWhereSchema.pick({ id: true }),
       })
     )
     .mutation(async ({ input }) => {
-      const { id } = input
-      const data = await prisma.template.delete({
-        where: { id },
-        select: defaultTemplateSelect,
+      const { where } = input
+      const data = await prismaDeleteTemplate({
+        where,
       })
       return data
     }),
