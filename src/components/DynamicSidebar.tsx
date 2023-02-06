@@ -14,9 +14,7 @@ export default function DynamicSidebar() {
 
   const { getValues } = useFormContext<DefaultFormValues>()
 
-  const selectedBlockValues = selectedBlockIndex
-    ? getValues(`blocks.${selectedBlockIndex}`)
-    : null
+  const selectedBlockValues = getValues(`blocks.${selectedBlockIndex}`) || null
 
   const handleUnsetActiveBlock = () => {
     dispatch(setSelectedBlock(-1))

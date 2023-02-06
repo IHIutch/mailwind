@@ -65,7 +65,7 @@ export const BlockCreateSchema = z.object({
   type: z.nativeEnum(BlockType),
   templateId: z.number(),
   position: z.string(),
-  attributes: z.object({}).optional(),
+  attributes: z.any().optional(),
   value: z.string().optional(),
 })
 

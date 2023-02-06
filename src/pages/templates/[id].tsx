@@ -78,7 +78,7 @@ export type DefaultFormValues = {
     // containerAlign: 'left' | 'center' | 'right'
     containerAlign: string
     containerWidth: string
-    color: string
+    backgroundColor: string
   }
 }
 
@@ -103,7 +103,7 @@ export default function TemplateId() {
   const global = {
     containerAlign: 'center',
     containerWidth: '600px',
-    color: '#000000',
+    backgroundColor: '#ffffff',
   }
 
   const formMethods = useForm<DefaultFormValues>({
@@ -406,9 +406,10 @@ const EditView = () => {
   const { mutateAsync: handleCreateBlock } = useCreateBlock(Number(id))
   const { mutateAsync: handleDeleteBlock } = useDeleteBlock(Number(id))
 
-  const [draggingIdx, setDraggingIdx] = useState<number | null>(null)
+  const [draggingIdx, setDraggingIdx] = useState<number | undefined>(undefined)
 
-  const { control, setValue } = useFormContext<DefaultFormValues>()
+  const { control, setValue, getValues, watch } =
+    useFormContext<DefaultFormValues>()
   const { fields, move } = useFieldArray({
     keyName: 'uuid', // Prevent overwriting "id" key
     name: 'blocks',
@@ -443,8 +444,10 @@ const EditView = () => {
 
     const position = getNewLexoPosition(start?.position, end?.position)
 
+    // console.log({ position, activeIndex, overIndex })
+
     handleUpdateBlock({
-      where: { id: fields[activeIndex]?.id },
+      where: { id: getValues(`blocks.${activeIndex}.id`) },
       payload: {
         position,
       },
@@ -452,7 +455,10 @@ const EditView = () => {
 
     setValue('didMove', true)
     move(activeIndex, overIndex)
-    setDraggingIdx(null)
+
+    console.log({ activeIndex, overIndex })
+
+    setDraggingIdx(undefined)
   }
 
   const handleDragStart = ({ active }: { active: Active }) => {
@@ -489,10 +495,10 @@ const EditView = () => {
 
     handleCreateBlock({
       payload: {
-        type: fields?.[idx]?.type || BlockType.TEXT,
-        templateId: Number(fields?.[idx]?.templateId),
-        value: fields?.[idx]?.value || '',
-        attributes: fields?.[idx]?.attributes || {},
+        type: getValues(`blocks.${idx}.type`),
+        templateId: Number(id),
+        value: getValues(`blocks.${idx}.value`) || '',
+        attributes: getValues(`blocks.${idx}.attributes`),
         position,
       },
     })
@@ -510,13 +516,13 @@ const EditView = () => {
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
         onDragCancel={() => {
-          setDraggingIdx(null)
+          setDraggingIdx(undefined)
         }}
       >
         <SortableContext items={fields} strategy={verticalListSortingStrategy}>
           <ul>
             {fields.map((block, idx) => (
-              <li key={block.id}>
+              <li key={block.id || '-1'}>
                 <SortableItem id={block.id}>
                   <div
                     className={clsx(
@@ -535,9 +541,11 @@ const EditView = () => {
                         dispatch(setSelectedBlock(idx))
                       }
                     >
-                      <DynamicBlock index={idx} />
-                      {/* )}
-                      /> */}
+                      <DynamicBlock
+                        index={idx}
+                        type={getValues(`blocks.${idx}.type`)}
+                        attributes={watch(`blocks.${idx}.attributes`)}
+                      />
                     </ItemBlock>
                   </div>
                 </SortableItem>
@@ -546,9 +554,13 @@ const EditView = () => {
           </ul>
         </SortableContext>
         <SortOverlay>
-          {draggingIdx ? (
-            <ItemBlock>
-              <DynamicBlock index={draggingIdx} />
+          {draggingIdx !== undefined ? (
+            <ItemBlock type={getValues(`blocks.${draggingIdx}.type`)}>
+              <DynamicBlock
+                index={draggingIdx}
+                type={getValues(`blocks.${draggingIdx}.type`)}
+                attributes={getValues(`blocks.${draggingIdx}.attributes`)}
+              />
             </ItemBlock>
           ) : null}
         </SortOverlay>

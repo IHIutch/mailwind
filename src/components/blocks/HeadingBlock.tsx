@@ -24,11 +24,13 @@ export default function HeadingBlock({
 
   return (
     <div
+      style={{ ...attributes }}
       className={clsx(
         type === BlockType.H1 &&
           'text-4xl font-extrabold [&_strong]:font-black',
         type === BlockType.H2 && 'text-2xl font-bold [&_strong]:font-extrabold',
-        type === BlockType.H3 && 'text-xl font-semibold [&_strong]:font-bold'
+        type === BlockType.H3 && 'text-xl font-semibold [&_strong]:font-bold',
+        className
       )}
     >
       <Editor

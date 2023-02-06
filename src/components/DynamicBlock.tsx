@@ -1,20 +1,23 @@
 import { DefaultFormValues } from '@/pages/templates/[id]'
 import { blocks } from '@/utils/defaults'
-import { useFormContext, useWatch } from 'react-hook-form'
+import { BlockType } from '@prisma/client'
+import { useFormContext } from 'react-hook-form'
 
-export default function DynamicBlock({ index }: { index: number }) {
-  const { control, getValues } = useFormContext<DefaultFormValues>()
+export default function DynamicBlock({
+  index,
+  type,
+  attributes,
+}: {
+  index: number
+  type: BlockType
+  attributes: any
+}) {
+  const { control } = useFormContext<DefaultFormValues>()
 
-  const attributes = useWatch({
-    control,
-    name: `blocks.${index}.attributes` as 'blocks.0.attributes',
-  })
-  const currentBlock = getValues(`blocks.${index}`)
-
-  const Component = blocks[currentBlock.type]
+  const Component = blocks[type]
   return (
     <Component
-      type={currentBlock.type}
+      type={type}
       attributes={attributes}
       inputProps={{
         name: `blocks.${index}.value` as 'blocks.0.value',
