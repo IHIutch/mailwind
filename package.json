@@ -43,6 +43,7 @@
     "@types/react-dom": "18.0.10",
     "clsx": "^1.2.1",
     "dayjs": "^1.11.7",
+    "fathom-client": "^3.5.0",
     "lexorank": "^1.0.5",
     "lucide-react": "^0.107.0",
     "nanoid": "^4.0.0",

@@ -42,6 +42,7 @@ specifiers:
   eslint-config-prettier: ^8.6.0
   eslint-plugin-prettier: ^4.2.1
   eslint-plugin-tailwindcss: ^3.8.2
+  fathom-client: ^3.5.0
   lexorank: ^1.0.5
   lucide-react: ^0.107.0
   nanoid: ^4.0.0
@@ -97,6 +98,7 @@ dependencies:
   '@types/react-dom': 18.0.10
   clsx: 1.2.1
   dayjs: 1.11.7
+  fathom-client: 3.5.0
   lexorank: 1.0.5
   lucide-react: 0.107.0_react@18.2.0
   nanoid: 4.0.0
@@ -3198,6 +3200,10 @@ packages:
     dependencies:
       reusify: 1.0.4
     dev: true
+
+  /fathom-client/3.5.0:
+    resolution: {integrity: sha512-BiRDS9Q9a8Zma0H717FWC5cvf545K/CsxBpxKT22TcSl1EbRhhlHWIJgrdeiQUfdorBK2ppy09TwMOhRsbos/A==}
+    dev: false
 
   /file-entry-cache/6.0.1:
     resolution: {integrity: sha512-7Gps/XWymbLk2QLYK4NzpMOrYjMhdIxXuIvy2QBsLE6ljuodKvdkWs/cpyJJ3CVIVpH0Oi1Hvg1ovbMzLdFBBg==}
