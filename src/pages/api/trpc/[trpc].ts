@@ -3,6 +3,7 @@
  */
 import { createContext } from '@/server/context'
 import { appRouter } from '@/server/routers/_app'
+import { getErrorMessage } from '@/utils/functions'
 import * as trpcNext from '@trpc/server/adapters/next'
 
 export default trpcNext.createNextApiHandler({
@@ -17,7 +18,7 @@ export default trpcNext.createNextApiHandler({
   onError({ error }) {
     if (error.code === 'INTERNAL_SERVER_ERROR') {
       // send to bug reporting
-      console.error('Something went wrong', error)
+      throw Error(getErrorMessage(error)) // Should be caught by Sentry
     }
   },
   /**
