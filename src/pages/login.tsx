@@ -25,7 +25,6 @@ export default function Login() {
     getValues,
     formState: { errors },
   } = useForm<FormValues>()
-  console.log(`${getBaseUrl()}/logging-in`)
 
   const onSubmit: SubmitHandler<FormValues> = async (form) => {
     try {

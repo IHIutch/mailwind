@@ -6,11 +6,13 @@ export function getErrorMessage(error: unknown) {
 }
 
 export function getBaseUrl() {
-  return (
-    process.env?.NEXT_PUBLIC_SITE_URL ??
-    process.env?.NEXT_PUBLIC_VERCEL_URL ??
-    `http://localhost:${process.env.PORT ?? 3000}`
-  )
+  if (process.env.NODE_ENV !== 'production') {
+    return `http://localhost:${process.env.PORT ?? 3000}`
+  } else {
+    return (
+      process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_VERCEL_URL
+    )
+  }
 }
 
 export const getNewLexoPosition = (start?: string, end?: string) => {
