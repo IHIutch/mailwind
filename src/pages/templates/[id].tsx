@@ -70,6 +70,8 @@ import {
 import { getNewLexoPosition } from '@/utils/functions'
 import { SingleBlockPayloadType } from '@/utils/prisma/blocks'
 import { debounce } from 'lodash'
+import { useDebouncedEffect } from '@/utils/hooks/useDebounceEffect'
+import { isValid } from 'zod'
 
 export type DefaultFormValues = {
   didMove: boolean
@@ -224,55 +226,31 @@ const Content = ({ children }: { children: ReactNode }) => {
     ] as ['didMove', 'blocks.0.value', 'blocks.0.attributes'],
   })
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const autoSaveDebounce = useCallback(
-    debounce(
-      ({
-        id,
-        payload,
-        isValid,
-      }: {
-        id: any
-        payload: any
-        isValid: boolean
-      }) => {
-        if (isValid) {
-          // console.log({
-          //   where: { id },
-          //   payload,
-          // })
-          handleUpdateBlock({
-            where: { id },
-            payload,
-          })
-        }
-      },
-      750
-    ),
-    []
+  useDebouncedEffect(
+    () => {
+      if (!didMove && formState.isDirty && formState.isValid) {
+        handleUpdateBlock({
+          where: {
+            id: getValues(`blocks.${selectedBlockIndex}.id`),
+          },
+          payload: {
+            value: value || '',
+            attributes,
+          },
+        })
+      }
+    },
+    [
+      attributes,
+      didMove,
+      formState.isDirty,
+      formState.isValid,
+      getValues,
+      selectedBlockIndex,
+      value,
+    ],
+    750
   )
-
-  useEffect(() => {
-    if (!didMove && formState.isDirty) {
-      autoSaveDebounce({
-        id: getValues(`blocks.${selectedBlockIndex}.id`),
-        payload: {
-          value,
-          attributes,
-        },
-        isValid: formState.isValid,
-      })
-    }
-  }, [
-    attributes,
-    autoSaveDebounce,
-    didMove,
-    formState.isDirty,
-    formState.isValid,
-    getValues,
-    selectedBlockIndex,
-    value,
-  ])
 
   return <>{children}</>
 }
