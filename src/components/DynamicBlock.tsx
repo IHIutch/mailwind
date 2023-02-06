@@ -1,25 +1,83 @@
+import { useSelectedBlockState } from '@/context/selectedBlock'
 import { blocks } from '@/utils/defaults'
-import { BlockType } from '@prisma/client'
-import { JSONValue } from 'superjson/dist/types'
+import { SingleBlockPayloadType } from '@/utils/prisma/blocks'
+import { useUpdateBlock } from '@/utils/query/blocks'
+import { debounce } from 'lodash'
+import { useRouter } from 'next/router'
+import { useCallback, useEffect } from 'react'
+import { useFormContext, useWatch } from 'react-hook-form'
 
-export default function DynamicBlock({
-  type,
-  attributes,
-  value,
-  onChange,
-}: {
-  type: BlockType
-  attributes: JSONValue
-  value: string
-  onChange?: (value: any) => void
-}) {
-  const Component = blocks[type]
+type FormValues = {
+  blocks: SingleBlockPayloadType[]
+  global: any
+}
+
+export default function DynamicBlock({ index }: { index: number }) {
+  const {
+    query: { id },
+  } = useRouter()
+  const { mutateAsync: handleUpdateBlock } = useUpdateBlock(Number(id))
+  const { control, getValues, formState } = useFormContext<FormValues>()
+
+  const [attributes, value] = useWatch({
+    control,
+    name: [`blocks.${index}.attributes`, `blocks.${index}.value`] as [
+      'blocks.0.attributes',
+      'blocks.0.value'
+    ],
+  })
+  const currentBlock = getValues(`blocks.${index}`)
+  const isValueDirty = formState.dirtyFields.blocks?.[index]?.value
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const autoSaveDebounce = useCallback(
+    debounce(
+      ({
+        id,
+        value,
+        isValid,
+      }: {
+        id: any
+        value: string
+        isValid: boolean
+      }) => {
+        if (isValid) {
+          handleUpdateBlock({
+            where: { id },
+            payload: { value },
+          })
+        }
+      },
+      750
+    ),
+    []
+  )
+
+  useEffect(() => {
+    if (isValueDirty) {
+      autoSaveDebounce({
+        id: currentBlock?.id,
+        value: value || '',
+        isValid: formState.isValid,
+      })
+    }
+  }, [
+    autoSaveDebounce,
+    currentBlock?.id,
+    formState.isValid,
+    isValueDirty,
+    value,
+  ])
+
+  const Component = blocks[currentBlock.type]
   return (
     <Component
-      type={type}
+      type={currentBlock.type}
       attributes={attributes}
-      value={value}
-      onChange={onChange}
+      inputProps={{
+        name: `blocks.${index}.value` as 'blocks.0.value',
+        control,
+      }}
     />
   )
 }

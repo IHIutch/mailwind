@@ -6,6 +6,12 @@ import * as Label from '@radix-ui/react-label'
 import { useFormContext } from 'react-hook-form'
 import { useSelectedBlockState } from '@/context/selectedBlock'
 import { ReactNode } from 'react'
+import { SingleBlockPayloadType } from '@/utils/prisma/blocks'
+
+// type FormValues = {
+//   blocks: SingleBlockPayloadType[]
+//   global: any
+// }
 
 export default function TextSidebar({ children }: { children: ReactNode }) {
   const { data: selectedBlockIndex } = useSelectedBlockState()

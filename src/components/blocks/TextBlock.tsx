@@ -1,18 +1,42 @@
+import { SingleBlockPayloadType } from '@/utils/prisma/blocks'
+import { useController, UseControllerProps } from 'react-hook-form'
 import Editor from '../Editor'
-import { JSONValue } from 'superjson/dist/types'
+
+type FormValues = {
+  blocks: SingleBlockPayloadType[]
+  global: any
+}
 
 export default function TextBlock({
   attributes,
-  value,
-  onChange,
-}: {
-  attributes: JSONValue
-  value: string
-  onChange?: (value: any) => void
+  inputProps,
+  className,
+}: // errorClassName,
+// errorClassName,
+{
+  attributes: any
+  // value: string
+  // onChange?: (value: any) => void
+  // name: string
+  // control: Control
+  inputProps: UseControllerProps<FormValues>
+  className?: string
+  errorClassName?: string
 }) {
+  const {
+    field: { onChange, onBlur, name: inputName, value, ref },
+    fieldState: { error },
+  } = useController({ ...inputProps })
+
   return (
-    <div style={typeof attributes === 'object' ? { ...attributes } : undefined}>
-      <Editor value={value} onChange={onChange} />
+    <div style={{ ...attributes }} className={className}>
+      <Editor
+        ref={ref}
+        name={inputName}
+        value={value}
+        onChange={onChange}
+        onBlur={onBlur}
+      />
     </div>
   )
 }

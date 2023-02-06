@@ -318,7 +318,7 @@ const EditView = () => {
 
   const [draggingIdx, setDraggingIdx] = useState<number | null>(null)
 
-  const { control } = useFormContext<FormValues>()
+  const { control, watch } = useFormContext<FormValues>()
   const { fields, move } = useFieldArray({
     keyName: 'uuid', // Prevent overwriting "id" key
     name: 'blocks',
@@ -445,11 +445,11 @@ const EditView = () => {
                       }
                     >
                       <DynamicBlock
-                        // id={block.id}
-                        attributes={block.attributes}
+                        index={idx}
                         type={block.type}
                         value={block.value ?? ''}
                         onChange={(val) => console.log({ val })}
+                        attributes={watch(`blocks.${idx}.attributes`)}
                       />
                       {/* )}
                       /> */}
@@ -463,11 +463,7 @@ const EditView = () => {
         <SortOverlay>
           {draggingIdx ? (
             <ItemBlock>
-              <DynamicBlock
-                type={fields[draggingIdx]?.type || BlockType.TEXT}
-                value={fields[draggingIdx]?.value || ''}
-                attributes={fields[draggingIdx]?.attributes}
-              />
+              <DynamicBlock index={draggingIdx} />
             </ItemBlock>
           ) : null}
         </SortOverlay>

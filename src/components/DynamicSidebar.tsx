@@ -32,7 +32,9 @@ export default function DynamicSidebar() {
     name: `blocks.${selectedBlockIndex}.attributes` as 'blocks.0.attributes',
   })
 
-  const selectedBlockValues = getValues('blocks')?.[selectedBlockIndex || -1]
+  const selectedBlockValues = selectedBlockIndex
+    ? getValues(`blocks.${selectedBlockIndex}`)
+    : null
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const autoSaveDebounce = useCallback(
@@ -58,8 +60,13 @@ export default function DynamicSidebar() {
     []
   )
 
+  const isAttributesDirty =
+    Object.keys(
+      formState.dirtyFields.blocks?.[selectedBlockIndex || -1]?.attributes || {}
+    ).length > 0
+
   useEffect(() => {
-    if (formState.isDirty && selectedBlockIndex) {
+    if (isAttributesDirty) {
       autoSaveDebounce({
         id: selectedBlockValues?.id,
         attributes,
@@ -67,11 +74,10 @@ export default function DynamicSidebar() {
       })
     }
   }, [
-    selectedBlockIndex,
     attributes,
     autoSaveDebounce,
-    formState.isDirty,
     formState.isValid,
+    isAttributesDirty,
     selectedBlockValues?.id,
   ])
 

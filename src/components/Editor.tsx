@@ -3,7 +3,7 @@ import TextAlign from '@tiptap/extension-text-align'
 import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 
-export default function Editor({ value, onChange }) {
+export default function Editor({ name, ref, value, onChange, onBlur }) {
   const editor = useEditor({
     injectCSS: false,
     editorProps: {
@@ -31,6 +31,9 @@ export default function Editor({ value, onChange }) {
 
   return (
     <EditorContent
+      ref={ref}
+      name={name}
+      onBlur={onBlur}
       editor={editor}
       onKeyUp={(e) => {
         if (e.key === 'Enter') e.preventDefault()

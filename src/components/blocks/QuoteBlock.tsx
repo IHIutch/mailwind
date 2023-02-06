@@ -1,18 +1,42 @@
 import Editor from '../Editor'
-import { JSONValue } from 'superjson/dist/types'
+import { useController, UseControllerProps } from 'react-hook-form'
+import { SingleBlockPayloadType } from '@/utils/prisma/blocks'
+
+type FormValues = {
+  blocks: SingleBlockPayloadType[]
+  global: any
+}
 
 export default function QuoteBlock({
   attributes,
-  value,
-  onChange,
-}: {
-  attributes: JSONValue
-  value: string
-  onChange?: (value: any) => void
+  inputProps,
+  className,
+}: // errorClassName,
+// errorClassName,
+{
+  attributes: any
+  // value: string
+  // onChange?: (value: any) => void
+  // name: string
+  // control: Control
+  inputProps: UseControllerProps<FormValues>
+  className?: string
+  errorClassName?: string
 }) {
+  const {
+    field: { onChange, onBlur, name: inputName, value, ref },
+    fieldState: { error },
+  } = useController({ ...inputProps })
+
   return (
     <div className="border-l-4 border-gray-200 pl-3">
-      <Editor value={value} onChange={onChange} />
+      <Editor
+        ref={ref}
+        name={inputName}
+        value={value}
+        onChange={onChange}
+        onBlur={onBlur}
+      />
     </div>
   )
 }

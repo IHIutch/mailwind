@@ -1,19 +1,37 @@
+import { SingleBlockPayloadType } from '@/utils/prisma/blocks'
 import debounce from 'lodash/debounce'
 import Highlight, { defaultProps } from 'prism-react-renderer'
 import theme from 'prism-react-renderer/themes/nightOwl'
 import { useCallback, useState } from 'react'
+import { useController, UseControllerProps } from 'react-hook-form'
 import Editor from 'react-simple-code-editor'
-import { JSONValue } from 'superjson/dist/types'
+
+type FormValues = {
+  blocks: SingleBlockPayloadType[]
+  global: any
+}
 
 export default function CodeBlock({
   attributes,
-  value,
-  onChange = () => null,
-}: {
-  attributes: JSONValue
-  value: string
-  onChange?: (value: any) => void
+  inputProps,
+  className,
+}: // errorClassName,
+// errorClassName,
+{
+  attributes: any
+  // value: string
+  // onChange?: (value: any) => void
+  // name: string
+  // control: Control
+  inputProps: UseControllerProps<FormValues>
+  className?: string
+  errorClassName?: string
 }) {
+  const {
+    field: { onChange, onBlur, name: inputName, value, ref },
+    fieldState: { error },
+  } = useController({ ...inputProps })
+
   const [code, setCode] = useState(value)
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -30,17 +48,21 @@ export default function CodeBlock({
   //   [handleDetectLanguage]
   // )
 
-  const handleChange = (payload) => {
-    setCode(payload)
-    handleUpdateDebounce(payload)
-  }
+  // const handleChange = (payload) => {
+  //   setCode(payload)
+  //   handleUpdateDebounce(payload)
+  // }
 
   return (
     <div className="overflow-hidden rounded-md p-2" style={theme.plain}>
       <Editor
+        ref={ref}
+        name={inputName}
+        value={value}
+        // onChange={onChange}
+        onBlur={onBlur}
         className="font-mono"
-        value={code}
-        onValueChange={handleChange}
+        onValueChange={onChange}
         highlight={(code) => <PrismaHighlight code={code} language="jsx" />}
       />
     </div>

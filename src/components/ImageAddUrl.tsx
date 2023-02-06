@@ -2,14 +2,14 @@ import * as Label from '@radix-ui/react-label'
 import { Image, X } from 'lucide-react'
 import { useRef, useState } from 'react'
 
-export default function ImageDropzone({ onChange, value = '' }) {
+export default function ImageDropzone({ onChange, value = '', name }) {
   const [preview, setPreview] = useState(value)
   const [imageUrl, setImageUrl] = useState('')
   const [error, setError] = useState('')
   const inputRef = useRef()
 
   const handleSubmit = () => {
-    const isValid = inputRef.current.checkValidity()
+    const isValid = inputRef?.current?.checkValidity()
     if (isValid) {
       onChange(imageUrl)
       setPreview(imageUrl)
@@ -47,6 +47,7 @@ export default function ImageDropzone({ onChange, value = '' }) {
               </div>
               <input
                 ref={inputRef}
+                name={name}
                 value={imageUrl}
                 onChange={(e) => setImageUrl(e.target.value)}
                 type="url"
