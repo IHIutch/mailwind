@@ -29,6 +29,7 @@ function MyApp({
 
   useEffect(() => {
     Fathom.load('NFLJAEWU', {
+      url: 'https://twentyone-iggy-pop.mailwind.app/script.js',
       includedDomains: ['mailwind.app', 'mailwind.org'],
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
