@@ -1,15 +1,14 @@
-import { type Control, useController } from 'react-hook-form'
+import { DefaultFormValues } from '@/pages/templates/[id]'
+import { useController, UseControllerProps } from 'react-hook-form'
 
 export default function FontSizeInput({
   id,
-  name,
-  control,
+  inputProps,
   className,
   errorClassName,
 }: {
   id: string
-  name: string
-  control: Control
+  inputProps: UseControllerProps<DefaultFormValues>
   className?: string
   errorClassName?: string
 }) {
@@ -17,8 +16,7 @@ export default function FontSizeInput({
     field: { onChange, onBlur, name: inputName, value, ref },
     fieldState: { error },
   } = useController({
-    name,
-    control,
+    ...inputProps,
     rules: {
       required: true,
       validate: {

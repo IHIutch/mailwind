@@ -51,7 +51,7 @@ import {
   X,
 } from 'lucide-react'
 import { useRouter } from 'next/router'
-import { ReactNode, useEffect, useMemo } from 'react'
+import { type ReactNode, useEffect, useMemo, useCallback } from 'react'
 import { useState } from 'react'
 import dayjs from 'dayjs'
 import {
@@ -59,30 +59,41 @@ import {
   useFieldArray,
   useForm,
   useFormContext,
+  useWatch,
 } from 'react-hook-form'
 import {
   SelectedBlockProvider,
   setSelectedBlock,
   useSelectedBlockDispatch,
+  useSelectedBlockState,
 } from '@/context/selectedBlock'
 import { getNewLexoPosition } from '@/utils/functions'
 import { SingleBlockPayloadType } from '@/utils/prisma/blocks'
+import { debounce } from 'lodash'
 
-type FormValues = {
+export type DefaultFormValues = {
+  didMove: boolean
   blocks: SingleBlockPayloadType[]
-  global: any
+  global: {
+    // containerAlign: 'left' | 'center' | 'right'
+    containerAlign: string
+    containerWidth: string
+    color: string
+  }
 }
 
 export default function TemplateId() {
   const {
     query: { id },
   } = useRouter()
+
   const { data: blocks } = useGetBlocksByTemplateId(Number(id))
   const sortedBlocks = useMemo(() => {
     return blocks
       ? blocks.sort((a, b) => a.position.localeCompare(b.position))
       : []
   }, [blocks])
+
   const [previewSize, setPreviewSize] = useState<'desktop' | 'mobile'>(
     'desktop'
   )
@@ -95,17 +106,26 @@ export default function TemplateId() {
     color: '#000000',
   }
 
-  const formMethods = useForm<FormValues>({
+  const formMethods = useForm<DefaultFormValues>({
     mode: 'onChange',
     defaultValues: {
+      didMove: false,
       global,
       blocks: sortedBlocks,
     },
   })
 
   useEffect(() => {
-    formMethods.reset({ ...formMethods.getValues(), blocks: sortedBlocks })
+    formMethods.reset({
+      global: { ...formMethods.getValues('global') },
+      blocks: sortedBlocks,
+      didMove: false,
+    })
   }, [formMethods.reset, sortedBlocks, formMethods.getValues, formMethods])
+
+  // const attributes = formMethods.watch({
+  //   name: `blocks.${sele}.attributes` as 'blocks.0.attributes',
+  // })
 
   const handleDownload = async () => {
     console.log('download')
@@ -143,48 +163,118 @@ export default function TemplateId() {
       <GlobalNavbar>
         <TemplateTitle />
       </GlobalNavbar>
-      <SelectedBlockProvider initialValue={{ data: null }}>
-        <div className="relative pt-16">
-          {/* <FormProvider {...formMethods}> */}
-          <FormProvider {...formMethods}>
-            <div className="fixed inset-y-0 top-16 w-[calc(100%-300px)]">
-              <EditorNavbar
-                previewSize={previewSize}
-                setPreviewSize={setPreviewSize}
-                handleDownload={handleDownload}
-              />
-              <div className="flex h-full overflow-y-auto">
-                <div
-                  className={clsx('relative py-12 px-4', [
-                    global.containerAlign === 'left' && 'mr-auto',
-                    global.containerAlign === 'center' && 'mx-auto',
-                    global.containerAlign === 'right' && 'ml-auto',
-                  ])}
-                  style={{
-                    width:
-                      previewSize === 'desktop'
-                        ? `calc(${global.containerWidth} + ${offset})`
-                        : `calc(${mobileSize} + ${offset})`,
-                    left: offset,
-                  }}
-                >
-                  <EditView />
+      <SelectedBlockProvider initialValue={{ data: -1 }}>
+        <FormProvider {...formMethods}>
+          <Content>
+            <div className="relative pt-16">
+              <div className="fixed inset-y-0 top-16 w-[calc(100%-300px)]">
+                <EditorNavbar
+                  previewSize={previewSize}
+                  setPreviewSize={setPreviewSize}
+                  handleDownload={handleDownload}
+                />
+                <div className="flex h-full overflow-y-auto">
+                  <div
+                    className={clsx('relative py-12 px-4', [
+                      global.containerAlign === 'left' && 'mr-auto',
+                      global.containerAlign === 'center' && 'mx-auto',
+                      global.containerAlign === 'right' && 'ml-auto',
+                    ])}
+                    style={{
+                      width:
+                        previewSize === 'desktop'
+                          ? `calc(${global.containerWidth} + ${offset})`
+                          : `calc(${mobileSize} + ${offset})`,
+                      left: offset,
+                    }}
+                  >
+                    <EditView />
+                  </div>
+                </div>
+              </div>
+              <div className="fixed inset-y-0 right-0 w-[300px] border-l border-zinc-200 bg-white pt-16">
+                <div className="h-full overflow-y-auto">
+                  <div className="py-4">
+                    <DynamicSidebar />
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="fixed inset-y-0 right-0 w-[300px] border-l border-zinc-200 bg-white pt-16">
-              <div className="h-full overflow-y-auto">
-                <div className="py-4">
-                  <DynamicSidebar />
-                </div>
-              </div>
-            </div>
-          </FormProvider>
-        </div>
-        {/* </FormProvider> */}
+          </Content>
+        </FormProvider>
       </SelectedBlockProvider>
     </>
   )
+}
+
+const Content = ({ children }: { children: ReactNode }) => {
+  const {
+    query: { id },
+  } = useRouter()
+  const { data: selectedBlockIndex } = useSelectedBlockState()
+  const { mutateAsync: handleUpdateBlock } = useUpdateBlock(Number(id))
+
+  const { control, formState, getValues } = useFormContext<DefaultFormValues>()
+  const [didMove, value, attributes] = useWatch({
+    control,
+    name: [
+      'didMove',
+      `blocks.${selectedBlockIndex}.value`,
+      `blocks.${selectedBlockIndex}.attributes`,
+    ] as ['didMove', 'blocks.0.value', 'blocks.0.attributes'],
+  })
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const autoSaveDebounce = useCallback(
+    debounce(
+      ({
+        id,
+        payload,
+        isValid,
+      }: {
+        id: any
+        payload: any
+        isValid: boolean
+      }) => {
+        if (isValid) {
+          // console.log({
+          //   where: { id },
+          //   payload,
+          // })
+          handleUpdateBlock({
+            where: { id },
+            payload,
+          })
+        }
+      },
+      750
+    ),
+    []
+  )
+
+  useEffect(() => {
+    if (!didMove && formState.isDirty) {
+      autoSaveDebounce({
+        id: getValues(`blocks.${selectedBlockIndex}.id`),
+        payload: {
+          value,
+          attributes,
+        },
+        isValid: formState.isValid,
+      })
+    }
+  }, [
+    attributes,
+    autoSaveDebounce,
+    didMove,
+    formState.isDirty,
+    formState.isValid,
+    getValues,
+    selectedBlockIndex,
+    value,
+  ])
+
+  return <>{children}</>
 }
 
 const TemplateTitle = () => {
@@ -318,7 +408,7 @@ const EditView = () => {
 
   const [draggingIdx, setDraggingIdx] = useState<number | null>(null)
 
-  const { control, watch } = useFormContext<FormValues>()
+  const { control, setValue } = useFormContext<DefaultFormValues>()
   const { fields, move } = useFieldArray({
     keyName: 'uuid', // Prevent overwriting "id" key
     name: 'blocks',
@@ -360,6 +450,7 @@ const EditView = () => {
       },
     })
 
+    setValue('didMove', true)
     move(activeIndex, overIndex)
     setDraggingIdx(null)
   }
@@ -437,20 +528,14 @@ const EditView = () => {
                   >
                     <ItemBlock
                       type={block.type}
-                      handleAddItem={addItem}
+                      handleAddItem={({ type }) => addItem({ idx, type })}
                       handleDeleteItem={() => deleteItem(block.id)}
                       handleDuplicateItem={() => duplicateItem(idx)}
                       handleSetSelectedBlock={() =>
                         dispatch(setSelectedBlock(idx))
                       }
                     >
-                      <DynamicBlock
-                        index={idx}
-                        type={block.type}
-                        value={block.value ?? ''}
-                        onChange={(val) => console.log({ val })}
-                        attributes={watch(`blocks.${idx}.attributes`)}
-                      />
+                      <DynamicBlock index={idx} />
                       {/* )}
                       /> */}
                     </ItemBlock>
@@ -481,9 +566,9 @@ const ItemBlock = ({
   children,
 }: {
   type?: BlockType
-  handleAddItem?: ({ idx, type }: { idx: number; type: BlockType }) => void
-  handleDeleteItem?: ({ idx }: { idx: number }) => void
-  handleDuplicateItem?: ({ idx }: { idx: number }) => void
+  handleAddItem?: ({ type }: { type: BlockType }) => void
+  handleDeleteItem?: () => void
+  handleDuplicateItem?: () => void
   handleSetSelectedBlock?: () => void
   children?: ReactNode
 }) => {
@@ -564,10 +649,7 @@ const ItemBlock = ({
                     className="flex cursor-pointer items-center py-1 px-2 outline-none hover:bg-zinc-100"
                     onClick={(e) => {
                       e.stopPropagation() // This is a hacky fix that prevents the items behind this button from receiving a click event: https://github.com/radix-ui/primitives/issues/1658
-                      handleAddItem({
-                        idx,
-                        type: optionType,
-                      })
+                      handleAddItem({ type: optionType })
                     }}
                   >
                     {getIcon(optionType)}

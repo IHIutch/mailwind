@@ -4,9 +4,13 @@ import SpacingInput from '../inputs/SpacingInput'
 import * as Label from '@radix-ui/react-label'
 import { useFormContext } from 'react-hook-form'
 import { type ReactNode } from 'react'
+import { useSelectedBlockState } from '@/context/selectedBlock'
+import { DefaultFormValues } from '@/pages/templates/[id]'
 
 export default function ImageSidebar({ children }: { children: ReactNode }) {
-  const { control } = useFormContext()
+  const { data: selectedBlockIndex } = useSelectedBlockState()
+  const { control } = useFormContext<DefaultFormValues>()
+
   return (
     <div>
       <div>{children}</div>
@@ -20,8 +24,10 @@ export default function ImageSidebar({ children }: { children: ReactNode }) {
           </Label.Root>
           <SpacingInput
             id="heightInputField"
-            name={'attributes.height'}
-            control={control}
+            inputProps={{
+              name: `blocks.${selectedBlockIndex}.attributes.height` as 'blocks.0.attributes.height',
+              control,
+            }}
             className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
             errorClassName="mt-1 text-xs text-red-500"
           />
@@ -35,8 +41,10 @@ export default function ImageSidebar({ children }: { children: ReactNode }) {
           </Label.Root>
           <SpacingInput
             id="widthInputField"
-            name={'attributes.width'}
-            control={control}
+            inputProps={{
+              name: `blocks.${selectedBlockIndex}.attributes.width` as 'blocks.0.attributes.width',
+              control,
+            }}
             className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
             errorClassName="mt-1 text-xs text-red-500"
           />
@@ -51,8 +59,10 @@ export default function ImageSidebar({ children }: { children: ReactNode }) {
             </Label.Root>
             <PaddingInput
               id="paddingTopField"
-              name={'attributes.paddingTop'}
-              control={control}
+              inputProps={{
+                name: `blocks.${selectedBlockIndex}.attributes.paddingTop` as 'blocks.0.attributes.paddingTop',
+                control,
+              }}
               className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
               errorClassName="mt-1 text-xs text-red-500"
             />
@@ -66,8 +76,10 @@ export default function ImageSidebar({ children }: { children: ReactNode }) {
             </Label.Root>
             <PaddingInput
               id="paddingRightField"
-              name={'attributes.paddingRight'}
-              control={control}
+              inputProps={{
+                name: `blocks.${selectedBlockIndex}.attributes.paddingRight` as 'blocks.0.attributes.paddingRight',
+                control,
+              }}
               className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
               errorClassName="mt-1 text-xs text-red-500"
             />
@@ -81,8 +93,10 @@ export default function ImageSidebar({ children }: { children: ReactNode }) {
             </Label.Root>
             <PaddingInput
               id="paddingBottomField"
-              name={'attributes.paddingBottom'}
-              control={control}
+              inputProps={{
+                name: `blocks.${selectedBlockIndex}.attributes.paddingBottom` as 'blocks.0.attributes.paddingBottom',
+                control,
+              }}
               className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
               errorClassName="mt-1 text-xs text-red-500"
             />
@@ -96,8 +110,10 @@ export default function ImageSidebar({ children }: { children: ReactNode }) {
             </Label.Root>
             <PaddingInput
               id="paddingLeftField"
-              name={'attributes.paddingLeft'}
-              control={control}
+              inputProps={{
+                name: `blocks.${selectedBlockIndex}.attributes.paddingLeft` as 'blocks.0.attributes.paddingLeft',
+                control,
+              }}
               className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
               errorClassName="mt-1 text-xs text-red-500"
             />
@@ -112,8 +128,10 @@ export default function ImageSidebar({ children }: { children: ReactNode }) {
           </Label.Root>
           <LinkInput
             id="urlField"
-            name={'attributes.url'}
-            control={control}
+            inputProps={{
+              name: `blocks.${selectedBlockIndex}.attributes.url` as 'blocks.0.attributes.url',
+              control,
+            }}
             className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
             errorClassName="mt-1 text-xs text-red-500"
           />

@@ -1,16 +1,15 @@
+import { DefaultFormValues } from '@/pages/templates/[id]'
 import { KeyboardEvent } from 'react'
-import { type Control, useController } from 'react-hook-form'
+import { useController, UseControllerProps } from 'react-hook-form'
 
 export default function PaddingInput({
   id,
-  name,
-  control,
+  inputProps,
   className,
   errorClassName,
 }: {
   id: string
-  name: string
-  control: Control
+  inputProps: UseControllerProps<DefaultFormValues>
   className?: string
   errorClassName?: string
 }) {
@@ -18,8 +17,7 @@ export default function PaddingInput({
     field: { onChange, onBlur, name: inputName, value, ref },
     fieldState: { error },
   } = useController({
-    name,
-    control,
+    ...inputProps,
     rules: {
       required: true,
       validate: {

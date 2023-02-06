@@ -1,73 +1,15 @@
-import { useSelectedBlockState } from '@/context/selectedBlock'
+import { DefaultFormValues } from '@/pages/templates/[id]'
 import { blocks } from '@/utils/defaults'
-import { SingleBlockPayloadType } from '@/utils/prisma/blocks'
-import { useUpdateBlock } from '@/utils/query/blocks'
-import { debounce } from 'lodash'
-import { useRouter } from 'next/router'
-import { useCallback, useEffect } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
 
-type FormValues = {
-  blocks: SingleBlockPayloadType[]
-  global: any
-}
-
 export default function DynamicBlock({ index }: { index: number }) {
-  const {
-    query: { id },
-  } = useRouter()
-  const { mutateAsync: handleUpdateBlock } = useUpdateBlock(Number(id))
-  const { control, getValues, formState } = useFormContext<FormValues>()
+  const { control, getValues } = useFormContext<DefaultFormValues>()
 
-  const [attributes, value] = useWatch({
+  const attributes = useWatch({
     control,
-    name: [`blocks.${index}.attributes`, `blocks.${index}.value`] as [
-      'blocks.0.attributes',
-      'blocks.0.value'
-    ],
+    name: `blocks.${index}.attributes` as 'blocks.0.attributes',
   })
   const currentBlock = getValues(`blocks.${index}`)
-  const isValueDirty = formState.dirtyFields.blocks?.[index]?.value
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const autoSaveDebounce = useCallback(
-    debounce(
-      ({
-        id,
-        value,
-        isValid,
-      }: {
-        id: any
-        value: string
-        isValid: boolean
-      }) => {
-        if (isValid) {
-          handleUpdateBlock({
-            where: { id },
-            payload: { value },
-          })
-        }
-      },
-      750
-    ),
-    []
-  )
-
-  useEffect(() => {
-    if (isValueDirty) {
-      autoSaveDebounce({
-        id: currentBlock?.id,
-        value: value || '',
-        isValid: formState.isValid,
-      })
-    }
-  }, [
-    autoSaveDebounce,
-    currentBlock?.id,
-    formState.isValid,
-    isValueDirty,
-    value,
-  ])
 
   const Component = blocks[currentBlock.type]
   return (

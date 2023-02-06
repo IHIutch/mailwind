@@ -2,28 +2,18 @@ import Editor from '../Editor'
 import { BlockType } from '@prisma/client'
 import clsx from 'clsx'
 import { useController, UseControllerProps } from 'react-hook-form'
-import { SingleBlockPayloadType } from '@/utils/prisma/blocks'
-
-type FormValues = {
-  blocks: SingleBlockPayloadType[]
-  global: any
-}
+import { DefaultFormValues } from '@/pages/templates/[id]'
 
 export default function HeadingBlock({
   type,
   attributes,
   inputProps,
   className,
-}: // errorClassName,
-// errorClassName,
-{
+  errorClassName,
+}: {
   type: BlockType
   attributes: any
-  // value: string
-  // onChange?: (value: any) => void
-  // name: string
-  // control: Control
-  inputProps: UseControllerProps<FormValues>
+  inputProps: UseControllerProps<DefaultFormValues>
   className?: string
   errorClassName?: string
 }) {

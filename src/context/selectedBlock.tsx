@@ -6,10 +6,10 @@ const SET = 'selectedBlock/SET' // This is a place for enums probably
 
 // Initial State Def
 const initialState = {
-  data: null,
+  data: -1,
 } //This should either become a blockId or a block Object entirely
 
-type SelectedBlockDataType = number | null
+type SelectedBlockDataType = number
 
 type SelectedBlockState = {
   data: SelectedBlockDataType

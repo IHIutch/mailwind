@@ -1,18 +1,22 @@
-import { useController } from 'react-hook-form'
+import { DefaultFormValues } from '@/pages/templates/[id]'
+import { useController, UseControllerProps } from 'react-hook-form'
 
 export default function LinkInput({
   id,
-  name,
-  control,
+  inputProps,
   className,
   errorClassName,
+}: {
+  id: string
+  inputProps: UseControllerProps<DefaultFormValues>
+  className?: string
+  errorClassName?: string
 }) {
   const {
     field: { onChange, name: inputName, value, ref },
     fieldState: { error },
   } = useController({
-    name,
-    control,
+    ...inputProps,
     rules: {
       required: true,
     },
@@ -27,7 +31,7 @@ export default function LinkInput({
         value={value}
         name={inputName}
         ref={ref}
-        aria-describedby={error ?? `${id}-error-message`}
+        aria-describedby={error ? `${id}-error-message` : ''}
         aria-invalid={error ? 'true' : 'false'}
       />
       {error ? (

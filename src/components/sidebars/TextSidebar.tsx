@@ -6,16 +6,11 @@ import * as Label from '@radix-ui/react-label'
 import { useFormContext } from 'react-hook-form'
 import { useSelectedBlockState } from '@/context/selectedBlock'
 import { ReactNode } from 'react'
-import { SingleBlockPayloadType } from '@/utils/prisma/blocks'
-
-// type FormValues = {
-//   blocks: SingleBlockPayloadType[]
-//   global: any
-// }
+import { DefaultFormValues } from '@/pages/templates/[id]'
 
 export default function TextSidebar({ children }: { children: ReactNode }) {
   const { data: selectedBlockIndex } = useSelectedBlockState()
-  const { control } = useFormContext()
+  const { control } = useFormContext<DefaultFormValues>()
 
   return (
     <div>
@@ -30,10 +25,10 @@ export default function TextSidebar({ children }: { children: ReactNode }) {
           </Label.Root>
           <FontSizeInput
             id="fontSizeField"
-            name={
-              `blocks.${selectedBlockIndex}.attributes.fontSize` as 'blocks.0.attributes.fontSize'
-            }
-            control={control}
+            inputProps={{
+              name: `blocks.${selectedBlockIndex}.attributes.fontSize` as 'blocks.0.attributes.fontSize',
+              control,
+            }}
             className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
             errorClassName="mt-1 text-xs text-red-500"
           />
@@ -47,10 +42,10 @@ export default function TextSidebar({ children }: { children: ReactNode }) {
           </Label.Root>
           <LineHeightInput
             id="lineHeightField"
-            name={
-              `blocks.${selectedBlockIndex}.attributes.lineHeight` as 'blocks.0.attributes.lineHeight'
-            }
-            control={control}
+            inputProps={{
+              name: `blocks.${selectedBlockIndex}.attributes.lineHeight` as 'blocks.0.attributes.lineHeight',
+              control,
+            }}
             className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
             errorClassName="mt-1 text-xs text-red-500"
           />
@@ -65,10 +60,10 @@ export default function TextSidebar({ children }: { children: ReactNode }) {
             </Label.Root>
             <PaddingInput
               id="paddingTopField"
-              name={
-                `blocks.${selectedBlockIndex}.attributes.paddingTop` as 'blocks.0.attributes.paddingTop'
-              }
-              control={control}
+              inputProps={{
+                name: `blocks.${selectedBlockIndex}.attributes.paddingTop` as 'blocks.0.attributes.paddingTop',
+                control,
+              }}
               className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
               errorClassName="mt-1 text-xs text-red-500"
             />
@@ -82,10 +77,10 @@ export default function TextSidebar({ children }: { children: ReactNode }) {
             </Label.Root>
             <PaddingInput
               id="paddingRightField"
-              name={
-                `blocks.${selectedBlockIndex}.attributes.paddingRight` as 'blocks.0.attributes.paddingRight'
-              }
-              control={control}
+              inputProps={{
+                name: `blocks.${selectedBlockIndex}.attributes.paddingRight` as 'blocks.0.attributes.paddingRight',
+                control,
+              }}
               className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
               errorClassName="mt-1 text-xs text-red-500"
             />
@@ -99,10 +94,10 @@ export default function TextSidebar({ children }: { children: ReactNode }) {
             </Label.Root>
             <PaddingInput
               id="paddingBottomField"
-              name={
-                `blocks.${selectedBlockIndex}.attributes.paddingBottom` as 'blocks.0.attributes.paddingBottom'
-              }
-              control={control}
+              inputProps={{
+                name: `blocks.${selectedBlockIndex}.attributes.paddingBottom` as 'blocks.0.attributes.paddingBottom',
+                control,
+              }}
               className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
               errorClassName="mt-1 text-xs text-red-500"
             />
@@ -116,10 +111,10 @@ export default function TextSidebar({ children }: { children: ReactNode }) {
             </Label.Root>
             <PaddingInput
               id="paddingLeftField"
-              name={
-                `blocks.${selectedBlockIndex}.attributes.paddingLeft` as 'blocks.0.attributes.paddingLeft'
-              }
-              control={control}
+              inputProps={{
+                name: `blocks.${selectedBlockIndex}.attributes.paddingLeft` as 'blocks.0.attributes.paddingLeft',
+                control,
+              }}
               className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
               errorClassName="mt-1 text-xs text-red-500"
             />
@@ -134,10 +129,10 @@ export default function TextSidebar({ children }: { children: ReactNode }) {
           </Label.Root>
           <ColorInput
             id="backgroundColorField"
-            name={
-              `blocks.${selectedBlockIndex}.attributes.backgroundColor` as 'blocks.0.attributes.backgroundColor'
-            }
-            control={control}
+            inputProps={{
+              name: `blocks.${selectedBlockIndex}.attributes.backgroundColor` as 'blocks.0.attributes.backgroundColor',
+              control,
+            }}
           />
         </div>
       </div>

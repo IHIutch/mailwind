@@ -1,6 +1,7 @@
+import { DefaultFormValues } from '@/pages/templates/[id]'
 import * as Select from '@radix-ui/react-select'
 import { ChevronDown } from 'lucide-react'
-import { useController } from 'react-hook-form'
+import { useController, UseControllerProps } from 'react-hook-form'
 
 const fontWeightOptions = [
   { value: '100', label: 'Thin' },
@@ -16,17 +17,20 @@ const fontWeightOptions = [
 
 export default function FontFamilyInput({
   id,
-  name,
-  control,
+  inputProps,
   className,
   errorClassName,
+}: {
+  id: string
+  inputProps: UseControllerProps<DefaultFormValues>
+  className?: string
+  errorClassName?: string
 }) {
   const {
     field: { onChange, name: inputName, value, ref },
     fieldState: { error },
   } = useController({
-    name,
-    control,
+    ...inputProps,
     rules: {
       required: true,
     },

@@ -5,9 +5,10 @@ import * as ToggleGroup from '@radix-ui/react-toggle-group'
 import { AlignCenter, AlignLeft, AlignRight } from 'lucide-react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { type ReactNode } from 'react'
+import { DefaultFormValues } from '@/pages/templates/[id]'
 
 export default function GlobalSidebar({ children }: { children: ReactNode }) {
-  const { control } = useFormContext()
+  const { control } = useFormContext<DefaultFormValues>()
 
   return (
     <div>
@@ -62,8 +63,10 @@ export default function GlobalSidebar({ children }: { children: ReactNode }) {
         </Label.Root>
         <SpacingInput
           id="globalWidthField"
-          name="global.containerWidth"
-          control={control}
+          inputProps={{
+            name: `global.containerWidth`,
+            control,
+          }}
           className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
         />
       </div>
@@ -76,8 +79,10 @@ export default function GlobalSidebar({ children }: { children: ReactNode }) {
         </Label.Root>
         <ColorInput
           id="globalBackgroundColorField"
-          name="global.backgroundColor"
-          control={control}
+          inputProps={{
+            name: 'global.backgroundColor',
+            control,
+          }}
         />
       </div>
     </div>

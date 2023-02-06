@@ -1,4 +1,4 @@
-import { SingleBlockPayloadType } from '@/utils/prisma/blocks'
+import { DefaultFormValues } from '@/pages/templates/[id]'
 import debounce from 'lodash/debounce'
 import Highlight, { defaultProps } from 'prism-react-renderer'
 import theme from 'prism-react-renderer/themes/nightOwl'
@@ -6,24 +6,14 @@ import { useCallback, useState } from 'react'
 import { useController, UseControllerProps } from 'react-hook-form'
 import Editor from 'react-simple-code-editor'
 
-type FormValues = {
-  blocks: SingleBlockPayloadType[]
-  global: any
-}
-
 export default function CodeBlock({
   attributes,
   inputProps,
   className,
-}: // errorClassName,
-// errorClassName,
-{
+  errorClassName,
+}: {
   attributes: any
-  // value: string
-  // onChange?: (value: any) => void
-  // name: string
-  // control: Control
-  inputProps: UseControllerProps<FormValues>
+  inputProps: UseControllerProps<DefaultFormValues>
   className?: string
   errorClassName?: string
 }) {

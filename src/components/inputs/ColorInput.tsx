@@ -1,19 +1,18 @@
+import { DefaultFormValues } from '@/pages/templates/[id]'
 import * as Popover from '@radix-ui/react-popover'
 import * as RadioGroup from '@radix-ui/react-radio-group'
 import { Palette } from 'lucide-react'
 import { HexColorPicker } from 'react-colorful'
-import { type Control, useController } from 'react-hook-form'
+import { useController, UseControllerProps } from 'react-hook-form'
 
 export default function ColorInput({
   id,
-  name,
-  control,
+  inputProps,
   className,
   errorClassName,
 }: {
   id: string
-  name: string
-  control: Control
+  inputProps: UseControllerProps<DefaultFormValues>
   className?: string
   errorClassName?: string
 }) {
@@ -21,9 +20,7 @@ export default function ColorInput({
     field: { onChange, name: inputName, value, ref },
     fieldState: { error },
   } = useController({
-    name,
-    defaultValue: '#ffffff',
-    control,
+    ...inputProps,
     rules: {
       required: true,
     },
