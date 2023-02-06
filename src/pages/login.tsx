@@ -1,4 +1,4 @@
-import { getErrorMessage } from '@/utils/functions'
+import { getBaseUrl, getErrorMessage } from '@/utils/functions'
 import * as Label from '@radix-ui/react-label'
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
@@ -19,11 +19,6 @@ export default function Login() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitSuccess, setIsSubmitSuccess] = useState(false)
 
-  const appUrl =
-    process?.env?.SITE_URL ??
-    process?.env?.VERCEL_URL ??
-    'http://localhost:3000'
-
   const {
     register,
     handleSubmit,
@@ -37,7 +32,7 @@ export default function Login() {
       const { error } = await supabaseClient.auth.signInWithOtp({
         email: form.email,
         options: {
-          emailRedirectTo: appUrl + '/logging-in',
+          emailRedirectTo: `${getBaseUrl()}/logging-in`,
         },
       })
 
