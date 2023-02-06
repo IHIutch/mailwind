@@ -51,7 +51,7 @@ import {
   X,
 } from 'lucide-react'
 import { useRouter } from 'next/router'
-import { type ReactNode, useEffect, useMemo, useCallback } from 'react'
+import { type ReactNode, useEffect, useMemo } from 'react'
 import { useState } from 'react'
 import dayjs from 'dayjs'
 import {
@@ -69,9 +69,7 @@ import {
 } from '@/context/selectedBlock'
 import { getNewLexoPosition } from '@/utils/functions'
 import { SingleBlockPayloadType } from '@/utils/prisma/blocks'
-import { debounce } from 'lodash'
 import { useDebouncedEffect } from '@/utils/hooks/useDebounceEffect'
-import { isValid } from 'zod'
 
 export type DefaultFormValues = {
   didMove: boolean

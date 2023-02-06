@@ -11,9 +11,6 @@ import React from 'react'
 import { Database } from 'types/supabase.types'
 
 export default function LoggingIn() {
-  const user = useUser()
-  console.log({ user })
-
   return (
     <div className="flex h-full items-center justify-center">
       <div className="flex items-center">

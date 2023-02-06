@@ -5,17 +5,22 @@ export const useAuthUser = () => {
   const user = useUser()
 
   const { isLoading, isError, isSuccess, data, error } =
-    trpc.user.byId.useQuery({
-      where: {
-        id: user?.id,
+    trpc.user.byId.useQuery(
+      {
+        where: {
+          id: user?.id,
+        },
       },
-    })
+      {
+        enabled: !!user?.id,
+      }
+    )
 
   return {
     isLoading,
     isError,
     isSuccess,
-    data: user
+    data: data
       ? {
           email: user?.email,
           ...data,
