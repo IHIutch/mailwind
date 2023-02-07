@@ -1,6 +1,7 @@
 import { DefaultFormValues } from '@/pages/templates/[id]'
 import Highlight, { defaultProps, Language } from 'prism-react-renderer'
 import theme from 'prism-react-renderer/themes/nightOwl'
+import { useEffect, useState } from 'react'
 import { useController, UseControllerProps } from 'react-hook-form'
 import Editor from 'react-simple-code-editor'
 import { z } from 'zod'
@@ -31,6 +32,12 @@ export default function CodeBlock({
     fieldState: { error },
   } = useController({ ...inputProps })
 
+  const [code, setCode] = useState(value)
+
+  useEffect(() => {
+    onChange(code)
+  }, [code, onChange])
+
   // const handleDetectLanguage = useCallback(() => {
   //   const result = hljs.highlightAuto(code)
   //   setLanguage(result.language)
@@ -47,10 +54,10 @@ export default function CodeBlock({
       <Editor
         ref={ref}
         name={inputName}
-        value={value?.toString() || ''}
+        value={code}
         onBlur={onBlur}
         className="font-mono"
-        onValueChange={onChange}
+        onValueChange={(code) => setCode(code)}
         highlight={(code) => <PrismaHighlight code={code} language="jsx" />}
       />
     </div>

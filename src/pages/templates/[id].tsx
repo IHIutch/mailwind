@@ -2,11 +2,6 @@ import DynamicBlock from '@/components/DynamicBlock'
 import DynamicSidebar from '@/components/DynamicSidebar'
 import EditorNavbar from '@/components/EditorNavbar'
 import GlobalNavbar from '@/components/GlobalNavbar'
-import {
-  DragHandle,
-  SortableItem,
-  SortOverlay,
-} from '@/components/sortable/SortableItem'
 import { defaultAttributes } from '@/utils/defaults'
 import {
   useCreateBlock,
@@ -15,21 +10,6 @@ import {
   useUpdateBlock,
 } from '@/utils/query/blocks'
 import { useGetTemplateById, useUpdateTemplate } from '@/utils/query/templates'
-import {
-  type Active,
-  type Over,
-  DndContext,
-  KeyboardSensor,
-  MouseSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core'
-import {
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
 import { BlockType } from '@prisma/client'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import * as Dialog from '@radix-ui/react-dialog'
@@ -69,8 +49,15 @@ import {
 } from '@/context/selectedBlock'
 import { getNewLexoPosition } from '@/utils/functions'
 import { SingleBlockPayloadType } from '@/utils/prisma/blocks'
-import { useDebouncedEffect } from '@/utils/hooks/useDebounceEffect'
 import { debounce } from 'lodash'
+import {
+  DragDropContext,
+  Draggable,
+  DragStart,
+  Droppable,
+  DropResult,
+  resetServerContext,
+} from 'react-beautiful-dnd'
 
 export type DefaultFormValues = {
   didMove: boolean
@@ -95,6 +82,7 @@ export default function TemplateId() {
       : []
   }, [blocks])
 
+  const { data: selectedBlockIndex } = useSelectedBlockState()
   const [previewSize, setPreviewSize] = useState<'desktop' | 'mobile'>(
     'desktop'
   )
@@ -117,6 +105,7 @@ export default function TemplateId() {
   })
 
   useEffect(() => {
+    console.log('reset')
     formMethods.reset({
       global: { ...formMethods.getValues('global') },
       blocks: sortedBlocks,
@@ -146,117 +135,44 @@ export default function TemplateId() {
       </GlobalNavbar>
       <SelectedBlockProvider initialValue={{ data: -1 }}>
         <FormProvider {...formMethods}>
-          <Content>
-            <div className="relative pt-16">
-              <div className="fixed inset-y-0 top-16 w-[calc(100%-300px)]">
-                <EditorNavbar
-                  previewSize={previewSize}
-                  setPreviewSize={setPreviewSize}
-                  handleDownload={handleDownload}
-                />
-                <div className="flex h-full overflow-y-auto">
-                  <div
-                    className={clsx('relative py-12 px-4', [
-                      global.containerAlign === 'left' && 'mr-auto',
-                      global.containerAlign === 'center' && 'mx-auto',
-                      global.containerAlign === 'right' && 'ml-auto',
-                    ])}
-                    style={{
-                      width:
-                        previewSize === 'desktop'
-                          ? `calc(${global.containerWidth} + ${offset})`
-                          : `calc(${mobileSize} + ${offset})`,
-                      left: offset,
-                    }}
-                  >
-                    <EditView />
-                  </div>
-                </div>
-              </div>
-              <div className="fixed inset-y-0 right-0 w-[300px] border-l border-zinc-200 bg-white pt-16">
-                <div className="h-full overflow-y-auto">
-                  <div className="py-4">
-                    <DynamicSidebar />
-                  </div>
+          <div className="relative pt-16">
+            <div className="fixed inset-y-0 top-16 w-[calc(100%-300px)]">
+              <EditorNavbar
+                previewSize={previewSize}
+                setPreviewSize={setPreviewSize}
+                handleDownload={handleDownload}
+              />
+              <div className="flex h-full overflow-y-auto">
+                <div
+                  className={clsx('relative py-12 px-4', [
+                    global.containerAlign === 'left' && 'mr-auto',
+                    global.containerAlign === 'center' && 'mx-auto',
+                    global.containerAlign === 'right' && 'ml-auto',
+                  ])}
+                  style={{
+                    width:
+                      previewSize === 'desktop'
+                        ? `calc(${global.containerWidth} + ${offset})`
+                        : `calc(${mobileSize} + ${offset})`,
+                    left: offset,
+                  }}
+                >
+                  <EditView />
                 </div>
               </div>
             </div>
-          </Content>
+            <div className="fixed inset-y-0 right-0 w-[300px] border-l border-zinc-200 bg-white pt-16">
+              <div className="h-full overflow-y-auto">
+                <div className="py-4">
+                  <DynamicSidebar />
+                </div>
+              </div>
+            </div>
+          </div>
         </FormProvider>
       </SelectedBlockProvider>
     </>
   )
-}
-
-const Content = ({ children }: { children: ReactNode }) => {
-  const {
-    query: { id },
-  } = useRouter()
-  const { data: selectedBlockIndex } = useSelectedBlockState()
-  const { mutateAsync: handleUpdateBlock } = useUpdateBlock(Number(id))
-
-  const { control, formState, getValues } = useFormContext<DefaultFormValues>()
-  const [didMove, value, attributes] = useWatch({
-    control,
-    name: [
-      'didMove',
-      `blocks.${selectedBlockIndex}.value`,
-      `blocks.${selectedBlockIndex}.attributes`,
-    ] as ['didMove', 'blocks.0.value', 'blocks.0.attributes'],
-  })
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const autoSaveDebounce = useCallback(
-    debounce(
-      ({
-        id,
-        payload,
-        isValid,
-      }: {
-        id: any
-        payload: any
-        isValid: boolean
-      }) => {
-        if (isValid) {
-          // console.log('debounce', { selectedBlockIndex })
-          // console.log({
-          //   where: { id },
-          //   payload,
-          // })
-          handleUpdateBlock({
-            where: { id },
-            payload,
-          })
-        }
-      },
-      750
-    ),
-    []
-  )
-
-  useEffect(() => {
-    if (!didMove && formState.isDirty) {
-      autoSaveDebounce({
-        id: getValues(`blocks.${selectedBlockIndex}.id`),
-        payload: {
-          value,
-          attributes,
-        },
-        isValid: formState.isValid,
-      })
-    }
-  }, [
-    attributes,
-    autoSaveDebounce,
-    didMove,
-    formState.isDirty,
-    formState.isValid,
-    getValues,
-    selectedBlockIndex,
-    value,
-  ])
-
-  return <>{children}</>
 }
 
 const TemplateTitle = () => {
@@ -282,6 +198,8 @@ const TemplateTitle = () => {
     })
     setIsOpen(false)
   }
+
+  resetServerContext()
 
   return (
     <div className="mx-4 flex items-center border-l border-gray-300 px-4">
@@ -388,8 +306,6 @@ const EditView = () => {
   const { mutateAsync: handleCreateBlock } = useCreateBlock(Number(id))
   const { mutateAsync: handleDeleteBlock } = useDeleteBlock(Number(id))
 
-  const [draggingIdx, setDraggingIdx] = useState<number | undefined>(undefined)
-
   const { control, setValue, getValues, watch } =
     useFormContext<DefaultFormValues>()
   const { fields, move } = useFieldArray({
@@ -398,51 +314,33 @@ const EditView = () => {
     control,
   })
 
-  const sensors = useSensors(
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-    useSensor(MouseSensor, {
-      activationConstraint: {
-        distance: 6,
-      },
-    }),
-    useSensor(TouchSensor)
-  )
+  const handleDragEnd = ({ source, destination }: DropResult) => {
+    const activeIndex = source.index
+    const overIndex = destination?.index
 
-  const handleDragEnd = ({
-    active,
-    over,
-  }: {
-    active: Active
-    over: Over | null
-  }) => {
-    const activeIndex = fields.findIndex((i) => i.id === active.id)
-    const overIndex = fields.findIndex((i) => i.id === over?.id)
+    if (overIndex !== undefined) {
+      const offset = activeIndex > overIndex ? -1 : 1
+      const start = fields[Math.min(overIndex, overIndex + offset)]
+      const end = fields[Math.max(overIndex, overIndex + offset)]
 
-    const offset = activeIndex > overIndex ? -1 : 1
-    const start = fields[Math.min(overIndex, overIndex + offset)]
-    const end = fields[Math.max(overIndex, overIndex + offset)]
+      const position = getNewLexoPosition(start?.position, end?.position)
 
-    const position = getNewLexoPosition(start?.position, end?.position)
+      handleUpdateBlock({
+        where: { id: getValues(`blocks.${activeIndex}.id`) },
+        payload: {
+          position,
+        },
+      })
 
-    handleUpdateBlock({
-      where: { id: getValues(`blocks.${activeIndex}.id`) },
-      payload: {
-        position,
-      },
-    })
-
-    setValue('didMove', true)
-    move(activeIndex, overIndex)
-
-    setDraggingIdx(undefined)
+      setValue('didMove', true)
+      move(activeIndex, overIndex)
+      dispatch(setSelectedBlock(overIndex))
+    }
   }
 
-  const handleDragStart = ({ active }: { active: Active }) => {
-    const activeIndex = fields.findIndex((i) => i.id === active.id)
-    setDraggingIdx(activeIndex)
-  }
+  // const handleDragStart = ({ active }: { active: Active }) => {
+  //   const activeIndex = fields.findIndex((i) => i.id === active.id)
+  // }
 
   const addItem = ({ idx, type }: { idx: number; type: BlockType }) => {
     // Probably can refactor this so object attributes arent "payload" and we can just get the default values based on the block type
@@ -488,61 +386,55 @@ const EditView = () => {
 
   return (
     <div>
-      <DndContext
-        id="dnd"
-        sensors={sensors}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-        onDragCancel={() => {
-          setDraggingIdx(undefined)
-        }}
-      >
-        <SortableContext items={fields} strategy={verticalListSortingStrategy}>
-          <ul>
-            {fields.map((block, idx) => (
-              <li key={block.id || '-1'}>
-                <SortableItem id={block.id}>
-                  <div
-                    className={clsx(
-                      'overflow-hidden rounded-lg transition-all',
-                      draggingIdx && fields[draggingIdx]?.id === block.id
-                        ? 'ring-2 ring-offset-2'
-                        : 'ring-0 ring-offset-0'
-                    )}
+      {fields.length > 0 ? (
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Droppable droppableId="droppable">
+            {(drop) => (
+              <div ref={drop.innerRef} {...drop.droppableProps}>
+                {fields.map((block, idx) => (
+                  <Draggable
+                    draggableId={(block?.id || '-1').toString()}
+                    key={(block?.id || '-1').toString()}
+                    index={idx}
                   >
-                    <ItemBlock
-                      type={block.type}
-                      handleAddItem={({ type }) => addItem({ idx, type })}
-                      handleDeleteItem={() => deleteItem(block.id)}
-                      handleDuplicateItem={() => duplicateItem(idx)}
-                      handleSetSelectedBlock={() =>
-                        dispatch(setSelectedBlock(idx))
-                      }
-                    >
-                      <DynamicBlock
-                        index={idx}
-                        type={getValues(`blocks.${idx}.type`)}
-                        attributes={watch(`blocks.${idx}.attributes`)}
-                      />
-                    </ItemBlock>
-                  </div>
-                </SortableItem>
-              </li>
-            ))}
-          </ul>
-        </SortableContext>
-        <SortOverlay>
-          {draggingIdx !== undefined ? (
-            <ItemBlock type={getValues(`blocks.${draggingIdx}.type`)}>
-              <DynamicBlock
-                index={draggingIdx}
-                type={getValues(`blocks.${draggingIdx}.type`)}
-                attributes={getValues(`blocks.${draggingIdx}.attributes`)}
-              />
-            </ItemBlock>
-          ) : null}
-        </SortOverlay>
-      </DndContext>
+                    {(drag, snapshot) => (
+                      <div ref={drag.innerRef} {...drag.draggableProps}>
+                        <div {...drag.dragHandleProps}>{idx}</div>
+                        <div
+                          className={clsx(
+                            'overflow-hidden rounded-lg transition-all',
+                            snapshot.isDragging
+                              ? 'ring-2 ring-offset-2'
+                              : 'ring-0 ring-offset-0'
+                          )}
+                        >
+                          <ItemBlock
+                            key={(block?.id || '-1').toString()}
+                            type={block.type}
+                            handleAddItem={({ type }) => addItem({ idx, type })}
+                            handleDeleteItem={() => deleteItem(block.id)}
+                            handleDuplicateItem={() => duplicateItem(idx)}
+                            handleSetSelectedBlock={() =>
+                              dispatch(setSelectedBlock(idx))
+                            }
+                          >
+                            <DynamicBlock
+                              index={idx}
+                              type={getValues(`blocks.${idx}.type`)}
+                              attributes={watch(`blocks.${idx}.attributes`)}
+                            />
+                          </ItemBlock>
+                        </div>
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                <div>{drop.placeholder}</div>
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+      ) : null}
     </div>
   )
 }
@@ -678,10 +570,6 @@ const ItemBlock = ({
               </DropdownMenu.Content>
             </DropdownMenu.Portal>
           </DropdownMenu.Root>
-          <DragHandle
-            isDragDisabled={isMenuActive}
-            className="flex h-6 w-6 items-center justify-center rounded hover:bg-zinc-100"
-          />
         </div>
       </div>
       <div className="grow">{children}</div>

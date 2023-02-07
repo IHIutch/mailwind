@@ -1,7 +1,11 @@
 import { DefaultFormValues } from '@/pages/templates/[id]'
 import { blocks } from '@/utils/defaults'
+import { useUpdateBlock } from '@/utils/query/blocks'
 import { BlockType } from '@prisma/client'
-import { useFormContext } from 'react-hook-form'
+import { debounce } from 'lodash'
+import { useRouter } from 'next/router'
+import { useCallback, useEffect } from 'react'
+import { useFormContext, useWatch } from 'react-hook-form'
 
 export default function DynamicBlock({
   index,
@@ -12,7 +16,64 @@ export default function DynamicBlock({
   type: BlockType
   attributes: any
 }) {
-  const { control } = useFormContext<DefaultFormValues>()
+  const {
+    query: { id },
+  } = useRouter()
+  const { mutateAsync: handleUpdateBlock } = useUpdateBlock(Number(id))
+
+  const { control, formState, getValues } = useFormContext<DefaultFormValues>()
+  const [didMove, value] = useWatch({
+    control,
+    name: ['didMove', `blocks.${index}.value`] as ['didMove', 'blocks.0.value'],
+  })
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const autoSaveDebounce = useCallback(
+    debounce(
+      ({
+        where,
+        payload,
+        isValid,
+      }: {
+        where: any
+        payload: any
+        isValid: boolean
+      }) => {
+        if (isValid) {
+          handleUpdateBlock({
+            where,
+            payload,
+          })
+        }
+      },
+      750
+    ),
+    []
+  )
+
+  useEffect(() => {
+    if (!didMove && formState.dirtyFields.blocks?.[index]?.value) {
+      // console.log(index, formState.dirtyFields, value)
+      autoSaveDebounce({
+        where: {
+          id: getValues(`blocks.${index}.id`),
+        },
+        payload: {
+          value,
+        },
+        isValid: formState.isValid,
+      })
+    }
+  }, [
+    ,
+    autoSaveDebounce,
+    didMove,
+    formState.isValid,
+    formState.dirtyFields,
+    getValues,
+    index,
+    value,
+  ])
 
   const Component = blocks[type]
   return (
