@@ -32,7 +32,7 @@ export default function CodeBlock({
     fieldState: { error },
   } = useController({ ...inputProps })
 
-  const [code, setCode] = useState(value)
+  const [code, setCode] = useState((value || '').toString())
 
   useEffect(() => {
     onChange(code)
