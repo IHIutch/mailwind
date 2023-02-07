@@ -29,6 +29,7 @@ import {
   Trash2,
   Copy,
   X,
+  GripVertical,
 } from 'lucide-react'
 import { useRouter } from 'next/router'
 import { type ReactNode, useEffect, useMemo, useCallback } from 'react'
@@ -105,7 +106,6 @@ export default function TemplateId() {
   })
 
   useEffect(() => {
-    console.log('reset')
     formMethods.reset({
       global: { ...formMethods.getValues('global') },
       blocks: sortedBlocks,
@@ -136,28 +136,30 @@ export default function TemplateId() {
       <SelectedBlockProvider initialValue={{ data: -1 }}>
         <FormProvider {...formMethods}>
           <div className="relative pt-16">
-            <div className="fixed inset-y-0 top-16 w-[calc(100%-300px)]">
+            <div className="fixed inset-y-0 w-[calc(100%-300px)] pt-16">
               <EditorNavbar
                 previewSize={previewSize}
                 setPreviewSize={setPreviewSize}
                 handleDownload={handleDownload}
               />
-              <div className="flex h-full overflow-y-auto">
-                <div
-                  className={clsx('relative py-12 px-4', [
-                    global.containerAlign === 'left' && 'mr-auto',
-                    global.containerAlign === 'center' && 'mx-auto',
-                    global.containerAlign === 'right' && 'ml-auto',
-                  ])}
-                  style={{
-                    width:
-                      previewSize === 'desktop'
-                        ? `calc(${global.containerWidth} + ${offset})`
-                        : `calc(${mobileSize} + ${offset})`,
-                    left: offset,
-                  }}
-                >
-                  <EditView />
+              <div className="relative h-full pt-12">
+                <div className="h-full overflow-y-auto">
+                  <div
+                    className={clsx('relative py-12 px-4', [
+                      global.containerAlign === 'left' && 'mr-auto',
+                      global.containerAlign === 'center' && 'mx-auto',
+                      global.containerAlign === 'right' && 'ml-auto',
+                    ])}
+                    style={{
+                      width:
+                        previewSize === 'desktop'
+                          ? `calc(${global.containerWidth} + ${offset})`
+                          : `calc(${mobileSize} + ${offset})`,
+                      left: offset,
+                    }}
+                  >
+                    <EditView />
+                  </div>
                 </div>
               </div>
             </div>
@@ -399,13 +401,12 @@ const EditView = () => {
                   >
                     {(drag, snapshot) => (
                       <div ref={drag.innerRef} {...drag.draggableProps}>
-                        <div {...drag.dragHandleProps}>{idx}</div>
                         <div
                           className={clsx(
                             'overflow-hidden rounded-lg transition-all',
                             snapshot.isDragging
-                              ? 'ring-2 ring-offset-2'
-                              : 'ring-0 ring-offset-0'
+                              ? 'opacity-60 ring-2 ring-offset-2'
+                              : 'opacity-100 ring-0 ring-offset-0'
                           )}
                         >
                           <ItemBlock
@@ -416,6 +417,11 @@ const EditView = () => {
                             handleDuplicateItem={() => duplicateItem(idx)}
                             handleSetSelectedBlock={() =>
                               dispatch(setSelectedBlock(idx))
+                            }
+                            dragHandle={
+                              <div {...drag.dragHandleProps}>
+                                <GripVertical className="h-4 w-4 text-gray-500" />
+                              </div>
                             }
                           >
                             <DynamicBlock
@@ -445,6 +451,7 @@ const ItemBlock = ({
   handleDeleteItem = () => null,
   handleDuplicateItem = () => null,
   handleSetSelectedBlock = () => null,
+  dragHandle,
   children,
 }: {
   type?: BlockType
@@ -452,6 +459,7 @@ const ItemBlock = ({
   handleDeleteItem?: () => void
   handleDuplicateItem?: () => void
   handleSetSelectedBlock?: () => void
+  dragHandle: ReactNode
   children?: ReactNode
 }) => {
   const [isActive, setIsActive] = useState(false)
@@ -570,6 +578,9 @@ const ItemBlock = ({
               </DropdownMenu.Content>
             </DropdownMenu.Portal>
           </DropdownMenu.Root>
+          <div className="flex h-6 w-6 items-center justify-center rounded hover:bg-zinc-100">
+            {dragHandle}
+          </div>
         </div>
       </div>
       <div className="grow">{children}</div>

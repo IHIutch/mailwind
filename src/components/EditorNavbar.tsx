@@ -17,7 +17,7 @@ export default function EditorNavbar({
   }
 
   return (
-    <div className="relative flex h-12 border-b border-zinc-200 bg-white px-8 shadow-sm">
+    <div className="absolute inset-x-0 z-10 flex h-12 border-b border-zinc-200 bg-white px-8 shadow-sm">
       <div className="absolute inset-x-0 z-0 flex h-full items-center justify-center">
         <ToggleGroup.Root
           id="containerAlignField"
