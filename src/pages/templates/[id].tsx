@@ -40,25 +40,22 @@ import {
   useFieldArray,
   useForm,
   useFormContext,
-  useWatch,
 } from 'react-hook-form'
 import {
   SelectedBlockProvider,
   setSelectedBlock,
   useSelectedBlockDispatch,
-  useSelectedBlockState,
 } from '@/context/selectedBlock'
 import { getNewLexoPosition } from '@/utils/functions'
 import { SingleBlockPayloadType } from '@/utils/prisma/blocks'
-import { debounce } from 'lodash'
 import {
   DragDropContext,
   Draggable,
-  DragStart,
   Droppable,
   DropResult,
   resetServerContext,
 } from 'react-beautiful-dnd'
+import axios from 'redaxios'
 
 export type DefaultFormValues = {
   didMove: boolean
@@ -83,7 +80,6 @@ export default function TemplateId() {
       : []
   }, [blocks])
 
-  const { data: selectedBlockIndex } = useSelectedBlockState()
   const [previewSize, setPreviewSize] = useState<'desktop' | 'mobile'>(
     'desktop'
   )
@@ -114,13 +110,25 @@ export default function TemplateId() {
   }, [formMethods.reset, sortedBlocks, formMethods.getValues, formMethods])
 
   const handleDownload = async () => {
-    console.log('download')
-    // htmlFetcher.submit(
-    //   {
-    //     json: JSON.stringify(formData.blocks),
-    //   },
-    //   { method: 'post', action: '/api/download' }
-    // )
+    const {
+      data: { html },
+    } = await axios
+      .post(`/api/download`, { json: sortedBlocks })
+      .catch((res) => {
+        throw new Error(res.data.error)
+      })
+
+    const blob = new Blob([html], {
+      type: 'text/html;charset=utf-8',
+    })
+    const link = document.createElement('a')
+    link.href = window.URL.createObjectURL(blob)
+    link.download = 'email.html'
+
+    document.body.appendChild(link)
+    link.click()
+
+    document.body.removeChild(link)
   }
 
   // const global = useWatch({
