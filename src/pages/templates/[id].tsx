@@ -51,7 +51,7 @@ import {
   X,
 } from 'lucide-react'
 import { useRouter } from 'next/router'
-import { type ReactNode, useEffect, useMemo } from 'react'
+import { type ReactNode, useEffect, useMemo, useCallback } from 'react'
 import { useState } from 'react'
 import dayjs from 'dayjs'
 import {
@@ -70,6 +70,7 @@ import {
 import { getNewLexoPosition } from '@/utils/functions'
 import { SingleBlockPayloadType } from '@/utils/prisma/blocks'
 import { useDebouncedEffect } from '@/utils/hooks/useDebounceEffect'
+import { debounce } from 'lodash'
 
 export type DefaultFormValues = {
   didMove: boolean
@@ -123,10 +124,6 @@ export default function TemplateId() {
     })
   }, [formMethods.reset, sortedBlocks, formMethods.getValues, formMethods])
 
-  // const attributes = formMethods.watch({
-  //   name: `blocks.${sele}.attributes` as 'blocks.0.attributes',
-  // })
-
   const handleDownload = async () => {
     console.log('download')
     // htmlFetcher.submit(
@@ -136,22 +133,6 @@ export default function TemplateId() {
     //   { method: 'post', action: '/api/download' }
     // )
   }
-
-  // useEffect(() => {
-  //   if (htmlFetcher.data?.html) {
-  //     var blob = new Blob([htmlFetcher.data.html], {
-  //       type: 'text/html;charset=utf-8',
-  //     })
-  //     var link = document.createElement('a')
-  //     link.href = window.URL.createObjectURL(blob)
-  //     link.download = 'email.html'
-
-  //     document.body.appendChild(link)
-  //     link.click()
-
-  //     document.body.removeChild(link)
-  //   }
-  // }, [htmlFetcher.data?.html])
 
   // const global = useWatch({
   //   name: 'global',
@@ -224,31 +205,56 @@ const Content = ({ children }: { children: ReactNode }) => {
     ] as ['didMove', 'blocks.0.value', 'blocks.0.attributes'],
   })
 
-  useDebouncedEffect(
-    () => {
-      if (!didMove && formState.isDirty && formState.isValid) {
-        handleUpdateBlock({
-          where: {
-            id: getValues(`blocks.${selectedBlockIndex}.id`),
-          },
-          payload: {
-            value: value || '',
-            attributes,
-          },
-        })
-      }
-    },
-    [
-      attributes,
-      didMove,
-      formState.isDirty,
-      formState.isValid,
-      getValues,
-      selectedBlockIndex,
-      value,
-    ],
-    750
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const autoSaveDebounce = useCallback(
+    debounce(
+      ({
+        id,
+        payload,
+        isValid,
+      }: {
+        id: any
+        payload: any
+        isValid: boolean
+      }) => {
+        if (isValid) {
+          // console.log('debounce', { selectedBlockIndex })
+          // console.log({
+          //   where: { id },
+          //   payload,
+          // })
+          handleUpdateBlock({
+            where: { id },
+            payload,
+          })
+        }
+      },
+      750
+    ),
+    []
   )
+
+  useEffect(() => {
+    if (!didMove && formState.isDirty) {
+      autoSaveDebounce({
+        id: getValues(`blocks.${selectedBlockIndex}.id`),
+        payload: {
+          value,
+          attributes,
+        },
+        isValid: formState.isValid,
+      })
+    }
+  }, [
+    attributes,
+    autoSaveDebounce,
+    didMove,
+    formState.isDirty,
+    formState.isValid,
+    getValues,
+    selectedBlockIndex,
+    value,
+  ])
 
   return <>{children}</>
 }
@@ -420,8 +426,6 @@ const EditView = () => {
 
     const position = getNewLexoPosition(start?.position, end?.position)
 
-    // console.log({ position, activeIndex, overIndex })
-
     handleUpdateBlock({
       where: { id: getValues(`blocks.${activeIndex}.id`) },
       payload: {
@@ -431,8 +435,6 @@ const EditView = () => {
 
     setValue('didMove', true)
     move(activeIndex, overIndex)
-
-    console.log({ activeIndex, overIndex })
 
     setDraggingIdx(undefined)
   }

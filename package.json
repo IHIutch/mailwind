@@ -46,7 +46,6 @@
     "fathom-client": "^3.5.0",
     "lexorank": "^1.0.5",
     "lucide-react": "^0.107.0",
-    "nanoid": "^4.0.0",
     "next": "13.1.5",
     "prism-react-renderer": "^1.3.5",
     "prisma": "^4.9.0",

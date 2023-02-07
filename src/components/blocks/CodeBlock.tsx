@@ -1,10 +1,19 @@
 import { DefaultFormValues } from '@/pages/templates/[id]'
-import debounce from 'lodash/debounce'
-import Highlight, { defaultProps } from 'prism-react-renderer'
+import Highlight, { defaultProps, Language } from 'prism-react-renderer'
 import theme from 'prism-react-renderer/themes/nightOwl'
-import { useCallback, useState } from 'react'
 import { useController, UseControllerProps } from 'react-hook-form'
 import Editor from 'react-simple-code-editor'
+import { z } from 'zod'
+
+// const codeAttributes = z
+//   .object({
+//     value: z.string(),
+//     attributes: z.object({
+//       language: z.string(),
+//       theme: z.string(),
+//     }),
+//   })
+//   .optional()
 
 export default function CodeBlock({
   attributes,
@@ -22,11 +31,6 @@ export default function CodeBlock({
     fieldState: { error },
   } = useController({ ...inputProps })
 
-  const [code, setCode] = useState(value)
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const handleUpdateDebounce = useCallback(debounce(onChange, 250), [onChange])
-
   // const handleDetectLanguage = useCallback(() => {
   //   const result = hljs.highlightAuto(code)
   //   setLanguage(result.language)
@@ -38,18 +42,12 @@ export default function CodeBlock({
   //   [handleDetectLanguage]
   // )
 
-  // const handleChange = (payload) => {
-  //   setCode(payload)
-  //   handleUpdateDebounce(payload)
-  // }
-
   return (
     <div className="overflow-hidden rounded-md p-2" style={theme.plain}>
       <Editor
         ref={ref}
         name={inputName}
-        value={value}
-        // onChange={onChange}
+        value={value?.toString() || ''}
         onBlur={onBlur}
         className="font-mono"
         onValueChange={onChange}
@@ -59,7 +57,13 @@ export default function CodeBlock({
   )
 }
 
-const PrismaHighlight = ({ code, language }) => {
+const PrismaHighlight = ({
+  code,
+  language,
+}: {
+  code: string
+  language: Language
+}) => {
   return (
     <Highlight {...defaultProps} theme={theme} code={code} language={language}>
       {({ className, style, tokens, getLineProps, getTokenProps }) => (
