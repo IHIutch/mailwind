@@ -518,7 +518,7 @@ const ItemBlock = ({
           )}
         >
           <DropdownMenu onOpenChange={setIsMenuActive}>
-            <DropdownMenuTrigger>
+            <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
                 className="flex h-7 w-7 items-center justify-center p-0"
