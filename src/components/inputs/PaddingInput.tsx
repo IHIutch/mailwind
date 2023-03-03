@@ -1,6 +1,7 @@
-import { DefaultFormValues } from '@/pages/templates/[id]'
-import { KeyboardEvent } from 'react'
-import { useController, UseControllerProps } from 'react-hook-form'
+import { type DefaultFormValues } from '@/pages/templates/[id]'
+import { type KeyboardEvent } from 'react'
+import { useController, type UseControllerProps } from 'react-hook-form'
+import { Input } from '../ui/Input'
 
 export default function PaddingInput({
   id,
@@ -73,7 +74,7 @@ export default function PaddingInput({
 
   return (
     <div>
-      <input
+      <Input
         id={id}
         type="text"
         className={className}

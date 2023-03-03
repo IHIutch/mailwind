@@ -4,7 +4,7 @@ import { useAuthUser } from '@/utils/query/user'
 import dayjs from 'dayjs'
 import { Plus } from 'lucide-react'
 import Link from 'next/link'
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 
 export default function Profile() {
   const { data: user } = useAuthUser()

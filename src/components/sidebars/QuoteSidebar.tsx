@@ -1,5 +1,5 @@
 import { useSelectedBlockState } from '@/context/selectedBlock'
-import { DefaultFormValues } from '@/pages/templates/[id]'
+import { type DefaultFormValues } from '@/pages/templates/[id]'
 import React, { type ReactNode } from 'react'
 import { useFormContext } from 'react-hook-form'
 

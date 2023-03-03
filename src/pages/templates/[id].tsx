@@ -12,8 +12,6 @@ import {
 import { useGetTemplateById, useUpdateTemplate } from '@/utils/query/templates'
 import { BlockType } from '@prisma/client'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
-import * as Dialog from '@radix-ui/react-dialog'
-import * as Label from '@radix-ui/react-label'
 
 import clsx from 'clsx'
 import {
@@ -28,11 +26,10 @@ import {
   Settings,
   Trash2,
   Copy,
-  X,
   GripVertical,
 } from 'lucide-react'
 import { useRouter } from 'next/router'
-import { type ReactNode, useEffect, useMemo, useCallback } from 'react'
+import { type ReactNode, useEffect, useMemo } from 'react'
 import { useState } from 'react'
 import dayjs from 'dayjs'
 import {
@@ -47,15 +44,26 @@ import {
   useSelectedBlockDispatch,
 } from '@/context/selectedBlock'
 import { getNewLexoPosition } from '@/utils/functions'
-import { SingleBlockPayloadType } from '@/utils/prisma/blocks'
+import { type SingleBlockPayloadType } from '@/utils/prisma/blocks'
 import {
   DragDropContext,
   Draggable,
   Droppable,
-  DropResult,
+  type DropResult,
   resetServerContext,
 } from 'react-beautiful-dnd'
 import axios from 'redaxios'
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/Dialog'
+import { Label } from '@/components/ui/Label'
+import { Input } from '@/components/ui/Input'
+import { Button } from '@/components/ui/Button'
 
 export type DefaultFormValues = {
   didMove: boolean
@@ -221,87 +229,61 @@ const TemplateTitle = () => {
         </div>
       </div>
       <div className="ml-4">
-        <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
-          <Dialog.Trigger
-            className={clsx(
-              'flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-100 p-1 transition-colors',
-              'hover:bg-neutral-200'
-            )}
-          >
-            <Settings className="h-5 w-5" />
-          </Dialog.Trigger>
-          <Dialog.Portal>
-            <Dialog.Overlay
-              className={clsx(
-                'fixed inset-0 z-40 bg-neutral-900',
-                '[&[data-state=open]]:opacity-40'
-              )}
-            />
-            <div className="fixed inset-0 z-50 flex items-start justify-center">
-              <Dialog.Content className="relative my-16 flex w-full max-w-[28rem] flex-col rounded-md bg-white">
-                <header className="p-4">
-                  <Dialog.Title className="text-2xl font-semibold">
-                    Edit Template Title
-                  </Dialog.Title>
-                </header>
-                <Dialog.Close asChild className="absolute top-2 right-3">
-                  <button
-                    className={clsx(
-                      'rounded-lg bg-neutral-100 p-1 transition-colors',
-                      'hover:bg-neutral-200'
-                    )}
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+          <DialogTrigger asChild>
+            <Button
+              variant="subtle"
+              className="flex h-8 w-8 items-center justify-center p-0"
+            >
+              <Settings className="h-5 w-5" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-semibold">
+                Edit Template Title
+              </DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="py-4">
+                <Label
+                  htmlFor="template-title"
+                  className="mb-1 block text-sm font-semibold text-gray-700"
+                >
+                  Title
+                </Label>
+                <Input
+                  id="template-title"
+                  type="text"
+                  {...register('title')}
+                  placeholder="Untitled Template"
+                  aria-describedby={
+                    formState.errors.title ? `email-error-message` : ''
+                  }
+                  aria-invalid={formState.errors.title ? 'true' : 'false'}
+                />
+                {formState.errors.title ? (
+                  <p
+                    id="email-error-message"
+                    className="mt-1 text-xs text-red-500"
                   >
-                    <X />
-                  </button>
-                </Dialog.Close>
-                <form onSubmit={handleSubmit(onSubmit)}>
-                  <div className="p-4">
-                    <Label.Root
-                      htmlFor="template-title"
-                      className="mb-1 block text-sm font-semibold text-gray-700"
-                    >
-                      Title
-                    </Label.Root>
-                    <input
-                      id="template-title"
-                      type="text"
-                      className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
-                      {...register('title')}
-                      placeholder="Untitled Template"
-                      aria-describedby={
-                        formState.errors.title ? `email-error-message` : ''
-                      }
-                      aria-invalid={formState.errors.title ? 'true' : 'false'}
-                    />
-                    {formState.errors.title ? (
-                      <p
-                        id="email-error-message"
-                        className="mt-1 text-xs text-red-500"
-                      >
-                        {formState.errors.title.message}
-                      </p>
-                    ) : null}
-                  </div>
-                  <footer className="flex p-4">
-                    <div className="ml-auto">
-                      <Dialog.Close className="h-8 rounded border border-zinc-300 px-2 text-sm font-semibold text-zinc-500 hover:bg-indigo-50">
-                        Cancel
-                      </Dialog.Close>
-                      <button
-                        disabled={isLoading}
-                        type="submit"
-                        className="ml-2 h-8 rounded bg-indigo-500 px-2 text-sm font-semibold text-white hover:bg-indigo-600
-                        disabled:opacity-40"
-                      >
-                        Save
-                      </button>
-                    </div>
-                  </footer>
-                </form>
-              </Dialog.Content>
-            </div>
-          </Dialog.Portal>
-        </Dialog.Root>
+                    {formState.errors.title.message}
+                  </p>
+                ) : null}
+              </div>
+              <DialogFooter>
+                <div className="ml-auto">
+                  <Button variant="subtle" onClick={() => setIsOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button disabled={isLoading} type="submit" className="ml-2">
+                    Save
+                  </Button>
+                </div>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   )
@@ -482,6 +464,7 @@ const ItemBlock = ({
       case BlockType.CODE:
         return <Code2 className="h-4 w-4" />
       case BlockType.IMAGE:
+        // eslint-disable-next-line jsx-a11y/alt-text
         return <Image className="h-4 w-4" />
       case BlockType.DIVIDER:
         return <Quote className="h-4 w-4" />

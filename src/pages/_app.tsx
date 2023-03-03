@@ -1,11 +1,11 @@
 import {
   createBrowserSupabaseClient,
-  Session,
+  type Session,
 } from '@supabase/auth-helpers-nextjs'
 import { SessionContextProvider } from '@supabase/auth-helpers-react'
 import type { AppProps } from 'next/app'
 import { useEffect, useState } from 'react'
-import { Database } from 'types/supabase.types'
+import { type Database } from 'types/supabase.types'
 import '@/styles/main.css'
 import { trpc } from '@/utils/trpc'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'

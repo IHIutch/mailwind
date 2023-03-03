@@ -6,9 +6,9 @@ import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
 import { useUser } from '@supabase/auth-helpers-react'
 import { LexoRank } from 'lexorank'
 import { Loader2 } from 'lucide-react'
-import { GetServerSidePropsContext } from 'next'
+import { type GetServerSidePropsContext } from 'next'
 import React from 'react'
-import { Database } from 'types/supabase.types'
+import { type Database } from 'types/supabase.types'
 
 export default function LoggingIn() {
   return (

@@ -1,6 +1,6 @@
 import Editor from '../Editor'
-import { useController, UseControllerProps } from 'react-hook-form'
-import { DefaultFormValues } from '@/pages/templates/[id]'
+import { useController, type UseControllerProps } from 'react-hook-form'
+import { type DefaultFormValues } from '@/pages/templates/[id]'
 
 export default function QuoteBlock({
   attributes,

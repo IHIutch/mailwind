@@ -1,4 +1,7 @@
+import { type ClassValue } from 'class-variance-authority/dist/types'
+import clsx from 'clsx'
 import { LexoRank } from 'lexorank'
+import { twMerge } from 'tailwind-merge'
 
 export function getErrorMessage(error: unknown) {
   if (error instanceof Error) return error.message
@@ -25,4 +28,8 @@ export const getNewLexoPosition = (start?: string, end?: string) => {
   } else {
     return ''
   }
+}
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
 }

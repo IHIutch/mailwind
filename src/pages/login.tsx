@@ -1,13 +1,14 @@
+import { Button } from '@/components/ui/Button'
+import { Input } from '@/components/ui/Input'
+import { Label } from '@/components/ui/Label'
 import { getBaseUrl, getErrorMessage } from '@/utils/functions'
-import * as Label from '@radix-ui/react-label'
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
-import clsx from 'clsx'
-import { GetServerSidePropsContext } from 'next'
+import { type GetServerSidePropsContext } from 'next'
 import Link from 'next/link'
 import { useState } from 'react'
-import { SubmitHandler, useForm } from 'react-hook-form'
-import { Database } from 'types/supabase.types'
+import { type SubmitHandler, useForm } from 'react-hook-form'
+import { type Database } from 'types/supabase.types'
 
 type FormValues = {
   email: string
@@ -68,13 +69,8 @@ export default function Login() {
             <form onSubmit={handleSubmit(onSubmit)}>
               <div>
                 <div className="mb-4">
-                  <Label.Root
-                    htmlFor="email"
-                    className="mb-1 block text-sm font-semibold text-gray-700"
-                  >
-                    Your Email
-                  </Label.Root>
-                  <input
+                  <Label htmlFor="email">Your Email</Label>
+                  <Input
                     id="email"
                     type="email"
                     {...register('email', {
@@ -95,17 +91,13 @@ export default function Login() {
                   ) : null}
                 </div>
                 <div>
-                  <button
-                    className={clsx(
-                      'w-full cursor-pointer rounded-md bg-indigo-500 py-2 px-4 font-semibold text-white hover:bg-indigo-600',
-                      'disabled:cursor-not-allowed disabled:opacity-60'
-                    )}
-                    // className="w-full cursor-pointer rounded-md bg-indigo-500 py-2 px-4 font-semibold text-white hover:bg-indigo-600"
+                  <Button
+                    className="w-full"
                     disabled={isSubmitting}
-                    // type="submit"
+                    type="submit"
                   >
                     {isSubmitting ? 'Sending...' : 'Send Login Link'}
-                  </button>
+                  </Button>
                 </div>
               </div>
             </form>

@@ -2,7 +2,7 @@ import { useAuthUser } from '@/utils/query/user'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { LogOut } from 'lucide-react'
 import Link from 'next/link'
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 
 export default function GlobalNavbar({
   children,

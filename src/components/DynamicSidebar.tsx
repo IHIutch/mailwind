@@ -6,11 +6,12 @@ import {
   useSelectedBlockDispatch,
   useSelectedBlockState,
 } from '@/context/selectedBlock'
-import { DefaultFormValues } from '@/pages/templates/[id]'
+import { type DefaultFormValues } from '@/pages/templates/[id]'
 import { useCallback, useEffect } from 'react'
 import { debounce } from 'lodash'
 import { useUpdateBlock } from '@/utils/query/blocks'
 import { useRouter } from 'next/router'
+import { Button } from './ui/Button'
 
 export default function DynamicSidebar() {
   const {
@@ -89,12 +90,13 @@ export default function DynamicSidebar() {
     <Component key={selectedBlockIndex}>
       <div className="relative">
         {selectedBlockIndex ? (
-          <button
-            className="absolute right-2 flex h-8 w-8 items-center justify-center rounded bg-zinc-200 hover:bg-zinc-300"
+          <Button
+            variant="subtle"
+            className="absolute right-2 flex h-8 w-8 items-center justify-center p-0"
             onClick={handleUnsetActiveBlock}
           >
             <X className="h-4 w-4" />
-          </button>
+          </Button>
         ) : null}
         <div>
           <div className="mb-4 px-3">

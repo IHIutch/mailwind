@@ -4,8 +4,8 @@ import { getBaseUrl } from '../functions'
 import type { AppRouter } from '@/server/routers/_app'
 import { httpBatchLink, loggerLink } from '@trpc/client'
 import { createTRPCNext } from '@trpc/next'
-import { inferRouterInputs, inferRouterOutputs } from '@trpc/server'
-import { NextPageContext } from 'next'
+import { type inferRouterInputs, type inferRouterOutputs } from '@trpc/server'
+import { type NextPageContext } from 'next'
 import superjson from 'superjson'
 
 /**

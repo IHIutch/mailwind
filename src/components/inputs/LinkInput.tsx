@@ -1,5 +1,6 @@
-import { DefaultFormValues } from '@/pages/templates/[id]'
-import { useController, UseControllerProps } from 'react-hook-form'
+import { type DefaultFormValues } from '@/pages/templates/[id]'
+import { useController, type UseControllerProps } from 'react-hook-form'
+import { Input } from '../ui/Input'
 
 export default function LinkInput({
   id,
@@ -23,7 +24,7 @@ export default function LinkInput({
   })
   return (
     <div>
-      <input
+      <Input
         id={id}
         type="url"
         className={className}

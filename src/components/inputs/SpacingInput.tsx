@@ -1,5 +1,6 @@
-import { DefaultFormValues } from '@/pages/templates/[id]'
-import { useController, UseControllerProps } from 'react-hook-form'
+import { type DefaultFormValues } from '@/pages/templates/[id]'
+import { useController, type UseControllerProps } from 'react-hook-form'
+import { Input } from '../ui/Input'
 
 export default function SpacingInput({
   id,
@@ -67,7 +68,7 @@ export default function SpacingInput({
 
   return (
     <div>
-      <input
+      <Input
         id={id}
         type="text"
         className={className}

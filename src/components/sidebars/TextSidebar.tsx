@@ -5,8 +5,8 @@ import PaddingInput from '../inputs/PaddingInput'
 import * as Label from '@radix-ui/react-label'
 import { useFormContext } from 'react-hook-form'
 import { useSelectedBlockState } from '@/context/selectedBlock'
-import { ReactNode } from 'react'
-import { DefaultFormValues } from '@/pages/templates/[id]'
+import { type ReactNode } from 'react'
+import { type DefaultFormValues } from '@/pages/templates/[id]'
 
 export default function TextSidebar({ children }: { children: ReactNode }) {
   const { data: selectedBlockIndex } = useSelectedBlockState()
@@ -29,7 +29,6 @@ export default function TextSidebar({ children }: { children: ReactNode }) {
               name: `blocks.${selectedBlockIndex}.attributes.fontSize` as 'blocks.0.attributes.fontSize',
               control,
             }}
-            className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
             errorClassName="mt-1 text-xs text-red-500"
           />
         </div>
@@ -46,7 +45,6 @@ export default function TextSidebar({ children }: { children: ReactNode }) {
               name: `blocks.${selectedBlockIndex}.attributes.lineHeight` as 'blocks.0.attributes.lineHeight',
               control,
             }}
-            className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
             errorClassName="mt-1 text-xs text-red-500"
           />
         </div>
@@ -64,7 +62,6 @@ export default function TextSidebar({ children }: { children: ReactNode }) {
                 name: `blocks.${selectedBlockIndex}.attributes.paddingTop` as 'blocks.0.attributes.paddingTop',
                 control,
               }}
-              className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
               errorClassName="mt-1 text-xs text-red-500"
             />
           </div>
@@ -81,7 +78,6 @@ export default function TextSidebar({ children }: { children: ReactNode }) {
                 name: `blocks.${selectedBlockIndex}.attributes.paddingRight` as 'blocks.0.attributes.paddingRight',
                 control,
               }}
-              className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
               errorClassName="mt-1 text-xs text-red-500"
             />
           </div>
@@ -98,7 +94,6 @@ export default function TextSidebar({ children }: { children: ReactNode }) {
                 name: `blocks.${selectedBlockIndex}.attributes.paddingBottom` as 'blocks.0.attributes.paddingBottom',
                 control,
               }}
-              className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
               errorClassName="mt-1 text-xs text-red-500"
             />
           </div>
@@ -115,7 +110,6 @@ export default function TextSidebar({ children }: { children: ReactNode }) {
                 name: `blocks.${selectedBlockIndex}.attributes.paddingLeft` as 'blocks.0.attributes.paddingLeft',
                 control,
               }}
-              className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
               errorClassName="mt-1 text-xs text-red-500"
             />
           </div>

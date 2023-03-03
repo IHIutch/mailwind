@@ -5,7 +5,7 @@ import * as ToggleGroup from '@radix-ui/react-toggle-group'
 import { AlignCenter, AlignLeft, AlignRight } from 'lucide-react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { type ReactNode } from 'react'
-import { DefaultFormValues } from '@/pages/templates/[id]'
+import { type DefaultFormValues } from '@/pages/templates/[id]'
 
 export default function GlobalSidebar({ children }: { children: ReactNode }) {
   const { control } = useFormContext<DefaultFormValues>()
@@ -67,7 +67,6 @@ export default function GlobalSidebar({ children }: { children: ReactNode }) {
             name: `global.containerWidth`,
             control,
           }}
-          className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
         />
       </div>
       <div className="border-t border-zinc-200 px-3 pt-4">

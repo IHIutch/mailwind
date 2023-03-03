@@ -1,7 +1,7 @@
-import { DefaultFormValues } from '@/pages/templates/[id]'
+import { type DefaultFormValues } from '@/pages/templates/[id]'
 import * as Select from '@radix-ui/react-select'
 import { ChevronDown } from 'lucide-react'
-import { useController, UseControllerProps } from 'react-hook-form'
+import { useController, type UseControllerProps } from 'react-hook-form'
 
 const fontWeightOptions = [
   { value: '100', label: 'Thin' },

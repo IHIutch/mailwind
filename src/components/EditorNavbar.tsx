@@ -2,6 +2,8 @@ import * as Label from '@radix-ui/react-label'
 import * as Popover from '@radix-ui/react-popover'
 import * as ToggleGroup from '@radix-ui/react-toggle-group'
 import { Send } from 'lucide-react'
+import { Button } from './ui/Button'
+import { Input } from './ui/Input'
 
 export default function EditorNavbar({
   handleDownload,
@@ -43,19 +45,15 @@ export default function EditorNavbar({
         </ToggleGroup.Root>
       </div>
       <div className="relative ml-auto flex items-center">
-        <button
-          className="h-8 cursor-pointer rounded-md bg-indigo-500 px-2 text-sm font-semibold text-white hover:bg-indigo-600"
-          onClick={handleDownload}
-        >
+        <Button size="sm" onClick={handleDownload}>
           Download
-        </button>
+        </Button>
         <div className="ml-2">
           <Popover.Root>
-            <Popover.Trigger
-              className="h-8 rounded-md bg-indigo-100 px-2 text-sm font-semibold text-indigo-700 hover:bg-indigo-200 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:bg-indigo-100"
-              disabled
-            >
-              Send Test
+            <Popover.Trigger asChild>
+              <Button variant="outline" disabled>
+                Send Test
+              </Button>
             </Popover.Trigger>
             <Popover.Portal>
               <Popover.Content
@@ -71,18 +69,14 @@ export default function EditorNavbar({
                   Your Email
                 </Label.Root>
                 <div className="flex items-end">
-                  <input
+                  <Input
                     id="emailToSendField"
                     type="email"
                     placeholder="Your Email..."
-                    className="block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200/50"
                   />
-                  <button
-                    className="ml-2 h-10 cursor-pointer rounded-md bg-indigo-500 px-4 font-semibold text-white hover:bg-indigo-600"
-                    onClick={handleSendEmail}
-                  >
+                  <Button size="sm" onClick={handleSendEmail}>
                     <Send className="h-5 w-5" />
-                  </button>
+                  </Button>
                 </div>
               </Popover.Content>
             </Popover.Portal>
