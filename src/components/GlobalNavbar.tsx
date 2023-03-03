@@ -1,8 +1,13 @@
 import { useAuthUser } from '@/utils/query/user'
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { LogOut } from 'lucide-react'
 import Link from 'next/link'
 import { type ReactNode } from 'react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from './ui/DropdownMenu'
 
 export default function GlobalNavbar({
   children,
@@ -28,31 +33,23 @@ export default function GlobalNavbar({
         {children ? <div>{children}</div> : null}
 
         <div className="ml-auto">
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger asChild>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
               <button className="ml-auto flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600">
                 <span className="font-medium uppercase text-white">
                   {(user?.email || '').substring(0, 1)}
                 </span>
               </button>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Portal>
-              <DropdownMenu.Content
-                align="end"
-                className="z-20 w-40 rounded-md border border-zinc-200 bg-white py-2 shadow-lg"
-              >
-                {/* <DropdownMenu.Item className="flex cursor-pointer items-center py-1 px-2 outline-none hover:bg-zinc-100">
-                  <Link to="/account">Account</Link>
-                </DropdownMenu.Item> */}
-                <DropdownMenu.Item className="flex cursor-pointer items-center py-1 px-2 outline-none hover:bg-zinc-100">
-                  <LogOut className="h-4 w-4" />
-                  <Link href="/logout" className="pl-2 font-medium">
-                    Logout
-                  </Link>
-                </DropdownMenu.Item>
-              </DropdownMenu.Content>
-            </DropdownMenu.Portal>
-          </DropdownMenu.Root>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem>
+                <LogOut className="h-4 w-4" />
+                <Link href="/logout" className="pl-2 font-medium">
+                  Logout
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </div>

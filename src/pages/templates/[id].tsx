@@ -11,7 +11,6 @@ import {
 } from '@/utils/query/blocks'
 import { useGetTemplateById, useUpdateTemplate } from '@/utils/query/templates'
 import { BlockType } from '@prisma/client'
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 
 import clsx from 'clsx'
 import {
@@ -64,6 +63,12 @@ import {
 import { Label } from '@/components/ui/Label'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/DropdownMenu'
 
 export type DefaultFormValues = {
   didMove: boolean
@@ -92,7 +97,7 @@ export default function TemplateId() {
     'desktop'
   )
 
-  const offset = '80px'
+  const offset = '92px'
   const mobileSize = '480px'
   const global = {
     containerAlign: 'center',
@@ -512,64 +517,52 @@ const ItemBlock = ({
             isActive ? 'visible opacity-100' : 'invisible opacity-0'
           )}
         >
-          <DropdownMenu.Root onOpenChange={setIsMenuActive}>
-            <DropdownMenu.Trigger asChild>
-              <button className="flex h-6 w-6 items-center justify-center rounded hover:bg-zinc-100">
+          <DropdownMenu onOpenChange={setIsMenuActive}>
+            <DropdownMenuTrigger>
+              <Button
+                variant="ghost"
+                className="flex h-7 w-7 items-center justify-center p-0"
+              >
                 <Plus className="h-4 w-4 text-gray-500" />
-              </button>
-            </DropdownMenu.Trigger>
-
-            <DropdownMenu.Portal>
-              <DropdownMenu.Content
-                align="start"
-                className="w-48 rounded-md border border-zinc-200 bg-white py-2 shadow-lg"
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              {Object.entries(BlockType).map(([key, optionType], idx) => (
+                <DropdownMenuItem
+                  key={idx}
+                  onClick={(e) => {
+                    e.stopPropagation() // This is a hacky fix that prevents the items behind this button from receiving a click event: https://github.com/radix-ui/primitives/issues/1658
+                    handleAddItem({ type: optionType })
+                  }}
+                >
+                  {getIcon(optionType)}
+                  <p className="pl-2">{key}</p>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu onOpenChange={setIsMenuActive}>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="flex h-7 w-7 items-center justify-center p-0"
               >
-                {Object.entries(BlockType).map(([key, optionType], idx) => (
-                  <DropdownMenu.Item
-                    key={idx}
-                    className="flex cursor-pointer items-center py-1 px-2 outline-none hover:bg-zinc-100"
-                    onClick={(e) => {
-                      e.stopPropagation() // This is a hacky fix that prevents the items behind this button from receiving a click event: https://github.com/radix-ui/primitives/issues/1658
-                      handleAddItem({ type: optionType })
-                    }}
-                  >
-                    {getIcon(optionType)}
-                    <p className="pl-2">{key}</p>
-                  </DropdownMenu.Item>
-                ))}
-              </DropdownMenu.Content>
-            </DropdownMenu.Portal>
-          </DropdownMenu.Root>
-          <DropdownMenu.Root onOpenChange={setIsMenuActive}>
-            <DropdownMenu.Trigger asChild>
-              <button className="flex h-6 w-6 items-center justify-center rounded hover:bg-zinc-100">
                 <Settings className="h-4 w-4 text-gray-500" />
-              </button>
-            </DropdownMenu.Trigger>
+              </Button>
+            </DropdownMenuTrigger>
 
-            <DropdownMenu.Portal>
-              <DropdownMenu.Content
-                align="start"
-                className="w-48 rounded-md border border-zinc-200 bg-white py-2 shadow-lg"
-              >
-                <DropdownMenu.Item
-                  className="flex cursor-pointer items-center py-1 px-2 outline-none hover:bg-zinc-100"
-                  onClick={handleDuplicateItem}
-                >
-                  <Copy className="h-4 w-4" />
-                  <span className="pl-2">Duplicate Item</span>
-                </DropdownMenu.Item>
-                <DropdownMenu.Item
-                  className="flex cursor-pointer items-center py-1 px-2 outline-none hover:bg-zinc-100"
-                  onClick={handleDeleteItem}
-                >
-                  <Trash2 className="h-4 w-4" />
-                  <span className="pl-2">Delete Item</span>
-                </DropdownMenu.Item>
-              </DropdownMenu.Content>
-            </DropdownMenu.Portal>
-          </DropdownMenu.Root>
-          <div className="flex h-6 w-6 items-center justify-center rounded hover:bg-zinc-100">
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={handleDuplicateItem}>
+                <Copy className="h-4 w-4" />
+                <span className="pl-2">Duplicate Item</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleDeleteItem}>
+                <Trash2 className="h-4 w-4" />
+                <span className="pl-2">Delete Item</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg hover:bg-zinc-100">
             {dragHandle}
           </div>
         </div>

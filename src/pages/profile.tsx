@@ -66,8 +66,8 @@ const TemplateLink = ({
 }) => {
   return (
     <div
-      className="relative overflow-hidden rounded border border-gray-200 bg-white shadow-sm transition-all
-      hover:-translate-y-1 hover:shadow-md"
+      className="hover:-tranzinc-y-1 relative overflow-hidden rounded border border-gray-200 bg-white shadow-sm
+      transition-all hover:shadow-md"
     >
       <Link className="after:absolute after:inset-0" href={pathname}>
         {children}
