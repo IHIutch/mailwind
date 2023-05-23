@@ -1,5 +1,4 @@
 import { Image as ImageIcon } from 'lucide-react'
-import Image from 'next/image'
 import { type z } from 'zod'
 
 import { type ImageBlockSchema } from '@/utils/zod/schemas'

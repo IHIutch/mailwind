@@ -1,25 +1,18 @@
-import { type ReactNode } from 'react'
-import clsx from 'clsx'
 import { AlignCenter, AlignLeft, AlignRight } from 'lucide-react'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import { type DefaultFormValues } from '@/pages/templates/[id]'
+import { cn } from '@/utils/functions'
 import * as Label from '@radix-ui/react-label'
 import * as ToggleGroup from '@radix-ui/react-toggle-group'
 import ColorInput from '../inputs/ColorInput'
 import SpacingInput from '../inputs/SpacingInput'
 
-export default function GlobalSidebar({
-  className,
-  closeButton,
-}: {
-  className?: string
-  closeButton?: ReactNode
-}) {
+export default function GlobalSidebar({ className }: { className?: string }) {
   const { control } = useFormContext<DefaultFormValues>()
 
   return (
-    <div className={clsx('relative', className)}>
+    <div className={cn('relative', className)}>
       <div className="mb-4 border-b px-3 pb-3">
         <h2 className="text-xl font-semibold">Global Attributes</h2>
       </div>

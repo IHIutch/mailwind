@@ -161,10 +161,10 @@ export default function TemplateId() {
               <div className="relative h-full pt-12">
                 <div className="h-full overflow-y-auto">
                   <div
-                    className={clsx('relative px-4 py-12', [
-                      global.containerAlign === 'left' && 'mr-auto',
-                      global.containerAlign === 'center' && 'mx-auto',
-                      global.containerAlign === 'right' && 'ml-auto',
+                    className={cn('relative px-4 py-12', [
+                      global.containerAlign === 'left' ? 'mr-auto' : '',
+                      global.containerAlign === 'center' ? 'mx-auto' : '',
+                      global.containerAlign === 'right' ? 'ml-auto' : '',
                     ])}
                     style={{
                       width:
@@ -397,7 +397,7 @@ const EditView = () => {
                         )}
                       >
                         <div
-                          className={clsx(
+                          className={cn(
                             'transition-all',
                             snapshot.isDragging ? 'opacity-60' : 'opacity-100'
                           )}
@@ -508,7 +508,7 @@ const ItemBlock = ({
       onClick={handleSetSelectedBlock}
     >
       <div
-        className={clsx(
+        className={cn(
           'pr-2',
           type === BlockType['H1'] ||
             type === BlockType['H2'] ||
@@ -519,7 +519,7 @@ const ItemBlock = ({
       >
         <div
           // style={{ paddingTop: itemPaddingTop }}
-          className={clsx(
+          className={cn(
             'flex transition-all',
             isActive ? 'visible opacity-100' : 'invisible opacity-0'
           )}
