@@ -24,12 +24,17 @@
     "prettier/prettier": "error",
     "@typescript-eslint/no-unused-vars": [
       "warn",
-      { "argsIgnorePattern": "^_", "destructuredArrayIgnorePattern": "^_" }
+      {
+        "varsIgnorePattern": "^_",
+        "argsIgnorePattern": "^_",
+        "destructuredArrayIgnorePattern": "^_"
+      }
     ],
     "@typescript-eslint/consistent-type-imports": [
       "error",
       { "prefer": "type-imports", "fixStyle": "inline-type-imports" }
-    ]
+    ],
+    "tailwindcss/no-custom-classname": "off"
   },
   "settings": {
     "react": {
