@@ -2,20 +2,21 @@ import { z } from 'zod'
 
 import { BlockType, GlobalRole, MembershipRole } from '@prisma/client'
 
-const sizeSchema = z.string().regex(/^([0-9]+px|0)$/i)
+const spaceSchema = z.string().regex(/^([0-9]+px|0)$/i)
+const sizeSchema = z.string().regex(/^(\d+px|\d+%|0)$/)
 const hexColorSchema = z.string().regex(/^#[A-Fa-f0-9]{6}$/)
 const fontWeightSchema = z.string().regex(/^[1-9]00$/)
 
 export const TextBlockSchema = z.object({
   type: z.literal(BlockType.TEXT),
   attributes: z.object({
-    paddingTop: sizeSchema,
-    paddingRight: sizeSchema,
-    paddingBottom: sizeSchema,
-    paddingLeft: sizeSchema,
-    fontSize: sizeSchema,
+    paddingTop: spaceSchema,
+    paddingRight: spaceSchema,
+    paddingBottom: spaceSchema,
+    paddingLeft: spaceSchema,
+    fontSize: spaceSchema,
     fontWeight: fontWeightSchema,
-    lineHeight: sizeSchema,
+    lineHeight: spaceSchema,
     color: hexColorSchema,
     backgroundColor: hexColorSchema,
   }),
@@ -27,20 +28,30 @@ export const HeadingBlockSchema = z.object({
     z.literal(BlockType.H3),
   ]),
   attributes: z.object({
-    paddingTop: sizeSchema,
-    paddingRight: sizeSchema,
-    paddingBottom: sizeSchema,
-    paddingLeft: sizeSchema,
-    fontSize: sizeSchema,
+    paddingTop: spaceSchema,
+    paddingRight: spaceSchema,
+    paddingBottom: spaceSchema,
+    paddingLeft: spaceSchema,
+    fontSize: spaceSchema,
     fontWeight: fontWeightSchema,
-    lineHeight: sizeSchema,
+    lineHeight: spaceSchema,
     color: hexColorSchema,
     backgroundColor: hexColorSchema,
   }),
 })
-export const imageBlockSchema = z.object({
+export const ImageBlockSchema = z.object({
   type: z.literal(BlockType.IMAGE),
-  attributes: z.any(),
+  attributes: z.object({
+    paddingTop: spaceSchema,
+    paddingRight: spaceSchema,
+    paddingBottom: spaceSchema,
+    paddingLeft: spaceSchema,
+    src: z.string().url(),
+    alt: z.string(),
+    height: sizeSchema,
+    width: sizeSchema,
+    backgroundColor: hexColorSchema,
+  }),
 })
 export const codeBlockSchema = z.object({
   type: z.literal(BlockType.CODE),
@@ -49,12 +60,12 @@ export const codeBlockSchema = z.object({
 export const DividerBlockSchema = z.object({
   type: z.literal(BlockType.DIVIDER),
   attributes: z.object({
-    paddingTop: sizeSchema,
-    paddingRight: sizeSchema,
-    paddingBottom: sizeSchema,
-    paddingLeft: sizeSchema,
-    borderWidth: sizeSchema,
-    borderTopWidth: sizeSchema,
+    paddingTop: spaceSchema,
+    paddingRight: spaceSchema,
+    paddingBottom: spaceSchema,
+    paddingLeft: spaceSchema,
+    borderWidth: spaceSchema,
+    borderTopWidth: spaceSchema,
     borderTopColor: hexColorSchema,
     backgroundColor: hexColorSchema,
   }),
@@ -161,7 +172,7 @@ export const OrganizationUpdateSchema = z.object({
 export const blockSchema = z.union([
   TextBlockSchema.merge(defaultBlockSchema),
   HeadingBlockSchema.merge(defaultBlockSchema),
-  imageBlockSchema.merge(defaultBlockSchema),
+  ImageBlockSchema.merge(defaultBlockSchema),
   codeBlockSchema.merge(defaultBlockSchema),
   DividerBlockSchema.merge(defaultBlockSchema),
   quoteBlockSchema.merge(defaultBlockSchema),

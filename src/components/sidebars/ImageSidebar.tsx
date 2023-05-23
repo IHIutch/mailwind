@@ -4,10 +4,11 @@ import { useFormContext } from 'react-hook-form'
 
 import { useSelectedBlockState } from '@/context/selectedBlock'
 import { type DefaultFormValues } from '@/pages/templates/[id]'
-import * as Label from '@radix-ui/react-label'
-import LinkInput from '../inputs/LinkInput'
-import PaddingInput from '../inputs/PaddingInput'
+import ColorInput from '../inputs/ColorInput'
+import PaddingSelect from '../inputs/PaddingSelect'
 import SpacingInput from '../inputs/SpacingInput'
+import TextInput from '../inputs/TextInput'
+import { Label } from '../ui/Label'
 
 export default function ImageSidebar({
   className,
@@ -27,12 +28,46 @@ export default function ImageSidebar({
       </div>
       <div className="relative px-3">
         <div className="mb-4">
-          <Label.Root
+          <Label
+            htmlFor="urlField"
+            className="mb-1 block text-sm font-semibold text-gray-700"
+          >
+            Image URL
+          </Label>
+          <TextInput
+            id="urlField"
+            type="url"
+            inputProps={{
+              name: `blocks.${selectedBlockIndex}.attributes.src` as 'blocks.0.attributes.src',
+              control,
+            }}
+            errorClassName="mt-1 text-xs text-red-500"
+          />
+        </div>
+        <div className="mb-4">
+          <Label
+            htmlFor="altTextField"
+            className="mb-1 block text-sm font-semibold text-gray-700"
+          >
+            Alt Text
+          </Label>
+          <TextInput
+            id="altTextField"
+            type="text"
+            inputProps={{
+              name: `blocks.${selectedBlockIndex}.attributes.alt` as 'blocks.0.attributes.alt',
+              control,
+            }}
+            errorClassName="mt-1 text-xs text-red-500"
+          />
+        </div>
+        <div className="mb-4">
+          <Label
             htmlFor="heightInputField"
             className="mb-1 block text-sm font-semibold text-gray-700"
           >
             Image Height
-          </Label.Root>
+          </Label>
           <SpacingInput
             id="heightInputField"
             inputProps={{
@@ -43,12 +78,12 @@ export default function ImageSidebar({
           />
         </div>
         <div className="mb-4">
-          <Label.Root
+          <Label
             htmlFor="widthInputField"
             className="mb-1 block text-sm font-semibold text-gray-700"
           >
             Image Width
-          </Label.Root>
+          </Label>
           <SpacingInput
             id="widthInputField"
             inputProps={{
@@ -60,13 +95,13 @@ export default function ImageSidebar({
         </div>
         <div className="mb-4 grid grid-flow-row grid-cols-2 gap-4">
           <div>
-            <Label.Root
+            <Label
               htmlFor="paddingTopField"
               className="mb-1 block text-sm font-semibold text-gray-700"
             >
               Padding Top
-            </Label.Root>
-            <PaddingInput
+            </Label>
+            <PaddingSelect
               id="paddingTopField"
               inputProps={{
                 name: `blocks.${selectedBlockIndex}.attributes.paddingTop` as 'blocks.0.attributes.paddingTop',
@@ -76,13 +111,13 @@ export default function ImageSidebar({
             />
           </div>
           <div>
-            <Label.Root
+            <Label
               htmlFor="paddingRightField"
               className="mb-1 block text-sm font-semibold text-gray-700"
             >
               Padding Right
-            </Label.Root>
-            <PaddingInput
+            </Label>
+            <PaddingSelect
               id="paddingRightField"
               inputProps={{
                 name: `blocks.${selectedBlockIndex}.attributes.paddingRight` as 'blocks.0.attributes.paddingRight',
@@ -92,13 +127,13 @@ export default function ImageSidebar({
             />
           </div>
           <div>
-            <Label.Root
+            <Label
               htmlFor="paddingBottomField"
               className="mb-1 block text-sm font-semibold text-gray-700"
             >
               Padding Bottom
-            </Label.Root>
-            <PaddingInput
+            </Label>
+            <PaddingSelect
               id="paddingBottomField"
               inputProps={{
                 name: `blocks.${selectedBlockIndex}.attributes.paddingBottom` as 'blocks.0.attributes.paddingBottom',
@@ -108,13 +143,13 @@ export default function ImageSidebar({
             />
           </div>
           <div>
-            <Label.Root
+            <Label
               htmlFor="paddingLeftField"
               className="mb-1 block text-sm font-semibold text-gray-700"
             >
               Padding Left
-            </Label.Root>
-            <PaddingInput
+            </Label>
+            <PaddingSelect
               id="paddingLeftField"
               inputProps={{
                 name: `blocks.${selectedBlockIndex}.attributes.paddingLeft` as 'blocks.0.attributes.paddingLeft',
@@ -125,19 +160,18 @@ export default function ImageSidebar({
           </div>
         </div>
         <div className="mb-4">
-          <Label.Root
-            htmlFor="urlField"
+          <Label
+            htmlFor="backgroundColorField"
             className="mb-1 block text-sm font-semibold text-gray-700"
           >
-            Image Link
-          </Label.Root>
-          <LinkInput
-            id="urlField"
+            Background Color
+          </Label>
+          <ColorInput
+            id="backgroundColorField"
             inputProps={{
-              name: `blocks.${selectedBlockIndex}.attributes.url` as 'blocks.0.attributes.url',
+              name: `blocks.${selectedBlockIndex}.attributes.backgroundColor` as 'blocks.0.attributes.backgroundColor',
               control,
             }}
-            errorClassName="mt-1 text-xs text-red-500"
           />
         </div>
       </div>

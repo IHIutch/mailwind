@@ -15,7 +15,7 @@ import {
   defaultBlockSchema,
   DividerBlockSchema,
   HeadingBlockSchema,
-  imageBlockSchema,
+  ImageBlockSchema,
   quoteBlockSchema,
   TextBlockSchema,
 } from '@/utils/zod/schemas'
@@ -25,7 +25,7 @@ import { publicProcedure, router } from '../trpc'
 const partialBlockSchemas = z.union([
   TextBlockSchema.merge(defaultBlockSchema).omit({ id: true }).partial(),
   HeadingBlockSchema.merge(defaultBlockSchema).omit({ id: true }).partial(),
-  imageBlockSchema.merge(defaultBlockSchema).omit({ id: true }).partial(),
+  ImageBlockSchema.merge(defaultBlockSchema).omit({ id: true }).partial(),
   codeBlockSchema.merge(defaultBlockSchema).omit({ id: true }).partial(),
   DividerBlockSchema.merge(defaultBlockSchema).omit({ id: true }).partial(),
   quoteBlockSchema.merge(defaultBlockSchema).omit({ id: true }).partial(),

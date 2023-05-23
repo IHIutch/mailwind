@@ -20,7 +20,7 @@ export default function SpacingInput({
   } = useController({
     ...inputProps,
     rules: {
-      required: true,
+      required: 'This field is required',
       validate: {
         isNumber: (v) => {
           const { value } = handleMatch(v)
@@ -32,8 +32,7 @@ export default function SpacingInput({
         },
         isUnitSupported: (v) => {
           const { unit } = handleMatch(v)
-          if (!['px', '%', ''].includes(unit))
-            return `Units must be 'px', '%', or blank (for Tailwind units)`
+          if (!['px', '%'].includes(unit)) return `Units must be 'px' or '%'`
         },
         isFormatted: (v) => {
           const { value, unit } = handleMatch(v)
@@ -47,9 +46,7 @@ export default function SpacingInput({
     if (['ArrowUp', 'ArrowDown'].includes(e.key)) {
       e.preventDefault()
 
-      const { value = '', unit = '' } = e.target.value.match(
-        /(?<value>^-?\d+)(?<unit>\S+|)/
-      ).groups
+      const { value, unit } = handleMatch(e.target.value)
 
       const currentValue = isNaN(value) ? 0 : parseInt(value)
 
@@ -61,9 +58,11 @@ export default function SpacingInput({
   }
 
   const handleMatch = (val) => {
-    const { value = '', unit = '' } = val.match(
-      /(?<value>^-?\d+)(?<unit>\S+|)/
-    ).groups
+    const groups = val?.match(/(?<value>^-?\d+)(?<unit>\S+|)/)?.groups
+
+    const value = groups?.value || ''
+    const unit = groups?.unit || ''
+
     return { value, unit }
   }
 

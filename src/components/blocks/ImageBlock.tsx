@@ -1,27 +1,40 @@
-import { useController, type UseControllerProps } from 'react-hook-form'
+import { Image as ImageIcon } from 'lucide-react'
+import Image from 'next/image'
+import { type z } from 'zod'
 
-import { type DefaultFormValues } from '@/pages/templates/[id]'
-import ImageAddUrl from '../ImageAddUrl'
+import { type ImageBlockSchema } from '@/utils/zod/schemas'
+
+type ImageBlockAttributes = z.infer<typeof ImageBlockSchema>
 
 export default function ImageBlock({
   attributes,
-  inputProps,
-  className,
-  errorClassName,
 }: {
-  attributes: any
-  inputProps: UseControllerProps<DefaultFormValues>
-  className?: string
-  errorClassName?: string
+  attributes: ImageBlockAttributes['attributes']
 }) {
-  const {
-    field: { onChange, onBlur, name: inputName, value, ref },
-    fieldState: { error },
-  } = useController({ ...inputProps })
-
   return (
-    <div>
-      <ImageAddUrl name={inputName} value={value} onChange={onChange} />
+    <div
+      style={{
+        height: attributes.height,
+        width: attributes.width,
+        paddingTop: attributes.paddingTop,
+        paddingRight: attributes.paddingRight,
+        paddingBottom: attributes.paddingBottom,
+        paddingLeft: attributes.paddingLeft,
+        backgroundColor: attributes.backgroundColor,
+      }}
+    >
+      {attributes?.src ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          className="h-full w-full object-cover"
+          src={attributes.src}
+          alt={attributes.alt}
+        />
+      ) : (
+        <div className="flex h-full w-full items-center justify-center rounded-md border border-zinc-200 bg-zinc-100">
+          <ImageIcon className="h-16 w-16 text-zinc-300" />
+        </div>
+      )}
     </div>
   )
 }
