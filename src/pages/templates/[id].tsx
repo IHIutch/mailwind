@@ -171,7 +171,7 @@ export default function TemplateId() {
                         previewSize === 'desktop'
                           ? `calc(${global.containerWidth} + ${offset})`
                           : `calc(${mobileSize} + ${offset})`,
-                      left: offset,
+                      left: `calc(${offset} / 2 * -1)`,
                     }}
                   >
                     <EditView />
