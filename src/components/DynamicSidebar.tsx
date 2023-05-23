@@ -60,7 +60,13 @@ export default function DynamicSidebar() {
       !didMove &&
       formState.dirtyFields.blocks?.[selectedBlockIndex]?.attributes
     ) {
-      // console.log(index, formState.dirtyFields, value)
+      console.log({
+        selectedBlockIndex,
+        dirtyFields: formState.dirtyFields,
+        id: getValues(`blocks.${selectedBlockIndex}.id`),
+        errors: formState.errors,
+        isValid: formState.isValid,
+      })
       autoSaveDebounce({
         where: {
           id: getValues(`blocks.${selectedBlockIndex}.id`),
@@ -79,6 +85,7 @@ export default function DynamicSidebar() {
     formState.dirtyFields,
     getValues,
     selectedBlockIndex,
+    formState.errors,
   ])
 
   const handleUnsetActiveBlock = () => {

@@ -107,10 +107,12 @@ export const defaultAttributes = {
     fontWeight: '400',
   },
   [BlockType.DIVIDER]: {
-    paddingTop: '8px',
-    paddingRight: '0',
-    paddingBottom: '8px',
-    paddingLeft: '0',
+    paddingTop: '10px',
+    paddingRight: '24px',
+    paddingBottom: '10px',
+    paddingLeft: '24px',
+    borderColor: '#000000',
+    borderTopWidth: '4px',
   },
   [BlockType.IMAGE]: {
     paddingTop: '8px',

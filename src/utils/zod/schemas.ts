@@ -2,6 +2,9 @@ import { z } from 'zod'
 
 import { BlockType, GlobalRole, MembershipRole } from '@prisma/client'
 
+const sizeSchema = z.string().regex(/^([0-9]+px|0)$/i)
+const hexSchema = z.string().regex(/^#[A-Fa-f0-9]{6}$/)
+
 export const textBlockSchema = z.object({
   type: z.literal(BlockType.TEXT),
   attributes: z.any(),
@@ -22,9 +25,18 @@ export const codeBlockSchema = z.object({
   type: z.literal(BlockType.CODE),
   attributes: z.any(),
 })
-export const dividerBlockSchema = z.object({
+export const DividerBlockSchema = z.object({
   type: z.literal(BlockType.DIVIDER),
-  attributes: z.any(),
+  attributes: z.object({
+    paddingTop: sizeSchema,
+    paddingRight: sizeSchema,
+    paddingBottom: sizeSchema,
+    paddingLeft: sizeSchema,
+    borderWidth: sizeSchema,
+    borderTopColor: hexSchema,
+    backgroundColor: hexSchema,
+    borderTopWidth: sizeSchema,
+  }),
 })
 export const quoteBlockSchema = z.object({
   type: z.literal(BlockType.QUOTE),
@@ -130,6 +142,6 @@ export const blockSchema = z.union([
   headingBlockSchema.merge(defaultBlockSchema),
   imageBlockSchema.merge(defaultBlockSchema),
   codeBlockSchema.merge(defaultBlockSchema),
-  dividerBlockSchema.merge(defaultBlockSchema),
+  DividerBlockSchema.merge(defaultBlockSchema),
   quoteBlockSchema.merge(defaultBlockSchema),
 ])
