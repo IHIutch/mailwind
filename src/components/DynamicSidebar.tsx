@@ -88,25 +88,22 @@ export default function DynamicSidebar() {
   const selectedBlockType = getValues(`blocks.${selectedBlockIndex}.type`)
   const Component = sidebars[selectedBlockType || 'GLOBAL']
   return (
-    <Component key={selectedBlockIndex}>
-      <div className="relative">
-        {selectedBlockIndex ? (
-          <Button
-            variant="subtle"
-            className="absolute right-2 flex h-8 w-8 items-center justify-center p-0"
-            onClick={handleUnsetActiveBlock}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        ) : null}
-        <div>
-          <div className="mb-4 px-3">
-            <h2 className="font-semibold">
-              {selectedBlockType || 'Global Attributes'}
-            </h2>
+    <Component
+      key={selectedBlockIndex}
+      className="py-4"
+      closeButton={
+        selectedBlockIndex !== -1 ? (
+          <div className="absolute right-2 top-2">
+            <Button
+              variant="subtle"
+              className="flex h-8 w-8 items-center justify-center p-0"
+              onClick={handleUnsetActiveBlock}
+            >
+              <X className="h-4 w-4" />
+            </Button>
           </div>
-        </div>
-      </div>
-    </Component>
+        ) : null
+      }
+    />
   )
 }

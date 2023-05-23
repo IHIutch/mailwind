@@ -1,4 +1,5 @@
 import { type ReactNode } from 'react'
+import clsx from 'clsx'
 import { AlignCenter, AlignLeft, AlignRight } from 'lucide-react'
 import { Controller, useFormContext } from 'react-hook-form'
 
@@ -8,12 +9,20 @@ import * as ToggleGroup from '@radix-ui/react-toggle-group'
 import ColorInput from '../inputs/ColorInput'
 import SpacingInput from '../inputs/SpacingInput'
 
-export default function GlobalSidebar({ children }: { children: ReactNode }) {
+export default function GlobalSidebar({
+  className,
+  closeButton,
+}: {
+  className?: string
+  closeButton?: ReactNode
+}) {
   const { control } = useFormContext<DefaultFormValues>()
 
   return (
-    <div>
-      {children}
+    <div className={clsx('relative', className)}>
+      <div className="mb-4 px-3">
+        <h2 className="font-semibold">Global Attributes</h2>
+      </div>
       <div className="mb-4 px-3">
         <fieldset>
           <Label.Root htmlFor="containerAlignField" asChild>

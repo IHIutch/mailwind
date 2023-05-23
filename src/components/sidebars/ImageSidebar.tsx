@@ -1,4 +1,5 @@
 import { type ReactNode } from 'react'
+import clsx from 'clsx'
 import { useFormContext } from 'react-hook-form'
 
 import { useSelectedBlockState } from '@/context/selectedBlock'
@@ -8,13 +9,22 @@ import LinkInput from '../inputs/LinkInput'
 import PaddingInput from '../inputs/PaddingInput'
 import SpacingInput from '../inputs/SpacingInput'
 
-export default function ImageSidebar({ children }: { children: ReactNode }) {
+export default function ImageSidebar({
+  className,
+  closeButton,
+}: {
+  className?: string
+  closeButton?: ReactNode
+}) {
   const { data: selectedBlockIndex } = useSelectedBlockState()
   const { control } = useFormContext<DefaultFormValues>()
 
   return (
-    <div>
-      <div>{children}</div>
+    <div className={clsx('relative', className)}>
+      {closeButton}
+      <div className="mb-4 px-3">
+        <h2 className="font-semibold">Image Block</h2>
+      </div>
       <div className="relative px-3">
         <div className="mb-4">
           <Label.Root
