@@ -1,57 +1,41 @@
-import DynamicBlock from '@/components/DynamicBlock'
-import DynamicSidebar from '@/components/DynamicSidebar'
-import EditorNavbar from '@/components/EditorNavbar'
-import GlobalNavbar from '@/components/GlobalNavbar'
-import { defaultAttributes } from '@/utils/defaults'
-import {
-  useCreateBlock,
-  useDeleteBlock,
-  useGetBlocksByTemplateId,
-  useUpdateBlock,
-} from '@/utils/query/blocks'
-import { useGetTemplateById, useUpdateTemplate } from '@/utils/query/templates'
-import { BlockType } from '@prisma/client'
-
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import clsx from 'clsx'
+import dayjs from 'dayjs'
 import {
   Code2,
+  Copy,
   FlipVertical,
+  GripVertical,
+  Image,
+  Plus,
   PlusCircle,
   PlusSquare,
   Quote,
-  Type,
-  Image,
-  Plus,
   Settings,
   Trash2,
-  Copy,
-  GripVertical,
+  Type,
 } from 'lucide-react'
-import { useRouter } from 'next/router'
-import { type ReactNode, useEffect, useMemo } from 'react'
-import { useState } from 'react'
-import dayjs from 'dayjs'
+import useRouter from 'next/router'
+import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  resetServerContext,
+  type DropResult,
+} from 'react-beautiful-dnd'
 import {
   FormProvider,
   useFieldArray,
   useForm,
   useFormContext,
 } from 'react-hook-form'
-import {
-  SelectedBlockProvider,
-  setSelectedBlock,
-  useSelectedBlockDispatch,
-} from '@/context/selectedBlock'
-import { getNewLexoPosition } from '@/utils/functions'
-import { type SingleBlockPayloadType } from '@/utils/prisma/blocks'
-import {
-  DragDropContext,
-  Draggable,
-  Droppable,
-  type DropResult,
-  resetServerContext,
-} from 'react-beautiful-dnd'
 import axios from 'redaxios'
+
+import DynamicBlock from '@/components/DynamicBlock'
+import DynamicSidebar from '@/components/DynamicSidebar'
+import EditorNavbar from '@/components/EditorNavbar'
+import GlobalNavbar from '@/components/GlobalNavbar'
+import { Button } from '@/components/ui/Button'
 import {
   Dialog,
   DialogContent,
@@ -60,15 +44,30 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/Dialog'
-import { Label } from '@/components/ui/Label'
-import { Input } from '@/components/ui/Input'
-import { Button } from '@/components/ui/Button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu'
+import { Input } from '@/components/ui/Input'
+import { Label } from '@/components/ui/Label'
+import {
+  SelectedBlockProvider,
+  setSelectedBlock,
+  useSelectedBlockDispatch,
+} from '@/context/selectedBlock'
+import { defaultAttributes } from '@/utils/defaults'
+import { getNewLexoPosition } from '@/utils/functions'
+import { type SingleBlockPayloadType } from '@/utils/prisma/blocks'
+import {
+  useCreateBlock,
+  useDeleteBlock,
+  useGetBlocksByTemplateId,
+  useUpdateBlock,
+} from '@/utils/query/blocks'
+import { useGetTemplateById, useUpdateTemplate } from '@/utils/query/templates'
+import { BlockType } from '@prisma/client'
 
 export type DefaultFormValues = {
   didMove: boolean

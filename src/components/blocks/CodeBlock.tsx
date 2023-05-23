@@ -1,10 +1,11 @@
-import { type DefaultFormValues } from '@/pages/templates/[id]'
+import { useEffect, useState } from 'react'
 import Highlight, { defaultProps, type Language } from 'prism-react-renderer'
 import theme from 'prism-react-renderer/themes/nightOwl'
-import { useEffect, useState } from 'react'
 import { useController, type UseControllerProps } from 'react-hook-form'
 import Editor from 'react-simple-code-editor'
 import { z } from 'zod'
+
+import { type DefaultFormValues } from '@/pages/templates/[id]'
 
 // const codeAttributes = z
 //   .object({

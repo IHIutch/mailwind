@@ -1,6 +1,6 @@
-import { getErrorMessage } from '../functions'
 import { prisma } from '@/server/prisma'
 import { type Prisma } from '@prisma/client'
+import { getErrorMessage } from '../functions'
 
 export const prismaFindTemplates = async ({
   where,

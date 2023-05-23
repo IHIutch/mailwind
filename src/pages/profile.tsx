@@ -1,10 +1,11 @@
-import GlobalNavbar from '@/components/GlobalNavbar'
-import { useGetTemplatesByOrganizationId } from '@/utils/query/templates'
-import { useAuthUser } from '@/utils/query/user'
+import { type ReactNode } from 'react'
 import dayjs from 'dayjs'
 import { Plus } from 'lucide-react'
 import Link from 'next/link'
-import { type ReactNode } from 'react'
+
+import GlobalNavbar from '@/components/GlobalNavbar'
+import { useGetTemplatesByOrganizationId } from '@/utils/query/templates'
+import { useAuthUser } from '@/utils/query/user'
 
 export default function Profile() {
   const { data: user } = useAuthUser()

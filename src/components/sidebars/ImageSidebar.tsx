@@ -1,11 +1,12 @@
+import { type ReactNode } from 'react'
+import { useFormContext } from 'react-hook-form'
+
+import { useSelectedBlockState } from '@/context/selectedBlock'
+import { type DefaultFormValues } from '@/pages/templates/[id]'
+import * as Label from '@radix-ui/react-label'
 import LinkInput from '../inputs/LinkInput'
 import PaddingInput from '../inputs/PaddingInput'
 import SpacingInput from '../inputs/SpacingInput'
-import * as Label from '@radix-ui/react-label'
-import { useFormContext } from 'react-hook-form'
-import { type ReactNode } from 'react'
-import { useSelectedBlockState } from '@/context/selectedBlock'
-import { type DefaultFormValues } from '@/pages/templates/[id]'
 
 export default function ImageSidebar({ children }: { children: ReactNode }) {
   const { data: selectedBlockIndex } = useSelectedBlockState()

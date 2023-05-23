@@ -1,12 +1,14 @@
-import { getBaseUrl } from '../functions'
 // ℹ️ Type-only import:
 // https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html#type-only-imports-and-export
+
+import { type NextPageContext } from 'next'
+import superjson from 'superjson'
+
 import type { AppRouter } from '@/server/routers/_app'
 import { httpBatchLink, loggerLink } from '@trpc/client'
 import { createTRPCNext } from '@trpc/next'
 import { type inferRouterInputs, type inferRouterOutputs } from '@trpc/server'
-import { type NextPageContext } from 'next'
-import superjson from 'superjson'
+import { getBaseUrl } from '../functions'
 
 /**
  * Extend `NextPageContext` with meta data that can be picked up by `responseMeta()` when server-side rendering

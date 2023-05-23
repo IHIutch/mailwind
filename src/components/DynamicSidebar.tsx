@@ -1,16 +1,17 @@
-import { sidebars } from '@/utils/defaults'
+import { useCallback, useEffect } from 'react'
+import { debounce } from 'lodash'
 import { X } from 'lucide-react'
+import { useRouter } from 'next/router'
 import { useFormContext, useWatch } from 'react-hook-form'
+
 import {
   setSelectedBlock,
   useSelectedBlockDispatch,
   useSelectedBlockState,
 } from '@/context/selectedBlock'
 import { type DefaultFormValues } from '@/pages/templates/[id]'
-import { useCallback, useEffect } from 'react'
-import { debounce } from 'lodash'
+import { sidebars } from '@/utils/defaults'
 import { useUpdateBlock } from '@/utils/query/blocks'
-import { useRouter } from 'next/router'
 import { Button } from './ui/Button'
 
 export default function DynamicSidebar() {

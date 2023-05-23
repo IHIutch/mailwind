@@ -1,7 +1,8 @@
-import { useAuthUser } from '@/utils/query/user'
+import { type ReactNode } from 'react'
 import { LogOut } from 'lucide-react'
 import Link from 'next/link'
-import { type ReactNode } from 'react'
+
+import { useAuthUser } from '@/utils/query/user'
 import {
   DropdownMenu,
   DropdownMenuContent,

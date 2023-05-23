@@ -1,5 +1,6 @@
-import { BlockType, GlobalRole, MembershipRole } from '@prisma/client'
 import { z } from 'zod'
+
+import { BlockType, GlobalRole, MembershipRole } from '@prisma/client'
 
 export const textBlockSchema = z.object({
   type: z.literal(BlockType.TEXT),

@@ -1,8 +1,9 @@
-import Editor from '../Editor'
-import { BlockType } from '@prisma/client'
 import clsx from 'clsx'
 import { useController, type UseControllerProps } from 'react-hook-form'
+
 import { type DefaultFormValues } from '@/pages/templates/[id]'
+import { BlockType } from '@prisma/client'
+import Editor from '../Editor'
 
 export default function HeadingBlock({
   type,

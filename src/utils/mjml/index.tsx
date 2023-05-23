@@ -1,26 +1,27 @@
+import { readFileSync } from 'fs'
+import { minify } from 'html-minifier'
 import {
   Mjml,
-  MjmlHead,
-  MjmlPreview,
-  MjmlTitle,
   MjmlBody,
-  MjmlSection,
-  MjmlColumn,
   MjmlButton,
-  MjmlImage,
-  MjmlText,
-  render,
+  MjmlColumn,
   MjmlDivider,
+  MjmlHead,
+  MjmlImage,
+  MjmlPreview,
+  MjmlSection,
   MjmlSpacer,
   MjmlStyle,
+  MjmlText,
+  MjmlTitle,
+  render,
 } from 'mjml-react'
+import path from 'path'
 import pretty from 'pretty'
-import { minify } from 'html-minifier'
 import Highlight, { defaultProps } from 'prism-react-renderer'
 import theme from 'prism-react-renderer/themes/nightOwl'
-import { readFileSync } from 'fs'
+
 import { defaultAttributes } from '../defaults'
-import path from 'path'
 import { getErrorMessage } from '../functions'
 
 export default function getMjMl(json: any) {

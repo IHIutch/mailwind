@@ -1,7 +1,8 @@
-import { appRouter } from '@/server/routers/_app'
-import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
 import { Loader2 } from 'lucide-react'
 import { type GetServerSidePropsContext } from 'next'
+
+import { appRouter } from '@/server/routers/_app'
+import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
 
 export default function NewTemplate() {
   return (

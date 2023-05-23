@@ -1,16 +1,19 @@
+import { useEffect, useState } from 'react'
+import type { AppProps } from 'next/app'
+import { type Database } from 'types/supabase.types'
+
 import {
   createBrowserSupabaseClient,
   type Session,
 } from '@supabase/auth-helpers-nextjs'
 import { SessionContextProvider } from '@supabase/auth-helpers-react'
-import type { AppProps } from 'next/app'
-import { useEffect, useState } from 'react'
-import { type Database } from 'types/supabase.types'
+
 import '@/styles/main.css'
-import { trpc } from '@/utils/trpc'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import * as Fathom from 'fathom-client'
 import { Router } from 'next/router'
+
+import { trpc } from '@/utils/trpc'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 // Record a pageview when route changes
 Router.events.on('routeChangeComplete', (as, routeProps) => {

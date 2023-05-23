@@ -1,7 +1,9 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+
+import type { NextApiRequest, NextApiResponse } from 'next'
+
 import { getErrorMessage } from '@/utils/functions'
 import getMjMl from '@/utils/mjml'
-import type { NextApiRequest, NextApiResponse } from 'next'
 
 type Data = {
   html?: string

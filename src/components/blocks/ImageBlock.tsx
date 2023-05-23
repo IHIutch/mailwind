@@ -1,6 +1,7 @@
-import ImageAddUrl from '../ImageAddUrl'
 import { useController, type UseControllerProps } from 'react-hook-form'
+
 import { type DefaultFormValues } from '@/pages/templates/[id]'
+import ImageAddUrl from '../ImageAddUrl'
 
 export default function ImageBlock({
   attributes,

@@ -1,17 +1,18 @@
-import { router, publicProcedure } from '../trpc'
-import {
-  UserCreateSchema,
-  UserUpdateSchema,
-  UserWhereSchema,
-} from '@/utils/zod/schemas'
-import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
+
 import {
   prismaCreateUser,
   prismaDeleteUser,
   prismaFindUniqueUser,
   prismaUpdateUser,
 } from '@/utils/prisma/users'
+import {
+  UserCreateSchema,
+  UserUpdateSchema,
+  UserWhereSchema,
+} from '@/utils/zod/schemas'
+import { TRPCError } from '@trpc/server'
+import { publicProcedure, router } from '../trpc'
 
 export const userRouter = router({
   byId: publicProcedure

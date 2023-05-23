@@ -1,4 +1,12 @@
-import { router, publicProcedure } from '../trpc'
+import { z } from 'zod'
+
+import {
+  prismaCreateBlock,
+  prismaDeleteBlock,
+  prismaFindBlocks,
+  prismaFindUniqueBlock,
+  prismaUpdateBlock,
+} from '@/utils/prisma/blocks'
 import {
   BlockCreateSchema,
   BlockUpdateSchema,
@@ -12,14 +20,7 @@ import {
   textBlockSchema,
 } from '@/utils/zod/schemas'
 import { TRPCError } from '@trpc/server'
-import { z } from 'zod'
-import {
-  prismaCreateBlock,
-  prismaDeleteBlock,
-  prismaFindBlocks,
-  prismaFindUniqueBlock,
-  prismaUpdateBlock,
-} from '@/utils/prisma/blocks'
+import { publicProcedure, router } from '../trpc'
 
 const partialBlockSchemas = z.union([
   textBlockSchema.merge(defaultBlockSchema).omit({ id: true }).partial(),

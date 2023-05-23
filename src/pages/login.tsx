@@ -1,14 +1,15 @@
+import { useState } from 'react'
+import { type GetServerSidePropsContext } from 'next'
+import Link from 'next/link'
+import { useForm, type SubmitHandler } from 'react-hook-form'
+import { type Database } from 'types/supabase.types'
+
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Label } from '@/components/ui/Label'
 import { getBaseUrl, getErrorMessage } from '@/utils/functions'
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
-import { type GetServerSidePropsContext } from 'next'
-import Link from 'next/link'
-import { useState } from 'react'
-import { type SubmitHandler, useForm } from 'react-hook-form'
-import { type Database } from 'types/supabase.types'
 
 type FormValues = {
   email: string

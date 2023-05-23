@@ -1,5 +1,6 @@
-import { type DefaultFormValues } from '@/pages/templates/[id]'
 import { useController, type UseControllerProps } from 'react-hook-form'
+
+import { type DefaultFormValues } from '@/pages/templates/[id]'
 import Editor from '../Editor'
 
 export default function TextBlock({

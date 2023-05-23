@@ -1,6 +1,7 @@
-import * as Label from '@radix-ui/react-label'
-import { Image, X } from 'lucide-react'
 import { useRef, useState } from 'react'
+import { Image, X } from 'lucide-react'
+
+import * as Label from '@radix-ui/react-label'
 
 export default function ImageDropzone({ onChange, value = '', name }) {
   const [preview, setPreview] = useState(value)

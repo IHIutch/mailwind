@@ -1,11 +1,5 @@
-import { router, publicProcedure } from '../trpc'
-import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
-import {
-  TemplateCreateSchema,
-  TemplateUpdateSchema,
-  TemplateWhereSchema,
-} from '@/utils/zod/schemas'
+
 import {
   prismaCreateTemplate,
   prismaDeleteTemplate,
@@ -13,6 +7,13 @@ import {
   prismaFindUniqueTemplate,
   prismaUpdateTemplate,
 } from '@/utils/prisma/templates'
+import {
+  TemplateCreateSchema,
+  TemplateUpdateSchema,
+  TemplateWhereSchema,
+} from '@/utils/zod/schemas'
+import { TRPCError } from '@trpc/server'
+import { publicProcedure, router } from '../trpc'
 
 export const templateRouter = router({
   byOrganizationId: publicProcedure

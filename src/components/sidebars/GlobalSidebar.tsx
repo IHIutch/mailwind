@@ -1,11 +1,12 @@
-import ColorInput from '../inputs/ColorInput'
-import SpacingInput from '../inputs/SpacingInput'
-import * as Label from '@radix-ui/react-label'
-import * as ToggleGroup from '@radix-ui/react-toggle-group'
+import { type ReactNode } from 'react'
 import { AlignCenter, AlignLeft, AlignRight } from 'lucide-react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { type ReactNode } from 'react'
+
 import { type DefaultFormValues } from '@/pages/templates/[id]'
+import * as Label from '@radix-ui/react-label'
+import * as ToggleGroup from '@radix-ui/react-toggle-group'
+import ColorInput from '../inputs/ColorInput'
+import SpacingInput from '../inputs/SpacingInput'
 
 export default function GlobalSidebar({ children }: { children: ReactNode }) {
   const { control } = useFormContext<DefaultFormValues>()

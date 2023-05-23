@@ -1,9 +1,10 @@
-import { type DefaultFormValues } from '@/pages/templates/[id]'
-import * as Popover from '@radix-ui/react-popover'
-import * as RadioGroup from '@radix-ui/react-radio-group'
 import { Palette } from 'lucide-react'
 import { HexColorPicker } from 'react-colorful'
 import { useController, type UseControllerProps } from 'react-hook-form'
+
+import { type DefaultFormValues } from '@/pages/templates/[id]'
+import * as Popover from '@radix-ui/react-popover'
+import * as RadioGroup from '@radix-ui/react-radio-group'
 
 export default function ColorInput({
   id,

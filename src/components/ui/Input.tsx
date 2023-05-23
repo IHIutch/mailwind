@@ -1,5 +1,6 @@
-import { cn } from '@/utils/functions'
 import * as React from 'react'
+
+import { cn } from '@/utils/functions'
 
 export type InputProps = React.InputHTMLAttributes<HTMLInputElement>
 

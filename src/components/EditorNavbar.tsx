@@ -1,7 +1,8 @@
+import { Send } from 'lucide-react'
+
 import * as Label from '@radix-ui/react-label'
 import * as Popover from '@radix-ui/react-popover'
 import * as ToggleGroup from '@radix-ui/react-toggle-group'
-import { Send } from 'lucide-react'
 import { Button } from './ui/Button'
 import { Input } from './ui/Input'
 

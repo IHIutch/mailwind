@@ -1,8 +1,9 @@
-import { useSupabaseClient } from '@supabase/auth-helpers-react'
+import React, { useCallback, useEffect } from 'react'
 import { Loader2 } from 'lucide-react'
 import { useRouter } from 'next/router'
-import React, { useCallback, useEffect } from 'react'
 import { type Database } from 'types/supabase.types'
+
+import { useSupabaseClient } from '@supabase/auth-helpers-react'
 
 export default function Logout() {
   const router = useRouter()

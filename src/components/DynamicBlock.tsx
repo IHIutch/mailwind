@@ -1,11 +1,12 @@
+import { useCallback, useEffect } from 'react'
+import { debounce } from 'lodash'
+import { useRouter } from 'next/router'
+import { useFormContext, useWatch } from 'react-hook-form'
+
 import { type DefaultFormValues } from '@/pages/templates/[id]'
 import { blocks } from '@/utils/defaults'
 import { useUpdateBlock } from '@/utils/query/blocks'
 import { type BlockType } from '@prisma/client'
-import { debounce } from 'lodash'
-import { useRouter } from 'next/router'
-import { useCallback, useEffect } from 'react'
-import { useFormContext, useWatch } from 'react-hook-form'
 
 export default function DynamicBlock({
   index,
