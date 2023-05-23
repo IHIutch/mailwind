@@ -210,6 +210,9 @@ const HeadingBlock = ({
       fontWeight={Number(
         attributes?.fontWeight || defaultAttributes[type].fontWeight
       )}
+      containerBackgroundColor={
+        attributes?.backgroundColor || defaultAttributes.GLOBAL.backgroundColor
+      }
     >
       <div dangerouslySetInnerHTML={{ __html: value }} />
     </MjmlText>
@@ -242,6 +245,9 @@ const DividerBlock = ({ id, type, attributes }: MjmlDividerBlockProps) => {
       borderColor={
         attributes?.borderTopColor ||
         defaultAttributes['DIVIDER'].borderTopColor
+      }
+      containerBackgroundColor={
+        attributes?.backgroundColor || defaultAttributes.GLOBAL.backgroundColor
       }
     />
   )
@@ -276,6 +282,9 @@ const ImageBlock = ({ id, attributes }: MjmlImageBlockProps) => {
       }
       src={attributes.src || defaultAttributes['IMAGE'].src}
       alt={attributes.alt || defaultAttributes['IMAGE'].alt}
+      containerBackgroundColor={
+        attributes?.backgroundColor || defaultAttributes.GLOBAL.backgroundColor
+      }
     />
   )
 }
