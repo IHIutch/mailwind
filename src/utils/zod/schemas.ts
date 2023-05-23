@@ -6,8 +6,10 @@ const spaceSchema = z.string().regex(/^([0-9]+px|0)$/i)
 const sizeSchema = z.string().regex(/^(\d+px|\d+%|0)$/)
 const hexColorSchema = z.string().regex(/^#[A-Fa-f0-9]{6}$/)
 const fontWeightSchema = z.string().regex(/^[1-9]00$/)
+const fontFamilySchema = z.string()
 
 export const TextBlockSchema = z.object({
+  value: z.string(),
   type: z.literal(BlockType.TEXT),
   attributes: z.object({
     paddingTop: spaceSchema,
@@ -19,9 +21,12 @@ export const TextBlockSchema = z.object({
     lineHeight: spaceSchema,
     color: hexColorSchema,
     backgroundColor: hexColorSchema,
+    fontFamily: fontFamilySchema,
   }),
 })
+
 export const HeadingBlockSchema = z.object({
+  value: z.string(),
   type: z.union([
     z.literal(BlockType.H1),
     z.literal(BlockType.H2),
@@ -37,8 +42,10 @@ export const HeadingBlockSchema = z.object({
     lineHeight: spaceSchema,
     color: hexColorSchema,
     backgroundColor: hexColorSchema,
+    fontFamily: fontFamilySchema,
   }),
 })
+
 export const ImageBlockSchema = z.object({
   type: z.literal(BlockType.IMAGE),
   attributes: z.object({
@@ -53,10 +60,13 @@ export const ImageBlockSchema = z.object({
     backgroundColor: hexColorSchema,
   }),
 })
-export const codeBlockSchema = z.object({
+
+export const CodeBlockSchema = z.object({
+  value: z.string(),
   type: z.literal(BlockType.CODE),
   attributes: z.any(),
 })
+
 export const DividerBlockSchema = z.object({
   type: z.literal(BlockType.DIVIDER),
   attributes: z.object({
@@ -70,6 +80,7 @@ export const DividerBlockSchema = z.object({
     backgroundColor: hexColorSchema,
   }),
 })
+
 export const quoteBlockSchema = z.object({
   type: z.literal(BlockType.QUOTE),
   attributes: z.any(),
@@ -78,7 +89,6 @@ export const quoteBlockSchema = z.object({
 export const defaultBlockSchema = z.object({
   id: z.coerce.number(),
   templateId: z.coerce.number(),
-  value: z.string(),
   position: z.string(),
 })
 // TODO: Define schemas
@@ -169,11 +179,11 @@ export const OrganizationUpdateSchema = z.object({
   name: z.coerce.string().optional(),
 })
 
-export const blockSchema = z.union([
-  TextBlockSchema.merge(defaultBlockSchema),
-  HeadingBlockSchema.merge(defaultBlockSchema),
-  ImageBlockSchema.merge(defaultBlockSchema),
-  codeBlockSchema.merge(defaultBlockSchema),
-  DividerBlockSchema.merge(defaultBlockSchema),
-  quoteBlockSchema.merge(defaultBlockSchema),
-])
+// export const DynamicBlockSchema = z.discriminatedUnion('type', [
+//   TextBlockSchema.merge(defaultBlockSchema),
+//   HeadingBlockSchema.merge(defaultBlockSchema),
+//   ImageBlockSchema.merge(defaultBlockSchema),
+//   CodeBlockSchema.merge(defaultBlockSchema),
+//   DividerBlockSchema.merge(defaultBlockSchema),
+//   quoteBlockSchema.merge(defaultBlockSchema),
+// ])

@@ -11,7 +11,7 @@ import {
   BlockCreateSchema,
   BlockUpdateSchema,
   BlockWhereSchema,
-  codeBlockSchema,
+  CodeBlockSchema,
   defaultBlockSchema,
   DividerBlockSchema,
   HeadingBlockSchema,
@@ -26,7 +26,7 @@ const partialBlockSchemas = z.union([
   TextBlockSchema.merge(defaultBlockSchema).omit({ id: true }).partial(),
   HeadingBlockSchema.merge(defaultBlockSchema).omit({ id: true }).partial(),
   ImageBlockSchema.merge(defaultBlockSchema).omit({ id: true }).partial(),
-  codeBlockSchema.merge(defaultBlockSchema).omit({ id: true }).partial(),
+  CodeBlockSchema.merge(defaultBlockSchema).omit({ id: true }).partial(),
   DividerBlockSchema.merge(defaultBlockSchema).omit({ id: true }).partial(),
   quoteBlockSchema.merge(defaultBlockSchema).omit({ id: true }).partial(),
 ])

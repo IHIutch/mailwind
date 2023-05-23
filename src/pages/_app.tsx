@@ -16,7 +16,7 @@ import { trpc } from '@/utils/trpc'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 // Record a pageview when route changes
-Router.events.on('routeChangeComplete', (as, routeProps) => {
+Router.events.on('routeChangeComplete', (_, routeProps) => {
   if (!routeProps.shallow) {
     Fathom.trackPageview()
   }
