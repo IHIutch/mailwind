@@ -95,7 +95,7 @@ export default function DynamicSidebar() {
         selectedBlockIndex !== -1 ? (
           <div className="absolute right-2 top-2">
             <Button
-              variant="subtle"
+              variant="secondary"
               className="flex h-8 w-8 items-center justify-center p-0"
               onClick={handleUnsetActiveBlock}
             >

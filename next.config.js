@@ -7,15 +7,18 @@ const { withSentryConfig } = require('@sentry/nextjs')
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // reactStrictMode: true, // Have to turn off strict mode for react-beautiful-dnd to work
-  // experimental: {
-  //   appDir: true,
-  // },
   typescript: {
     // !! WARN !!
     // Dangerously allow production builds to successfully complete even if
     // your project has type errors.
     // !! WARN !!
     ignoreBuildErrors: true,
+  },
+  webpack: (config) => {
+    config.resolve.fallback = {
+      fs: false,
+    }
+    return config
   },
 }
 

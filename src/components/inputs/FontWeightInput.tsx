@@ -51,7 +51,7 @@ export default function FontWeightInput({
       >
         <Select.Trigger
           id="fontWeightField"
-          className="flex w-full items-center rounded-md border border-zinc-300 py-2 px-3 text-left shadow-sm outline-none focus:border-indigo-300 focus:ring focus:ring-indigo-200 [&[data-state=open]]:border-indigo-300 [&[data-state=open]]:ring [&[data-state=open]]:ring-indigo-200"
+          className="flex w-full items-center rounded-md border border-zinc-300 px-3 py-2 text-left shadow-sm outline-none focus:border-indigo-300 focus:ring focus:ring-indigo-200 [&[data-state=open]]:border-indigo-300 [&[data-state=open]]:ring [&[data-state=open]]:ring-indigo-200"
         >
           <Select.Value placeholder="Select a value..." />
           <Select.Icon className="ml-auto">
@@ -66,7 +66,7 @@ export default function FontWeightInput({
                 <Select.Item
                   key={idx}
                   value={value}
-                  className="cursor-pointer select-none rounded py-1.5 px-2 outline-none hover:bg-indigo-100  focus:bg-indigo-100 [&[data-state=checked]]:bg-indigo-500 [&[data-state=checked]]:text-white [&[data-state=checked]]:hover:bg-indigo-600 [&[data-state=checked]]:focus:bg-indigo-600"
+                  className="cursor-pointer select-none rounded px-2 py-1.5 outline-none hover:bg-indigo-100  focus:bg-indigo-100 [&[data-state=checked]]:bg-indigo-500 [&[data-state=checked]]:text-white [&[data-state=checked]]:hover:bg-indigo-600 [&[data-state=checked]]:focus:bg-indigo-600"
                 >
                   <Select.ItemText>{label}</Select.ItemText>
                 </Select.Item>
