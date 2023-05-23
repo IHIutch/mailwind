@@ -59,7 +59,7 @@ import {
   useSelectedBlockState,
 } from '@/context/selectedBlock'
 import { defaultAttributes } from '@/utils/defaults'
-import { getNewLexoPosition } from '@/utils/functions'
+import { cn, getNewLexoPosition } from '@/utils/functions'
 import { type SingleBlockPayloadType } from '@/utils/prisma/blocks'
 import {
   useCreateBlock,
@@ -161,7 +161,7 @@ export default function TemplateId() {
               <div className="relative h-full pt-12">
                 <div className="h-full overflow-y-auto">
                   <div
-                    className={clsx('relative py-12 px-4', [
+                    className={clsx('relative px-4 py-12', [
                       global.containerAlign === 'left' && 'mr-auto',
                       global.containerAlign === 'center' && 'mx-auto',
                       global.containerAlign === 'right' && 'ml-auto',
@@ -389,10 +389,16 @@ const EditView = () => {
                     index={idx}
                   >
                     {(drag, snapshot) => (
-                      <div ref={drag.innerRef} {...drag.draggableProps}>
+                      <div
+                        ref={drag.innerRef}
+                        {...drag.draggableProps}
+                        className={cn(
+                          selectedBlockIndex === idx ? 'relative z-10' : ''
+                        )}
+                      >
                         <div
                           className={clsx(
-                            'overflow-hidden rounded-lg transition-all focus-within:ring-2 focus-within:ring-zinc-400 focus-within:ring-offset-2',
+                            'transition-all',
                             snapshot.isDragging ? 'opacity-60' : 'opacity-100'
                           )}
                         >
@@ -411,11 +417,20 @@ const EditView = () => {
                               </div>
                             }
                           >
-                            <DynamicBlock
-                              index={idx}
-                              type={getValues(`blocks.${idx}.type`)}
-                              attributes={watch(`blocks.${idx}.attributes`)}
-                            />
+                            <div
+                              className={cn(
+                                '-m-1 rounded p-1',
+                                selectedBlockIndex === idx
+                                  ? 'ring-4 ring-indigo-600'
+                                  : 'ring-0'
+                              )}
+                            >
+                              <DynamicBlock
+                                index={idx}
+                                type={getValues(`blocks.${idx}.type`)}
+                                attributes={watch(`blocks.${idx}.attributes`)}
+                              />
+                            </div>
                           </ItemBlock>
                         </div>
                       </div>
