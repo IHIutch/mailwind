@@ -58,6 +58,7 @@ export default function CodeBlock({
         value={code}
         onBlur={onBlur}
         className="font-mono"
+        textareaClassName="focus:outline-none"
         onValueChange={(code) => setCode(code)}
         highlight={(code) => <PrismaHighlight code={code} language="jsx" />}
       />

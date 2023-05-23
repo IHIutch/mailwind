@@ -8,6 +8,9 @@ export default function Editor({ name, ref, value, onChange, onBlur }) {
     injectCSS: false,
     editorProps: {
       handleDrop: () => true,
+      attributes: {
+        class: 'focus:outline-none',
+      },
     },
     extensions: [
       StarterKit.configure({

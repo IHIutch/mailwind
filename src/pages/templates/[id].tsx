@@ -15,7 +15,7 @@ import {
   Trash2,
   Type,
 } from 'lucide-react'
-import useRouter from 'next/router'
+import { useRouter } from 'next/router'
 import {
   DragDropContext,
   Draggable,
@@ -56,6 +56,7 @@ import {
   SelectedBlockProvider,
   setSelectedBlock,
   useSelectedBlockDispatch,
+  useSelectedBlockState,
 } from '@/context/selectedBlock'
 import { defaultAttributes } from '@/utils/defaults'
 import { getNewLexoPosition } from '@/utils/functions'
@@ -143,11 +144,6 @@ export default function TemplateId() {
     document.body.removeChild(link)
   }
 
-  // const global = useWatch({
-  //   name: 'global',
-  //   control: formMethods.control,
-  // })
-
   return (
     <>
       <GlobalNavbar>
@@ -185,9 +181,7 @@ export default function TemplateId() {
             </div>
             <div className="fixed inset-y-0 right-0 w-[300px] border-l border-zinc-200 bg-white pt-16">
               <div className="h-full overflow-y-auto">
-                <div className="py-4">
-                  <DynamicSidebar />
-                </div>
+                <DynamicSidebar />
               </div>
             </div>
           </div>
@@ -294,6 +288,7 @@ const TemplateTitle = () => {
 }
 
 const EditView = () => {
+  const { data: selectedBlockIndex } = useSelectedBlockState()
   const dispatch = useSelectedBlockDispatch()
   const {
     query: { id },
@@ -397,10 +392,8 @@ const EditView = () => {
                       <div ref={drag.innerRef} {...drag.draggableProps}>
                         <div
                           className={clsx(
-                            'overflow-hidden rounded-lg transition-all',
-                            snapshot.isDragging
-                              ? 'opacity-60 ring-2 ring-offset-2'
-                              : 'opacity-100 ring-0 ring-offset-0'
+                            'overflow-hidden rounded-lg transition-all focus-within:ring-2 focus-within:ring-zinc-400 focus-within:ring-offset-2',
+                            snapshot.isDragging ? 'opacity-60' : 'opacity-100'
                           )}
                         >
                           <ItemBlock
