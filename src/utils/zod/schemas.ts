@@ -3,19 +3,32 @@ import { z } from 'zod'
 import { BlockType, GlobalRole, MembershipRole } from '@prisma/client'
 
 const sizeSchema = z.string().regex(/^([0-9]+px|0)$/i)
-const hexSchema = z.string().regex(/^#[A-Fa-f0-9]{6}$/)
+const hexColorSchema = z.string().regex(/^#[A-Fa-f0-9]{6}$/)
+const fontWeightSchema = z
+  .string()
+  .regex(/^(100|200|300|400|500|600|700|800|900)$/)
 
 export const textBlockSchema = z.object({
   type: z.literal(BlockType.TEXT),
   attributes: z.any(),
 })
-export const headingBlockSchema = z.object({
+export const HeadingBlockSchema = z.object({
   type: z.union([
     z.literal(BlockType.H1),
     z.literal(BlockType.H2),
     z.literal(BlockType.H3),
   ]),
-  attributes: z.any(),
+  attributes: z.object({
+    paddingTop: sizeSchema,
+    paddingRight: sizeSchema,
+    paddingBottom: sizeSchema,
+    paddingLeft: sizeSchema,
+    fontSize: sizeSchema,
+    fontWeight: fontWeightSchema,
+    lineHeight: sizeSchema,
+    color: hexColorSchema,
+    backgroundColor: hexColorSchema,
+  }),
 })
 export const imageBlockSchema = z.object({
   type: z.literal(BlockType.IMAGE),
@@ -33,8 +46,8 @@ export const DividerBlockSchema = z.object({
     paddingBottom: sizeSchema,
     paddingLeft: sizeSchema,
     borderWidth: sizeSchema,
-    borderTopColor: hexSchema,
-    backgroundColor: hexSchema,
+    borderTopColor: hexColorSchema,
+    backgroundColor: hexColorSchema,
     borderTopWidth: sizeSchema,
   }),
 })
@@ -139,7 +152,7 @@ export const OrganizationUpdateSchema = z.object({
 
 export const blockSchema = z.union([
   textBlockSchema.merge(defaultBlockSchema),
-  headingBlockSchema.merge(defaultBlockSchema),
+  HeadingBlockSchema.merge(defaultBlockSchema),
   imageBlockSchema.merge(defaultBlockSchema),
   codeBlockSchema.merge(defaultBlockSchema),
   DividerBlockSchema.merge(defaultBlockSchema),

@@ -2,9 +2,11 @@ import { type z } from 'zod'
 
 import { type DividerBlockSchema } from '@/utils/zod/schemas'
 
-type DividerProps = z.infer<typeof DividerBlockSchema>
+type DividerBlockAttributes = z.infer<typeof DividerBlockSchema>
 
-export default function DividerBlock({ attributes }: DividerProps) {
+export default function DividerBlock(
+  attributes: DividerBlockAttributes['attributes']
+) {
   return (
     <div
       style={{
