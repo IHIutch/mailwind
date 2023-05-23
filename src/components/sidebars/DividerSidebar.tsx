@@ -122,6 +122,21 @@ export default function DividerSidebar({
             }}
           />
         </div>
+        <div className="mb-4">
+          <Label
+            htmlFor="backgroundColorField"
+            className="mb-1 block text-sm font-semibold text-gray-700"
+          >
+            Background Color
+          </Label>
+          <ColorInput
+            id="backgroundColorField"
+            inputProps={{
+              name: `blocks.${selectedBlockIndex}.attributes.backgroundColor` as 'blocks.0.attributes.backgroundColor',
+              control,
+            }}
+          />
+        </div>
       </div>
     </div>
   )

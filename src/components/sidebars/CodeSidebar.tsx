@@ -17,8 +17,8 @@ export default function CodeSidebar({
   return (
     <div className={clsx('relative', className)}>
       {closeButton}
-      <div className="mb-4 px-3">
-        <h2 className="font-semibold">Code Block</h2>
+      <div className="mb-4 border-b px-3 pb-3">
+        <h2 className="text-xl font-semibold">Code Block</h2>
       </div>
     </div>
   )

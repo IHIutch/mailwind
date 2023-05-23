@@ -4,9 +4,11 @@ import { type DividerBlockSchema } from '@/utils/zod/schemas'
 
 type DividerBlockAttributes = z.infer<typeof DividerBlockSchema>
 
-export default function DividerBlock(
+export default function DividerBlock({
+  attributes,
+}: {
   attributes: DividerBlockAttributes['attributes']
-) {
+}) {
   return (
     <div
       style={{
@@ -14,6 +16,7 @@ export default function DividerBlock(
         paddingBottom: attributes.paddingBottom,
         paddingLeft: attributes.paddingLeft,
         paddingRight: attributes.paddingRight,
+        backgroundColor: attributes.backgroundColor,
       }}
     >
       <hr

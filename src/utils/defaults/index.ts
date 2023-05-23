@@ -3,7 +3,7 @@ import {
   DividerBlock,
   HeadingBlock,
   ImageBlock,
-  QuoteBlock,
+  // QuoteBlock,
   TextBlock,
 } from '@/components/blocks'
 import {
@@ -12,7 +12,7 @@ import {
   GlobalSidebar,
   HeadingSidebar,
   ImageSidebar,
-  QuoteSidebar,
+  // QuoteSidebar,
   TextSidebar,
 } from '@/components/sidebars'
 import { BlockType } from '@prisma/client'
@@ -23,7 +23,7 @@ export const blocks = {
   [BlockType.H2]: HeadingBlock,
   [BlockType.H3]: HeadingBlock,
   [BlockType.DIVIDER]: DividerBlock,
-  [BlockType.QUOTE]: QuoteBlock,
+  // [BlockType.QUOTE]: QuoteBlock,
   [BlockType.IMAGE]: ImageBlock,
   [BlockType.CODE]: CodeBlock,
 }
@@ -35,7 +35,7 @@ export const sidebars = {
   [BlockType.H2]: HeadingSidebar,
   [BlockType.H3]: HeadingSidebar,
   [BlockType.DIVIDER]: DividerSidebar,
-  [BlockType.QUOTE]: QuoteSidebar,
+  // [BlockType.QUOTE]: QuoteSidebar,
   [BlockType.IMAGE]: ImageSidebar,
   [BlockType.CODE]: CodeSidebar,
 }
@@ -88,15 +88,15 @@ export const defaultAttributes = {
     lineHeight: '18px',
     fontWeight: '400',
   },
-  [BlockType.QUOTE]: {
-    paddingTop: '12px',
-    paddingRight: '0',
-    paddingBottom: '12px',
-    paddingLeft: '0',
-    fontSize: '16px',
-    lineHeight: '18px',
-    fontWeight: '400',
-  },
+  // [BlockType.QUOTE]: {
+  //   paddingTop: '12px',
+  //   paddingRight: '0',
+  //   paddingBottom: '12px',
+  //   paddingLeft: '0',
+  //   fontSize: '16px',
+  //   lineHeight: '18px',
+  //   fontWeight: '400',
+  // },
   [BlockType.CODE]: {
     paddingTop: '8px',
     paddingRight: '0',
@@ -111,13 +111,15 @@ export const defaultAttributes = {
     paddingRight: '24px',
     paddingBottom: '10px',
     paddingLeft: '24px',
-    borderColor: '#000000',
-    borderTopWidth: '4px',
+    borderTopColor: '#000000',
+    borderTopWidth: '2px',
   },
   [BlockType.IMAGE]: {
     paddingTop: '8px',
     paddingRight: '0',
     paddingBottom: '8px',
     paddingLeft: '0',
+    src: '',
+    alt: '',
   },
 }

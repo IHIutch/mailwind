@@ -23,7 +23,7 @@ export default function ColorInput({
   } = useController({
     ...inputProps,
     rules: {
-      required: true,
+      required: 'This field is required',
     },
   })
 

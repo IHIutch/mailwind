@@ -45,7 +45,7 @@ export default function LineHeightSelect({
   } = useController({
     ...inputProps,
     rules: {
-      required: true,
+      required: 'This field is required',
     },
   })
 

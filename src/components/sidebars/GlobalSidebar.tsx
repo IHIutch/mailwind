@@ -20,8 +20,8 @@ export default function GlobalSidebar({
 
   return (
     <div className={clsx('relative', className)}>
-      <div className="mb-4 px-3">
-        <h2 className="font-semibold">Global Attributes</h2>
+      <div className="mb-4 border-b px-3 pb-3">
+        <h2 className="text-xl font-semibold">Global Attributes</h2>
       </div>
       <div className="mb-4 px-3">
         <fieldset>
@@ -43,19 +43,19 @@ export default function GlobalSidebar({
               >
                 <ToggleGroup.Item
                   value="left"
-                  className="rounded-l-md border border-r-0 border-zinc-300 py-1 px-2 font-bold text-zinc-500 hover:bg-indigo-50 [&[data-state=on]]:border-indigo-100 [&[data-state=on]]:bg-indigo-100 [&[data-state=on]]:text-indigo-600"
+                  className="rounded-l-md border border-r-0 border-zinc-300 px-2 py-1 font-bold text-zinc-500 hover:bg-indigo-50 [&[data-state=on]]:border-indigo-100 [&[data-state=on]]:bg-indigo-100 [&[data-state=on]]:text-indigo-600"
                 >
                   <AlignLeft className="h-5 w-5" />
                 </ToggleGroup.Item>
                 <ToggleGroup.Item
                   value="center"
-                  className="border border-x-0 border-zinc-300 py-1 px-2 font-bold text-zinc-500 hover:bg-indigo-50 [&[data-state=on]]:border-indigo-100 [&[data-state=on]]:bg-indigo-100 [&[data-state=on]]:text-indigo-600"
+                  className="border border-x-0 border-zinc-300 px-2 py-1 font-bold text-zinc-500 hover:bg-indigo-50 [&[data-state=on]]:border-indigo-100 [&[data-state=on]]:bg-indigo-100 [&[data-state=on]]:text-indigo-600"
                 >
                   <AlignCenter className="h-5 w-5" />
                 </ToggleGroup.Item>
                 <ToggleGroup.Item
                   value="right"
-                  className="rounded-r-md border border-l-0 border-zinc-300 py-1 px-2 font-bold text-zinc-500 hover:bg-indigo-50 [&[data-state=on]]:border-indigo-100 [&[data-state=on]]:bg-indigo-100 [&[data-state=on]]:text-indigo-600"
+                  className="rounded-r-md border border-l-0 border-zinc-300 px-2 py-1 font-bold text-zinc-500 hover:bg-indigo-50 [&[data-state=on]]:border-indigo-100 [&[data-state=on]]:bg-indigo-100 [&[data-state=on]]:text-indigo-600"
                 >
                   <AlignRight className="h-5 w-5" />
                 </ToggleGroup.Item>

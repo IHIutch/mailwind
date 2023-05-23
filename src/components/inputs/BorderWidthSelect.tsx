@@ -35,7 +35,7 @@ export default function BorderWidthSelect({
   } = useController({
     ...inputProps,
     rules: {
-      required: true,
+      required: 'This field is required',
     },
   })
 

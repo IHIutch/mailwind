@@ -21,7 +21,7 @@ export default function PaddingInput({
   } = useController({
     ...inputProps,
     rules: {
-      required: true,
+      required: 'This field is required',
       validate: {
         isNumber: (v) => {
           const { value } = handleMatch(v)

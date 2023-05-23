@@ -44,7 +44,7 @@ export default function FontSizeSelect({
   } = useController({
     ...inputProps,
     rules: {
-      required: true,
+      required: 'This field is required',
     },
   })
 

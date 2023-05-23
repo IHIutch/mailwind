@@ -51,7 +51,7 @@ export default function PaddingSelect({
   } = useController({
     ...inputProps,
     rules: {
-      required: true,
+      required: 'This field is required',
     },
   })
 

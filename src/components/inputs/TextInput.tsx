@@ -18,7 +18,7 @@ export default function TextInput({
 }) {
   const {
     field: { onChange, name: inputName, value, ref },
-    fieldState: { error, ...rest },
+    fieldState: { error },
   } = useController({
     ...inputProps,
   })

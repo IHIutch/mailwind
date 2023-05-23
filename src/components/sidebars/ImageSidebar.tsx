@@ -23,8 +23,8 @@ export default function ImageSidebar({
   return (
     <div className={clsx('relative', className)}>
       {closeButton}
-      <div className="mb-4 px-3">
-        <h2 className="font-semibold">Image Block</h2>
+      <div className="mb-4 border-b px-3 pb-3">
+        <h2 className="text-xl font-semibold">Image Block</h2>
       </div>
       <div className="relative px-3">
         <div className="mb-4">

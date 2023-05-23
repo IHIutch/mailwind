@@ -40,7 +40,7 @@ export default function FontWeightSelect({
   } = useController({
     ...inputProps,
     rules: {
-      required: true,
+      required: 'This field is required',
     },
   })
 

@@ -33,7 +33,7 @@ export default function FontFamilyInput({
   } = useController({
     ...inputProps,
     rules: {
-      required: true,
+      required: 'This field is required',
     },
   })
 
@@ -61,7 +61,7 @@ export default function FontFamilyInput({
                 <Select.Item
                   key={idx}
                   value={value}
-                  className="cursor-pointer rounded py-1.5 px-2 outline-none hover:bg-indigo-100 focus:bg-indigo-100  [&[data-state=checked]]:bg-indigo-500 [&[data-state=checked]]:text-white [&[data-state=checked]]:hover:bg-indigo-600 [&[data-state=checked]]:focus:bg-indigo-600"
+                  className="cursor-pointer rounded px-2 py-1.5 outline-none hover:bg-indigo-100 focus:bg-indigo-100  [&[data-state=checked]]:bg-indigo-500 [&[data-state=checked]]:text-white [&[data-state=checked]]:hover:bg-indigo-600 [&[data-state=checked]]:focus:bg-indigo-600"
                 >
                   <Select.ItemText>{label}</Select.ItemText>
                 </Select.Item>
