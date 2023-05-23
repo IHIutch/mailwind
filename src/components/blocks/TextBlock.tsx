@@ -1,15 +1,18 @@
 import { useController, type UseControllerProps } from 'react-hook-form'
+import { type z } from 'zod'
 
 import { type DefaultFormValues } from '@/pages/templates/[id]'
+import { type TextBlockSchema } from '@/utils/zod/schemas'
 import Editor from '../Editor'
+
+type TextBlockAttributes = z.infer<typeof TextBlockSchema>
 
 export default function TextBlock({
   attributes,
   inputProps,
   className,
-  errorClassName,
 }: {
-  attributes: any
+  attributes: TextBlockAttributes['attributes']
   inputProps: UseControllerProps<DefaultFormValues>
   className?: string
   errorClassName?: string

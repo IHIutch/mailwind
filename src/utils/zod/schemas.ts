@@ -4,13 +4,21 @@ import { BlockType, GlobalRole, MembershipRole } from '@prisma/client'
 
 const sizeSchema = z.string().regex(/^([0-9]+px|0)$/i)
 const hexColorSchema = z.string().regex(/^#[A-Fa-f0-9]{6}$/)
-const fontWeightSchema = z
-  .string()
-  .regex(/^(100|200|300|400|500|600|700|800|900)$/)
+const fontWeightSchema = z.string().regex(/^[1-9]00$/)
 
-export const textBlockSchema = z.object({
+export const TextBlockSchema = z.object({
   type: z.literal(BlockType.TEXT),
-  attributes: z.any(),
+  attributes: z.object({
+    paddingTop: sizeSchema,
+    paddingRight: sizeSchema,
+    paddingBottom: sizeSchema,
+    paddingLeft: sizeSchema,
+    fontSize: sizeSchema,
+    fontWeight: fontWeightSchema,
+    lineHeight: sizeSchema,
+    color: hexColorSchema,
+    backgroundColor: hexColorSchema,
+  }),
 })
 export const HeadingBlockSchema = z.object({
   type: z.union([
@@ -46,9 +54,9 @@ export const DividerBlockSchema = z.object({
     paddingBottom: sizeSchema,
     paddingLeft: sizeSchema,
     borderWidth: sizeSchema,
+    borderTopWidth: sizeSchema,
     borderTopColor: hexColorSchema,
     backgroundColor: hexColorSchema,
-    borderTopWidth: sizeSchema,
   }),
 })
 export const quoteBlockSchema = z.object({
@@ -151,7 +159,7 @@ export const OrganizationUpdateSchema = z.object({
 })
 
 export const blockSchema = z.union([
-  textBlockSchema.merge(defaultBlockSchema),
+  TextBlockSchema.merge(defaultBlockSchema),
   HeadingBlockSchema.merge(defaultBlockSchema),
   imageBlockSchema.merge(defaultBlockSchema),
   codeBlockSchema.merge(defaultBlockSchema),

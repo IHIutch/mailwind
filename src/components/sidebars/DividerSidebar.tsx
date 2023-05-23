@@ -22,8 +22,8 @@ export default function DividerSidebar({
   return (
     <div className={clsx('relative', className)}>
       {closeButton}
-      <div className="mb-4 px-3">
-        <h2 className="font-semibold">Divider Block</h2>
+      <div className="mb-4 border-b px-3 pb-3">
+        <h2 className="text-xl font-semibold">Divider Block</h2>
       </div>
       <div className="relative px-3">
         <div className="mb-4 grid grid-flow-row grid-cols-2 gap-4">
@@ -109,13 +109,13 @@ export default function DividerSidebar({
         </div>
         <div className="mb-4">
           <Label
-            htmlFor="borderColorField"
+            htmlFor="borderTopColorField"
             className="mb-1 block text-sm font-semibold text-gray-700"
           >
             Border Color
           </Label>
           <ColorInput
-            id="borderColorField"
+            id="borderTopColorField"
             inputProps={{
               name: `blocks.${selectedBlockIndex}.attributes.borderTopColor` as 'blocks.0.attributes.borderTopColor',
               control,
