@@ -1,9 +1,9 @@
 import { trpc } from '../trpc'
 
-export const useGetTemplatesByOrganizationId = (organizationId: number) => {
+export const useGetTemplatesByMembershipId = (membershipId: number) => {
   const { isLoading, isError, isSuccess, data, error } =
-    trpc.template.byOrganizationId.useQuery({
-      where: { organizationId },
+    trpc.template.byMembershipId.useQuery({
+      where: { membershipId },
     })
   return {
     data,
@@ -28,22 +28,22 @@ export const useGetTemplateById = (id: number) => {
   }
 }
 
-export const useCreateTemplate = (organizationId: number) => {
+export const useCreateTemplate = (membershipId: number) => {
   const { template: templateUtils } = trpc.useContext()
   const { mutateAsync, isLoading, isError, isSuccess, data, error } =
     trpc.template.create.useMutation({
       // When mutate is called:
       onMutate: async ({ payload }: { payload: any }) => {
         // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-        await templateUtils.byOrganizationId.cancel({
-          where: { organizationId },
+        await templateUtils.byMembershipId.cancel({
+          where: { membershipId },
         })
-        const previous = templateUtils.byOrganizationId.getData({
-          where: { organizationId },
+        const previous = templateUtils.byMembershipId.getData({
+          where: { membershipId },
         })
-        templateUtils.byOrganizationId.setData(
+        templateUtils.byMembershipId.setData(
           {
-            where: { organizationId },
+            where: { membershipId },
           },
           (old: any) => {
             return [...old, payload]
@@ -53,17 +53,17 @@ export const useCreateTemplate = (organizationId: number) => {
       },
       // If the mutation fails, use the context we returned above
       onError: (err, updated, context) => {
-        templateUtils.byOrganizationId.setData(
+        templateUtils.byMembershipId.setData(
           {
-            where: { organizationId },
+            where: { membershipId },
           },
           context?.previous
         )
       },
       // Always refetch after error or success:
       onSettled: () => {
-        templateUtils.byOrganizationId.invalidate({
-          where: { organizationId },
+        templateUtils.byMembershipId.invalidate({
+          where: { membershipId },
         })
       },
     })

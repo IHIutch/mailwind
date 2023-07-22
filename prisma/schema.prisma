@@ -11,14 +11,12 @@ datasource db {
 }
 
 model User {
-  id                   String       @id @db.Uuid
-  stripeSubscriptionId String?      @unique @db.VarChar
-  stripeCustomerId     String?      @unique @db.VarChar
-  createdAt            DateTime     @default(now()) @db.Timestamptz()
-  updatedAt            DateTime     @default(now()) @updatedAt @db.Timestamptz()
-  deletedAt            DateTime?    @db.Timestamptz()
-  role                 GlobalRole
-  memberships          Membership[]
+  id          String       @id @db.Uuid
+  createdAt   DateTime     @default(now()) @db.Timestamptz()
+  updatedAt   DateTime     @default(now()) @updatedAt @db.Timestamptz()
+  deletedAt   DateTime?    @db.Timestamptz()
+  role        GlobalRole
+  memberships Membership[]
 }
 
 model Block {
@@ -35,14 +33,14 @@ model Block {
 }
 
 model Template {
-  id             Int           @id @default(autoincrement())
-  createdAt      DateTime      @default(now()) @db.Timestamptz()
-  updatedAt      DateTime      @default(now()) @updatedAt @db.Timestamptz()
-  deletedAt      DateTime?     @db.Timestamptz()
-  title          String?       @db.VarChar
-  blocks         Block[]
-  Organization   Organization? @relation(fields: [organizationId], references: [id])
-  organizationId Int?
+  id           Int         @id @default(autoincrement())
+  createdAt    DateTime    @default(now()) @db.Timestamptz()
+  updatedAt    DateTime    @default(now()) @updatedAt @db.Timestamptz()
+  deletedAt    DateTime?   @db.Timestamptz()
+  title        String?     @db.VarChar
+  blocks       Block[]
+  Membership   Membership? @relation(fields: [membershipId], references: [id])
+  membershipId Int?
 }
 
 model Membership {
@@ -55,16 +53,18 @@ model Membership {
   deletedAt      DateTime?      @db.Timestamptz()
   User           User           @relation(fields: [userId], references: [id])
   Organization   Organization   @relation(fields: [organizationId], references: [id])
+  templates      Template[]
 }
 
 model Organization {
-  id          Int          @id @default(autoincrement())
-  name        String       @db.VarChar
-  createdAt   DateTime     @default(now()) @db.Timestamptz()
-  updatedAt   DateTime     @default(now()) @updatedAt @db.Timestamptz()
-  deletedAt   DateTime?    @db.Timestamptz()
-  memberships Membership[]
-  templates   Template[]
+  id                   Int          @id @default(autoincrement())
+  name                 String       @db.VarChar
+  createdAt            DateTime     @default(now()) @db.Timestamptz()
+  updatedAt            DateTime     @default(now()) @updatedAt @db.Timestamptz()
+  deletedAt            DateTime?    @db.Timestamptz()
+  stripeSubscriptionId String?      @unique @db.VarChar
+  stripeCustomerId     String?      @unique @db.VarChar
+  memberships          Membership[]
 }
 
 enum MembershipRole {

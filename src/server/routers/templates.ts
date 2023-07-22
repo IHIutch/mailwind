@@ -16,10 +16,10 @@ import { TRPCError } from '@trpc/server'
 import { publicProcedure, router } from '../trpc'
 
 export const templateRouter = router({
-  byOrganizationId: publicProcedure
+  byMembershipId: publicProcedure
     .input(
       z.object({
-        where: TemplateWhereSchema.pick({ organizationId: true }),
+        where: TemplateWhereSchema.pick({ membershipId: true }),
       })
     )
     .query(async ({ input }) => {

@@ -135,18 +135,18 @@ export const BlockUpdateSchema = z.object({
 
 export const TemplateWhereSchema = z.object({
   id: z.coerce.number().optional(),
-  organizationId: z.coerce.number().optional(),
+  membershipId: z.coerce.number().optional(),
 })
 
 export const TemplateCreateSchema = z.object({
   title: z.coerce.string().optional(),
-  organizationId: z.coerce.number(),
+  membershipId: z.coerce.number(),
 })
 
 export const TemplateUpdateSchema = z.object({
   id: z.coerce.number().optional(),
   title: z.coerce.string().optional(),
-  organizationId: z.coerce.number().optional(),
+  membershipId: z.coerce.number().optional(),
 })
 
 export const MembershipWhereSchema = z.object({

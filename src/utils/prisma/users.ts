@@ -9,8 +9,6 @@ import { getErrorMessage } from '../functions'
  */
 export const UserSelect = Prisma.validator<Prisma.UserSelect>()({
   id: true,
-  stripeSubscriptionId: true,
-  stripeCustomerId: true,
   role: true,
   memberships: {
     select: {
