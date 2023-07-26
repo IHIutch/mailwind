@@ -3,7 +3,7 @@ import type { AppProps } from 'next/app'
 import { type Database } from 'types/supabase.types'
 
 import {
-  createBrowserSupabaseClient,
+  createPagesBrowserClient,
   type Session,
 } from '@supabase/auth-helpers-nextjs'
 import { SessionContextProvider } from '@supabase/auth-helpers-react'
@@ -26,9 +26,7 @@ function MyApp({
   Component,
   pageProps,
 }: AppProps<{ initialSession: Session }>) {
-  const [supabaseClient] = useState(() =>
-    createBrowserSupabaseClient<Database>()
-  )
+  const [supabaseClient] = useState(() => createPagesBrowserClient<Database>())
 
   useEffect(() => {
     Fathom.load('NFLJAEWU', {

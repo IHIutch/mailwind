@@ -8,14 +8,17 @@ export function getErrorMessage(error: unknown) {
   return String(error)
 }
 
-export function getBaseUrl() {
+export function getAbsoluteUrl(path: string) {
+  let url = ''
   if (process.env.NODE_ENV !== 'production') {
-    return `http://localhost:${process.env.PORT ?? 3000}`
+    url = `http://localhost:${process.env.PORT ?? 3000}`
   } else {
-    return (
-      process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_VERCEL_URL
-    )
+    url =
+      (process.env.NEXT_PUBLIC_SITE_URL ??
+        process.env.NEXT_PUBLIC_VERCEL_URL) ||
+      ''
   }
+  return url + path
 }
 
 export const getNewLexoPosition = (start?: string, end?: string) => {

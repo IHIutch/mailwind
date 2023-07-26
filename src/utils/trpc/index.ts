@@ -8,7 +8,7 @@ import type { AppRouter } from '@/server/routers/_app'
 import { httpBatchLink, loggerLink } from '@trpc/client'
 import { createTRPCNext } from '@trpc/next'
 import { type inferRouterInputs, type inferRouterOutputs } from '@trpc/server'
-import { getBaseUrl } from '../functions'
+import { getAbsoluteUrl } from '../functions'
 
 /**
  * Extend `NextPageContext` with meta data that can be picked up by `responseMeta()` when server-side rendering
@@ -54,7 +54,7 @@ export const trpc = createTRPCNext<AppRouter, SSRContext>({
           url:
             typeof window !== 'undefined' // This might not work (or be necessary?)
               ? '/api/trpc'
-              : `${getBaseUrl()}/api/trpc`,
+              : getAbsoluteUrl('/api/trpc'),
           /**
            * Set custom request headers on every request from tRPC
            * @link https://trpc.io/docs/ssr

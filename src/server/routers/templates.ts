@@ -70,6 +70,7 @@ export const templateRouter = router({
     )
     .mutation(async ({ input }) => {
       const { where, payload } = input
+
       const data = prismaUpdateTemplate({
         where,
         data: payload,

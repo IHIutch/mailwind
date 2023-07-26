@@ -6,10 +6,9 @@ import { type Database } from 'types/supabase.types'
 
 import { prisma } from '@/server/prisma'
 import { prismaFindUniqueUser } from '@/utils/prisma/users'
-import { createStripeCustomer } from '@/utils/stripe'
+import { createStripeCustomer, updateStripeCustomer } from '@/utils/stripe'
 import { BlockType, GlobalRole, MembershipRole } from '@prisma/client'
-import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
-import { useUser } from '@supabase/auth-helpers-react'
+import { createPagesServerClient } from '@supabase/auth-helpers-nextjs'
 
 export default function LoggingIn() {
   return (
@@ -23,7 +22,7 @@ export default function LoggingIn() {
 }
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const supabase = createServerSupabaseClient<Database>(ctx)
+  const supabase = createPagesServerClient<Database>(ctx)
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -46,11 +45,11 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
           Organization: {
             create: {
               name: user.email || '',
+              stripeCustomerId: stripeCustomer.id,
             },
           },
           User: {
             create: {
-              stripeCustomerId: stripeCustomer.id,
               id: user.id,
               role: GlobalRole.CUSTOMER,
             },
@@ -58,10 +57,16 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
         },
       })
 
+      await updateStripeCustomer(stripeCustomer.id, {
+        metadata: {
+          organizationId: newUserMembership.organizationId,
+        },
+      })
+
       await prisma.template.create({
         data: {
           title: 'My First Template',
-          organizationId: newUserMembership.organizationId,
+          membershipId: newUserMembership.id,
           blocks: {
             create: {
               type: BlockType.H1,

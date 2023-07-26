@@ -2,7 +2,7 @@ import { Loader2 } from 'lucide-react'
 import { type GetServerSidePropsContext } from 'next'
 
 import { appRouter } from '@/server/routers/_app'
-import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
+import { createPagesServerClient } from '@supabase/auth-helpers-nextjs'
 
 export default function NewTemplate() {
   return (
@@ -16,7 +16,7 @@ export default function NewTemplate() {
 }
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const supabase = createServerSupabaseClient(ctx)
+  const supabase = createPagesServerClient(ctx)
   const {
     data: { session },
   } = await supabase.auth.getSession()
@@ -30,8 +30,8 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 
   const template = await caller.template.create({
     payload: {
-      organizationId: Number(user.memberships[0]?.organizationId),
-      title: null,
+      membershipId: Number(user.memberships[0]?.id),
+      title: '',
     },
   })
 

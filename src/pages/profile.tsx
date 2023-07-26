@@ -4,20 +4,20 @@ import { Plus } from 'lucide-react'
 import Link from 'next/link'
 
 import GlobalNavbar from '@/components/GlobalNavbar'
-import { useGetTemplatesByOrganizationId } from '@/utils/query/templates'
+import { useGetTemplatesByMembershipId } from '@/utils/query/templates'
 import { useAuthUser } from '@/utils/query/user'
 
 export default function Profile() {
   const { data: user } = useAuthUser()
-  const { data: templates } = useGetTemplatesByOrganizationId(
-    Number(user?.memberships?.[0]?.organizationId)
+  const { data: templates } = useGetTemplatesByMembershipId(
+    Number(user?.memberships?.[0]?.id)
   )
 
   return (
     <div className="h-full bg-neutral-50">
       <GlobalNavbar className="shadow-sm" />
       <div className="pt-16">
-        <div className="container-xl mx-auto py-12 px-4">
+        <div className="container-xl mx-auto px-4 py-12">
           <h1 className="mb-8 text-3xl font-bold">Your Templates</h1>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
             <TemplateLink pathname="/templates/new">
@@ -45,7 +45,9 @@ export default function Profile() {
                       </div>
                       <div className="text-xs text-neutral-500">
                         <span>Last Modified: </span>
-                        <span>{dayjs(template.updatedAt).format('MMM D')}</span>
+                        <span>
+                          {dayjs(template?.updatedAt).format('MMM D')}
+                        </span>
                       </div>
                     </div>
                   </TemplateLink>

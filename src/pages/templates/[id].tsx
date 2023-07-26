@@ -230,7 +230,7 @@ const TemplateTitle = () => {
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
             <Button
-              variant="subtle"
+              variant="secondary"
               className="flex h-8 w-8 items-center justify-center p-0"
             >
               <Settings className="h-5 w-5" />
@@ -271,7 +271,7 @@ const TemplateTitle = () => {
               </div>
               <DialogFooter>
                 <div className="ml-auto">
-                  <Button variant="subtle" onClick={() => setIsOpen(false)}>
+                  <Button variant="secondary" onClick={() => setIsOpen(false)}>
                     Cancel
                   </Button>
                   <Button disabled={isLoading} type="submit" className="ml-2">

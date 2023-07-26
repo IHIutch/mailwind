@@ -14,6 +14,13 @@ export const UserSelect = Prisma.validator<Prisma.UserSelect>()({
     select: {
       id: true,
       organizationId: true,
+      Organization: {
+        select: {
+          id: true,
+          stripeSubscriptionId: true,
+          stripeCustomerId: true,
+        },
+      },
     },
   },
 })

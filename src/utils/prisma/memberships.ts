@@ -9,6 +9,8 @@ export const MembershipSelect = Prisma.validator<Prisma.MembershipSelect>()({
     select: {
       id: true,
       name: true,
+      stripeCustomerId: true,
+      stripeSubscriptionId: true,
     },
   },
 })

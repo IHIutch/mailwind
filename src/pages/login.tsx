@@ -1,14 +1,13 @@
 import { useState } from 'react'
 import { type GetServerSidePropsContext } from 'next'
-import Link from 'next/link'
 import { useForm, type SubmitHandler } from 'react-hook-form'
 import { type Database } from 'types/supabase.types'
 
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Label } from '@/components/ui/Label'
-import { getBaseUrl, getErrorMessage } from '@/utils/functions'
-import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
+import { getAbsoluteUrl, getErrorMessage } from '@/utils/functions'
+import { createPagesServerClient } from '@supabase/auth-helpers-nextjs'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
 
 type FormValues = {
@@ -34,7 +33,7 @@ export default function Login() {
       const { error } = await supabaseClient.auth.signInWithOtp({
         email: form.email,
         options: {
-          emailRedirectTo: `${getBaseUrl()}/logging-in`,
+          emailRedirectTo: getAbsoluteUrl('/api/auth/callback'),
         },
       })
 
@@ -47,8 +46,8 @@ export default function Login() {
   }
 
   return (
-    <main>
-      <div className="mx-auto mt-20 w-96 rounded-lg border p-8 shadow">
+    <main className="h-full bg-neutral-50 pt-20">
+      <div className="mx-auto w-96 rounded-lg border bg-white p-8 shadow">
         {isSubmitSuccess ? (
           <div className="text-center">
             <h1 className="mb-2 text-3xl font-bold">Email Sent</h1>
@@ -59,7 +58,12 @@ export default function Login() {
               It expires in 24 hours and can only be used once.
             </p>
             <p>
-              Didn&apos;t get the link? <Link href="/login">Try Again</Link>.
+              {/* This forces a page refresh, resetting the form */}
+              {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+              <a className="font-medium underline" href="/login">
+                Didn&apos;t get the link? Try Again
+              </a>
+              .
             </p>
           </div>
         ) : (
@@ -110,7 +114,7 @@ export default function Login() {
 }
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const supabase = createServerSupabaseClient(ctx)
+  const supabase = createPagesServerClient(ctx)
   const {
     data: { session },
   } = await supabase.auth.getSession()

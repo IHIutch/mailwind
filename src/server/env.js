@@ -9,7 +9,16 @@ const { z } = require('zod')
 /*eslint sort-keys: "error"*/
 const envSchema = z.object({
   DB_CONNECTION_STRING: z.string().url(),
+  //
+  // NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
+  //
   NODE_ENV: z.enum(['development', 'test', 'production']),
+  //
+  STRIPE_MONTHLY_PLAN_ID: z.string().min(1),
+  STRIPE_SECRET_KEY: z.string().min(1),
+  STRIPE_SIGNING_SECRET: z.string().min(1),
+  //
+  STRIPE_WEBHOOK_SECRET: z.string().min(1),
 })
 
 const env = envSchema.safeParse(process.env)

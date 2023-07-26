@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react'
-import { LogOut } from 'lucide-react'
+import { LogOut, User } from 'lucide-react'
 import Link from 'next/link'
 
 import { useAuthUser } from '@/utils/query/user'
@@ -43,6 +43,12 @@ export default function GlobalNavbar({
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              <DropdownMenuItem>
+                <User className="h-4 w-4" />
+                <Link href="/account" className="pl-2 font-medium">
+                  Account
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuItem>
                 <LogOut className="h-4 w-4" />
                 <Link href="/logout" className="pl-2 font-medium">

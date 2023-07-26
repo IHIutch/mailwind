@@ -57,14 +57,16 @@ model Membership {
 }
 
 model Organization {
-  id                   Int          @id @default(autoincrement())
-  name                 String       @db.VarChar
-  createdAt            DateTime     @default(now()) @db.Timestamptz()
-  updatedAt            DateTime     @default(now()) @updatedAt @db.Timestamptz()
-  deletedAt            DateTime?    @db.Timestamptz()
-  stripeSubscriptionId String?      @unique @db.VarChar
-  stripeCustomerId     String?      @unique @db.VarChar
-  memberships          Membership[]
+  id                     Int          @id @default(autoincrement())
+  name                   String       @db.VarChar
+  createdAt              DateTime     @default(now()) @db.Timestamptz()
+  updatedAt              DateTime     @default(now()) @updatedAt @db.Timestamptz()
+  deletedAt              DateTime?    @db.Timestamptz()
+  stripeSubscriptionId   String?      @unique @db.VarChar
+  stripeCustomerId       String?      @unique @db.VarChar
+  stripePriceId          String?
+  stripeCurrentPeriodEnd DateTime?
+  memberships            Membership[]
 }
 
 enum MembershipRole {

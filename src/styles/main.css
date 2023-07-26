@@ -88,11 +88,9 @@
   }
 }
 
-/* html,
-body,
 #__next {
   @apply h-full;
-} */
+}
 
 .editor a {
   @apply text-blue-500;

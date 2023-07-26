@@ -162,6 +162,7 @@ export const MembershipCreateSchema = z.object({
 })
 
 export const MembershipUpdateSchema = z.object({
+  id: z.coerce.number().optional(),
   userId: z.coerce.string().uuid().optional(),
   organizationId: z.coerce.number().optional(),
   role: z.nativeEnum(MembershipRole).optional(),
@@ -176,14 +177,6 @@ export const OrganizationCreateSchema = z.object({
 })
 
 export const OrganizationUpdateSchema = z.object({
+  id: z.coerce.number().optional(),
   name: z.coerce.string().optional(),
 })
-
-// export const DynamicBlockSchema = z.discriminatedUnion('type', [
-//   TextBlockSchema.merge(defaultBlockSchema),
-//   HeadingBlockSchema.merge(defaultBlockSchema),
-//   ImageBlockSchema.merge(defaultBlockSchema),
-//   CodeBlockSchema.merge(defaultBlockSchema),
-//   DividerBlockSchema.merge(defaultBlockSchema),
-//   quoteBlockSchema.merge(defaultBlockSchema),
-// ])
