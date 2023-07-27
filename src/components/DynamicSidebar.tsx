@@ -3,6 +3,7 @@ import { debounce } from 'lodash'
 import { X } from 'lucide-react'
 import { useRouter } from 'next/router'
 import { useFormContext, useWatch } from 'react-hook-form'
+import { P, match } from 'ts-pattern'
 
 import {
   setSelectedBlock,
@@ -10,8 +11,17 @@ import {
   useSelectedBlockState,
 } from '@/context/selectedBlock'
 import { type DefaultFormValues } from '@/pages/templates/[id]'
-import { sidebars } from '@/utils/defaults'
 import { useUpdateBlock } from '@/utils/query/blocks'
+import { BlockType } from '@prisma/client'
+import {
+  CodeSidebar,
+  DividerSidebar,
+  GlobalSidebar,
+  HeadingSidebar,
+  ImageSidebar,
+  QuoteSidebar,
+  TextSidebar,
+} from './sidebars'
 import { Button } from './ui/Button'
 
 export default function DynamicSidebar() {
@@ -20,7 +30,6 @@ export default function DynamicSidebar() {
   } = useRouter()
   const { mutateAsync: handleUpdateBlock } = useUpdateBlock(Number(id))
   const { data: selectedBlockIndex } = useSelectedBlockState()
-  const dispatch = useSelectedBlockDispatch()
 
   const { control, formState, getValues } = useFormContext<DefaultFormValues>()
   const [didMove, attributes] = useWatch({
@@ -56,26 +65,28 @@ export default function DynamicSidebar() {
   )
 
   useEffect(() => {
-    if (
-      !didMove &&
-      formState.dirtyFields.blocks?.[selectedBlockIndex]?.attributes
-    ) {
-      console.log({
-        selectedBlockIndex,
-        dirtyFields: formState.dirtyFields,
-        id: getValues(`blocks.${selectedBlockIndex}.id`),
-        errors: formState.errors,
-        isValid: formState.isValid,
-      })
-      autoSaveDebounce({
-        where: {
-          id: getValues(`blocks.${selectedBlockIndex}.id`),
-        },
-        payload: {
-          attributes,
-        },
-        isValid: formState.isValid,
-      })
+    if (typeof selectedBlockIndex === 'number') {
+      if (
+        !didMove &&
+        formState.dirtyFields.blocks?.[selectedBlockIndex]?.attributes
+      ) {
+        // console.log({
+        //   selectedBlockIndex,
+        //   dirtyFields: formState.dirtyFields,
+        //   id: getValues(`blocks.${selectedBlockIndex}.id`),
+        //   errors: formState.errors,
+        //   isValid: formState.isValid,
+        // })
+        autoSaveDebounce({
+          where: {
+            id: getValues(`blocks.${selectedBlockIndex}.id`),
+          },
+          payload: {
+            attributes,
+          },
+          isValid: formState.isValid,
+        })
+      }
     }
   }, [
     attributes,
@@ -88,29 +99,49 @@ export default function DynamicSidebar() {
     formState.errors,
   ])
 
+  const selectedBlockType = selectedBlockIndex
+    ? getValues(`blocks.${selectedBlockIndex}.type`)
+    : 'GLOBAL'
+
+  return match(selectedBlockType)
+    .with(BlockType.TEXT, () => (
+      <TextSidebar closeButton={<SidebarCloseButton />} />
+    ))
+    .with(P.union(BlockType.H1, BlockType.H2, BlockType.H3), () => (
+      <HeadingSidebar closeButton={<SidebarCloseButton />} />
+    ))
+    .with(BlockType.DIVIDER, () => (
+      <DividerSidebar closeButton={<SidebarCloseButton />} />
+    ))
+    .with(BlockType.QUOTE, () => (
+      <QuoteSidebar closeButton={<SidebarCloseButton />} />
+    ))
+    .with(BlockType.IMAGE, () => (
+      <ImageSidebar closeButton={<SidebarCloseButton />} />
+    ))
+    .with(BlockType.CODE, () => (
+      <CodeSidebar closeButton={<SidebarCloseButton />} />
+    ))
+    .with('GLOBAL', () => <GlobalSidebar />)
+    .otherwise(() => null)
+}
+
+const SidebarCloseButton = () => {
+  const dispatch = useSelectedBlockDispatch()
+
   const handleUnsetActiveBlock = () => {
-    dispatch(setSelectedBlock(-1))
+    dispatch(setSelectedBlock(null))
   }
 
-  const selectedBlockType = getValues(`blocks.${selectedBlockIndex}.type`)
-  const Component = sidebars[selectedBlockType || 'GLOBAL']
   return (
-    <Component
-      key={selectedBlockIndex}
-      className="py-4"
-      closeButton={
-        selectedBlockIndex !== -1 ? (
-          <div className="absolute right-2 top-2">
-            <Button
-              variant="secondary"
-              className="flex h-8 w-8 items-center justify-center p-0"
-              onClick={handleUnsetActiveBlock}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-        ) : null
-      }
-    />
+    <div className="absolute right-2 top-2">
+      <Button
+        variant="secondary"
+        className="flex h-8 w-8 items-center justify-center p-0"
+        onClick={handleUnsetActiveBlock}
+      >
+        <X className="h-4 w-4" />
+      </Button>
+    </div>
   )
 }

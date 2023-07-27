@@ -11,10 +11,10 @@ const SET = 'selectedBlock/SET' // This is a place for enums probably
 
 // Initial State Def
 const initialState = {
-  data: -1,
+  data: null,
 } //This should either become a blockId or a block Object entirely
 
-type SelectedBlockDataType = number
+type SelectedBlockDataType = number | null
 
 type SelectedBlockState = {
   data: SelectedBlockDataType
@@ -25,7 +25,7 @@ type SelectedBlockAction = {
 }
 type SelectedBlockProviderProps = {
   children: ReactNode
-  initialValue: typeof initialState
+  initialValue?: typeof initialState
 }
 
 const reducer = (state: SelectedBlockState, action: SelectedBlockAction) => {

@@ -2,20 +2,15 @@ import { prisma } from '@/server/prisma'
 import { Prisma } from '@prisma/client'
 import { getErrorMessage } from '../functions'
 
-export const OrganizationSelect = Prisma.validator<Prisma.OrganizationSelect>()(
-  {
-    id: true,
-    name: true,
-    stripeSubscriptionId: true,
-    stripeCustomerId: true,
+export const OrganizationInclude =
+  Prisma.validator<Prisma.OrganizationInclude>()({
     memberships: {
       select: {
         id: true,
         organizationId: true,
       },
     },
-  }
-)
+  })
 
 export const prismaFindOrganizations = async ({
   where,
@@ -25,7 +20,7 @@ export const prismaFindOrganizations = async ({
   try {
     return await prisma.organization.findMany({
       where,
-      select: OrganizationSelect,
+      include: OrganizationInclude,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))
@@ -40,7 +35,7 @@ export const prismaFindUniqueOrganization = async ({
   try {
     return await prisma.organization.findUnique({
       where,
-      select: OrganizationSelect,
+      include: OrganizationInclude,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))
@@ -55,7 +50,7 @@ export const prismaCreateOrganization = async ({
   try {
     return await prisma.organization.create({
       data,
-      select: OrganizationSelect,
+      include: OrganizationInclude,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))
@@ -73,7 +68,7 @@ export const prismaUpdateOrganization = async ({
     return await prisma.organization.update({
       data,
       where,
-      select: OrganizationSelect,
+      include: OrganizationInclude,
     })
   } catch (error) {
     throw Error(getErrorMessage(error))

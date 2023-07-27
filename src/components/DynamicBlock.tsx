@@ -2,11 +2,19 @@ import { useCallback, useEffect } from 'react'
 import { debounce } from 'lodash'
 import { useRouter } from 'next/router'
 import { useFormContext, useWatch } from 'react-hook-form'
+import { P, match } from 'ts-pattern'
 
 import { type DefaultFormValues } from '@/pages/templates/[id]'
-import { blocks } from '@/utils/defaults'
 import { useUpdateBlock } from '@/utils/query/blocks'
-import { type BlockType } from '@prisma/client'
+import { BlockType } from '@prisma/client'
+import {
+  CodeBlock,
+  DividerBlock,
+  HeadingBlock,
+  ImageBlock,
+  QuoteBlock,
+  TextBlock,
+} from './blocks'
 
 export default function DynamicBlock({
   index,
@@ -76,17 +84,47 @@ export default function DynamicBlock({
     value,
   ])
 
-  const Component = blocks[type]
-  return (
-    <Component
-      type={type}
-      attributes={attributes}
-      inputProps={{
-        name: `blocks.${index}.value` as 'blocks.0.value',
-        control,
-      }}
-    />
-  )
+  return match(type)
+    .with(BlockType.TEXT, () => (
+      <TextBlock
+        attributes={attributes}
+        inputProps={{
+          name: `blocks.${index}.value` as 'blocks.0.value',
+          control,
+        }}
+      />
+    ))
+    .with(P.union(BlockType.H1, BlockType.H2, BlockType.H3), (type) => (
+      <HeadingBlock
+        type={type}
+        attributes={attributes}
+        inputProps={{
+          name: `blocks.${index}.value` as 'blocks.0.value',
+          control,
+        }}
+      />
+    ))
+    .with(BlockType.DIVIDER, () => <DividerBlock attributes={attributes} />)
+    .with(BlockType.QUOTE, () => (
+      <QuoteBlock
+        attributes={attributes}
+        inputProps={{
+          name: `blocks.${index}.value` as 'blocks.0.value',
+          control,
+        }}
+      />
+    ))
+    .with(BlockType.IMAGE, () => <ImageBlock attributes={attributes} />)
+    .with(BlockType.CODE, () => (
+      <CodeBlock
+        attributes={attributes}
+        inputProps={{
+          name: `blocks.${index}.value` as 'blocks.0.value',
+          control,
+        }}
+      />
+    ))
+    .otherwise(() => null)
 }
 
 // function keyDownHandler(event) {

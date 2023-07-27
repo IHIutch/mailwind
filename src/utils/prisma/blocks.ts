@@ -9,6 +9,7 @@ const BlockSelect = Prisma.validator<Prisma.BlockSelect>()({
   value: true,
   templateId: true,
   position: true,
+  updatedAt: true,
 })
 
 export type SingleBlockPayloadType = Prisma.BlockGetPayload<{

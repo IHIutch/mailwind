@@ -148,7 +148,7 @@ export default function TemplateId() {
       <GlobalNavbar>
         <TemplateTitle />
       </GlobalNavbar>
-      <SelectedBlockProvider initialValue={{ data: -1 }}>
+      <SelectedBlockProvider>
         <FormProvider {...formMethods}>
           <div className="relative pt-16">
             <div className="fixed inset-y-0 w-[calc(100%-300px)] pt-16">

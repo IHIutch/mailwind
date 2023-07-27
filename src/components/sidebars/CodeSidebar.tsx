@@ -1,4 +1,4 @@
-import React, { type ReactNode } from 'react'
+import React, { type ReactElement } from 'react'
 import clsx from 'clsx'
 import { useFormContext } from 'react-hook-form'
 
@@ -10,10 +10,11 @@ export default function CodeSidebar({
   closeButton,
 }: {
   className?: string
-  closeButton?: ReactNode
+  closeButton?: ReactElement
 }) {
   const { data: selectedBlockIndex } = useSelectedBlockState()
   const { control } = useFormContext<DefaultFormValues>()
+
   return (
     <div className={clsx('relative', className)}>
       {closeButton}
