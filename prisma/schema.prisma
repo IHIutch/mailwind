@@ -86,7 +86,8 @@ enum BlockType {
   H2
   H3
   DIVIDER
-  QUOTE
+  // QUOTE
   IMAGE
   CODE
+  BUTTON
 }

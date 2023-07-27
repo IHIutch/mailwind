@@ -5,7 +5,7 @@ import {
   Copy,
   FlipVertical,
   GripVertical,
-  Image,
+  ImageIcon,
   Plus,
   PlusCircle,
   PlusSquare,
@@ -29,6 +29,7 @@ import {
   useFormContext,
 } from 'react-hook-form'
 import axios from 'redaxios'
+import { match } from 'ts-pattern'
 
 import DynamicBlock from '@/components/DynamicBlock'
 import DynamicSidebar from '@/components/DynamicSidebar'
@@ -57,7 +58,7 @@ import {
   useSelectedBlockDispatch,
   useSelectedBlockState,
 } from '@/context/selectedBlock'
-import { defaultAttributes } from '@/utils/defaults'
+import { getDefaultAttributes } from '@/utils/defaults'
 import { cn, getNewLexoPosition } from '@/utils/functions'
 import { type SingleBlockPayloadType } from '@/utils/prisma/blocks'
 import {
@@ -348,8 +349,8 @@ const EditView = () => {
         position,
         type,
         attributes: {
-          ...defaultAttributes['GLOBAL'],
-          ...defaultAttributes[type],
+          ...getDefaultAttributes('GLOBAL'),
+          ...getDefaultAttributes(type),
         },
       },
     })
@@ -468,23 +469,19 @@ const ItemBlock = ({
   const [isMenuActive, setIsMenuActive] = useState(false)
 
   const getIcon = (value: BlockType) => {
-    switch (value) {
-      case BlockType.TEXT:
-        return <Type className="h-4 w-4" />
-      case BlockType.DIVIDER:
-        return <FlipVertical className="h-4 w-4" />
-      case BlockType.CODE:
-        return <Code2 className="h-4 w-4" />
-      case BlockType.IMAGE:
-        // eslint-disable-next-line jsx-a11y/alt-text
-        return <Image className="h-4 w-4" />
-      case BlockType.DIVIDER:
-        return <Quote className="h-4 w-4" />
-      case BlockType.H1:
-        return <PlusCircle className="h-4 w-4" />
-      default:
-        return <PlusSquare className="h-4 w-4" />
-    }
+    return (
+      match(value)
+        .with(BlockType.TEXT, () => <Type className="h-4 w-4" />)
+        .with(BlockType.DIVIDER, () => <FlipVertical className="h-4 w-4" />)
+        .with(BlockType.CODE, () => <Code2 className="h-4 w-4" />)
+        .with(BlockType.IMAGE, () => <ImageIcon className="h-4 w-4" />)
+        // .with(BlockType.QUOTE, () => <Quote className="h-4 w-4" />)
+        .with(BlockType.H1, () => <PlusCircle className="h-4 w-4" />)
+        .with(BlockType.H2, () => <PlusCircle className="h-4 w-4" />)
+        .with(BlockType.H3, () => <PlusCircle className="h-4 w-4" />)
+        .with(BlockType.BUTTON, () => <PlusSquare className="h-4 w-4" />)
+        .exhaustive()
+    )
   }
 
   // const { control, getValues } = useFormContext()
@@ -534,15 +531,15 @@ const ItemBlock = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              {Object.entries(BlockType).map(([key, optionType], idx) => (
+              {Object.entries(BlockType).map(([key, type], idx) => (
                 <DropdownMenuItem
                   key={idx}
                   onClick={(e) => {
                     e.stopPropagation() // This is a hacky fix that prevents the items behind this button from receiving a click event: https://github.com/radix-ui/primitives/issues/1658
-                    handleAddItem({ type: optionType })
+                    handleAddItem({ type: type })
                   }}
                 >
-                  {getIcon(optionType)}
+                  {getIcon(type)}
                   <p className="pl-2">{key}</p>
                 </DropdownMenuItem>
               ))}

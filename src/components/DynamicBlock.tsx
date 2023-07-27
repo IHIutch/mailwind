@@ -7,14 +7,13 @@ import { P, match } from 'ts-pattern'
 import { type DefaultFormValues } from '@/pages/templates/[id]'
 import { useUpdateBlock } from '@/utils/query/blocks'
 import { BlockType } from '@prisma/client'
-import {
-  CodeBlock,
-  DividerBlock,
-  HeadingBlock,
-  ImageBlock,
-  QuoteBlock,
-  TextBlock,
-} from './blocks'
+import ButtonBlock from './blocks/ButtonBlock'
+import CodeBlock from './blocks/CodeBlock'
+import DividerBlock from './blocks/DividerBlock'
+import HeadingBlock from './blocks/HeadingBlock'
+import ImageBlock from './blocks/ImageBlock'
+import QuoteBlock from './blocks/QuoteBlock'
+import TextBlock from './blocks/TextBlock'
 
 export default function DynamicBlock({
   index,
@@ -84,47 +83,58 @@ export default function DynamicBlock({
     value,
   ])
 
-  return match(type)
-    .with(BlockType.TEXT, () => (
-      <TextBlock
-        attributes={attributes}
-        inputProps={{
-          name: `blocks.${index}.value` as 'blocks.0.value',
-          control,
-        }}
-      />
-    ))
-    .with(P.union(BlockType.H1, BlockType.H2, BlockType.H3), (type) => (
-      <HeadingBlock
-        type={type}
-        attributes={attributes}
-        inputProps={{
-          name: `blocks.${index}.value` as 'blocks.0.value',
-          control,
-        }}
-      />
-    ))
-    .with(BlockType.DIVIDER, () => <DividerBlock attributes={attributes} />)
-    .with(BlockType.QUOTE, () => (
-      <QuoteBlock
-        attributes={attributes}
-        inputProps={{
-          name: `blocks.${index}.value` as 'blocks.0.value',
-          control,
-        }}
-      />
-    ))
-    .with(BlockType.IMAGE, () => <ImageBlock attributes={attributes} />)
-    .with(BlockType.CODE, () => (
-      <CodeBlock
-        attributes={attributes}
-        inputProps={{
-          name: `blocks.${index}.value` as 'blocks.0.value',
-          control,
-        }}
-      />
-    ))
-    .otherwise(() => null)
+  return (
+    match(type)
+      .with(BlockType.TEXT, () => (
+        <TextBlock
+          attributes={attributes}
+          inputProps={{
+            name: `blocks.${index}.value` as 'blocks.0.value',
+            control,
+          }}
+        />
+      ))
+      .with(BlockType.BUTTON, () => (
+        <ButtonBlock
+          attributes={attributes}
+          inputProps={{
+            name: `blocks.${index}.value` as 'blocks.0.value',
+            control,
+          }}
+        />
+      ))
+      .with(P.union(BlockType.H1, BlockType.H2, BlockType.H3), (type) => (
+        <HeadingBlock
+          type={type}
+          attributes={attributes}
+          inputProps={{
+            name: `blocks.${index}.value` as 'blocks.0.value',
+            control,
+          }}
+        />
+      ))
+      .with(BlockType.DIVIDER, () => <DividerBlock attributes={attributes} />)
+      // .with(BlockType.QUOTE, () => (
+      //   <QuoteBlock
+      //     attributes={attributes}
+      //     inputProps={{
+      //       name: `blocks.${index}.value` as 'blocks.0.value',
+      //       control,
+      //     }}
+      //   />
+      // ))
+      .with(BlockType.IMAGE, () => <ImageBlock attributes={attributes} />)
+      .with(BlockType.CODE, () => (
+        <CodeBlock
+          attributes={attributes}
+          inputProps={{
+            name: `blocks.${index}.value` as 'blocks.0.value',
+            control,
+          }}
+        />
+      ))
+      .exhaustive()
+  )
 }
 
 // function keyDownHandler(event) {

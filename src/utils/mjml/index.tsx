@@ -1,3 +1,4 @@
+import * as React from 'react'
 import { readFileSync } from 'fs'
 import { minify } from 'html-minifier'
 import {
@@ -10,7 +11,6 @@ import {
   MjmlImage,
   MjmlPreview,
   MjmlSection,
-  MjmlSpacer,
   MjmlStyle,
   MjmlText,
   MjmlTitle,
@@ -20,9 +20,11 @@ import path from 'path'
 import pretty from 'pretty'
 import Highlight, { defaultProps } from 'prism-react-renderer'
 import theme from 'prism-react-renderer/themes/nightOwl'
+import { P, match } from 'ts-pattern'
 import { type z } from 'zod'
 
-import { defaultAttributes } from '../defaults'
+import { BlockType } from '@prisma/client'
+import { getDefaultAttributes } from '../defaults'
 import { getErrorMessage } from '../functions'
 import {
   type ImageBlockSchema,
@@ -49,13 +51,52 @@ export default function getMjMl(json: any) {
           <MjmlColumn>
             {json
               ? json.map((data, idx) => (
-                  <DynamicMjmlComponent
-                    key={idx}
-                    id={data.id}
-                    attributes={data.attributes}
-                    value={data.value}
-                    type={data.type}
-                  />
+                  <React.Fragment key={idx}>
+                    {match(data.type)
+                      .with(BlockType.TEXT, () => (
+                        <TextBlock
+                          id={data.id}
+                          attributes={data.attributes}
+                          value={data.value}
+                        />
+                      ))
+                      .with(BlockType.BUTTON, () => (
+                        <ButtonBlock
+                          id={data.id}
+                          attributes={data.attributes}
+                          value={data.value}
+                        />
+                      ))
+                      .with(
+                        P.union(BlockType.H1, BlockType.H2, BlockType.H3),
+                        (type) => (
+                          <HeadingBlock
+                            id={data.id}
+                            type={type}
+                            attributes={data.attributes}
+                            value={data.value}
+                          />
+                        )
+                      )
+                      .with(BlockType.DIVIDER, () => (
+                        <DividerBlock
+                          id={data.id}
+                          attributes={data.attributes}
+                        />
+                      ))
+                      // .with(BlockType.QUOTE, ())
+                      .with(BlockType.IMAGE, () => (
+                        <ImageBlock id={data.id} attributes={data.attributes} />
+                      ))
+                      .with(BlockType.CODE, () => (
+                        <CodeBlock
+                          id={data.id}
+                          attributes={data.attributes}
+                          value={data.value}
+                        />
+                      ))
+                      .exhaustive()}
+                  </React.Fragment>
                 ))
               : null}
           </MjmlColumn>
@@ -84,17 +125,6 @@ export default function getMjMl(json: any) {
   )
 }
 
-const BlockType = {
-  Text: 'TEXT',
-  H1: 'H1',
-  H2: 'H2',
-  H3: 'H3',
-  Divider: 'DIVIDER',
-  Quote: 'QUOTE',
-  Image: 'IMAGE',
-  Code: 'CODE',
-}
-
 interface MjmlTextBlockProps extends z.infer<typeof TextBlockSchema> {
   id: number
 }
@@ -103,28 +133,115 @@ const TextBlock = ({ id, attributes, value }: MjmlTextBlockProps) => {
     <MjmlText
       cssClass={`data-${id}`}
       paddingTop={
-        attributes?.paddingTop || defaultAttributes['TEXT'].paddingTop
+        attributes?.paddingTop ||
+        getDefaultAttributes(BlockType.TEXT).paddingTop
       }
       paddingRight={
-        attributes?.paddingRight || defaultAttributes['TEXT'].paddingRight
+        attributes?.paddingRight ||
+        getDefaultAttributes(BlockType.TEXT).paddingRight
       }
       paddingBottom={
-        attributes?.paddingBottom || defaultAttributes['TEXT'].paddingBottom
+        attributes?.paddingBottom ||
+        getDefaultAttributes(BlockType.TEXT).paddingBottom
       }
       paddingLeft={
-        attributes?.paddingLeft || defaultAttributes['TEXT'].paddingLeft
+        attributes?.paddingLeft ||
+        getDefaultAttributes(BlockType.TEXT).paddingLeft
       }
-      fontSize={attributes?.fontSize || defaultAttributes['TEXT'].fontSize}
-      fontFamily={attributes?.fontFamily || defaultAttributes.GLOBAL.fontFamily}
+      fontSize={attributes?.fontSize || getDefaultAttributes('GLOBAL').fontSize}
+      fontFamily={
+        attributes?.fontFamily || getDefaultAttributes('GLOBAL').fontFamily
+      }
       lineHeight={
-        attributes?.lineHeight || defaultAttributes['TEXT'].lineHeight
+        attributes?.lineHeight ||
+        getDefaultAttributes(BlockType.TEXT).lineHeight
       }
       containerBackgroundColor={
-        attributes?.backgroundColor || defaultAttributes.GLOBAL.backgroundColor
+        attributes?.backgroundColor ||
+        getDefaultAttributes('GLOBAL').backgroundColor
       }
     >
       <div dangerouslySetInnerHTML={{ __html: value }} />
     </MjmlText>
+  )
+}
+
+interface MjmlTextBlockProps extends z.infer<typeof TextBlockSchema> {
+  id: number
+}
+const ButtonBlock = ({ id, attributes, value }: MjmlTextBlockProps) => {
+  return (
+    <MjmlButton
+      cssClass={`data-${id}`}
+      color={attributes?.color || getDefaultAttributes(BlockType.BUTTON).color}
+      paddingTop={
+        attributes?.paddingTop ||
+        getDefaultAttributes(BlockType.BUTTON).paddingTop
+      }
+      paddingRight={
+        attributes?.paddingRight ||
+        getDefaultAttributes(BlockType.BUTTON).paddingRight
+      }
+      paddingBottom={
+        attributes?.paddingBottom ||
+        getDefaultAttributes(BlockType.BUTTON).paddingBottom
+      }
+      paddingLeft={
+        attributes?.paddingLeft ||
+        getDefaultAttributes(BlockType.BUTTON).paddingLeft
+      }
+      // innerPaddingTop={
+      //   attributes?.innerPaddingTop ||
+      //   getDefaultAttributes(BlockType.BUTTON).innerPaddingTop
+      // }
+      // innerPaddingRight={
+      //   attributes?.innerPaddingRight ||
+      //   getDefaultAttributes(BlockType.BUTTON).innerPaddingRight
+      // }
+      // innerPaddingBottom={
+      //   attributes?.innerPaddingBottom ||
+      //   getDefaultAttributes(BlockType.BUTTON).innerPaddingBottom
+      // }
+      // innerPaddingLeft={
+      //   attributes?.innerPaddingLeft ||
+      //   getDefaultAttributes(BlockType.BUTTON).innerPaddingLeft
+      // }
+      innerPadding={[
+        attributes?.innerPaddingTop ||
+          getDefaultAttributes(BlockType.BUTTON).innerPaddingTop,
+        attributes?.innerPaddingRight ||
+          getDefaultAttributes(BlockType.BUTTON).innerPaddingRight,
+        attributes?.innerPaddingBottom ||
+          getDefaultAttributes(BlockType.BUTTON).innerPaddingBottom,
+        attributes?.innerPaddingLeft ||
+          getDefaultAttributes(BlockType.BUTTON).innerPaddingLeft,
+      ].join(' ')}
+      fontSize={attributes?.fontSize || getDefaultAttributes('GLOBAL').fontSize}
+      fontWeight={
+        attributes?.fontWeight || getDefaultAttributes('GLOBAL').fontWeight
+      }
+      fontFamily={
+        attributes?.fontFamily || getDefaultAttributes('GLOBAL').fontFamily
+      }
+      lineHeight={
+        attributes?.lineHeight ||
+        getDefaultAttributes(BlockType.BUTTON).lineHeight
+      }
+      backgroundColor={
+        attributes?.backgroundColor ||
+        getDefaultAttributes(BlockType.BUTTON).backgroundColor
+      }
+      containerBackgroundColor={
+        attributes?.containerBackgroundColor ||
+        getDefaultAttributes(BlockType.BUTTON).containerBackgroundColor
+      }
+      borderRadius={
+        attributes?.borderRadius ||
+        getDefaultAttributes(BlockType.BUTTON).borderRadius
+      }
+    >
+      {value}
+    </MjmlButton>
   )
 }
 
@@ -136,21 +253,23 @@ const CodeBlock = ({ id, attributes, value }: MjmlCodeBlockProps) => {
     <MjmlText
       cssClass={`data-${id} font-mono`}
       paddingTop={
-        attributes?.paddingTop || defaultAttributes['CODE'].paddingTop
+        attributes?.paddingTop || getDefaultAttributes('CODE').paddingTop
       }
       paddingRight={
-        attributes?.paddingRight || defaultAttributes['CODE'].paddingRight
+        attributes?.paddingRight || getDefaultAttributes('CODE').paddingRight
       }
       paddingBottom={
-        attributes?.paddingBottom || defaultAttributes['CODE'].paddingBottom
+        attributes?.paddingBottom || getDefaultAttributes('CODE').paddingBottom
       }
       paddingLeft={
-        attributes?.paddingLeft || defaultAttributes['CODE'].paddingLeft
+        attributes?.paddingLeft || getDefaultAttributes('CODE').paddingLeft
       }
-      fontSize={attributes?.fontSize || defaultAttributes['CODE'].fontSize}
-      fontFamily={attributes?.fontFamily || defaultAttributes.GLOBAL.fontFamily}
+      fontSize={attributes?.fontSize || getDefaultAttributes('CODE').fontSize}
+      fontFamily={
+        attributes?.fontFamily || getDefaultAttributes('GLOBAL').fontFamily
+      }
       lineHeight={
-        attributes?.lineHeight || defaultAttributes['CODE'].lineHeight
+        attributes?.lineHeight || getDefaultAttributes('CODE').lineHeight
       }
     >
       <pre
@@ -194,24 +313,31 @@ const HeadingBlock = ({
   return (
     <MjmlText
       cssClass={`data-${id}`}
-      paddingTop={attributes?.paddingTop || defaultAttributes[type].paddingTop}
+      paddingTop={
+        attributes?.paddingTop || getDefaultAttributes(type).paddingTop
+      }
       paddingRight={
-        attributes?.paddingRight || defaultAttributes[type].paddingRight
+        attributes?.paddingRight || getDefaultAttributes(type).paddingRight
       }
       paddingBottom={
-        attributes?.paddingBottom || defaultAttributes[type].paddingBottom
+        attributes?.paddingBottom || getDefaultAttributes(type).paddingBottom
       }
       paddingLeft={
-        attributes?.paddingLeft || defaultAttributes[type].paddingLeft
+        attributes?.paddingLeft || getDefaultAttributes(type).paddingLeft
       }
-      fontSize={attributes?.fontSize || defaultAttributes[type].fontSize}
-      fontFamily={attributes?.fontFamily || defaultAttributes.GLOBAL.fontFamily}
-      lineHeight={attributes?.lineHeight || defaultAttributes[type].lineHeight}
+      fontSize={attributes?.fontSize || getDefaultAttributes(type).fontSize}
+      fontFamily={
+        attributes?.fontFamily || getDefaultAttributes('GLOBAL').fontFamily
+      }
+      lineHeight={
+        attributes?.lineHeight || getDefaultAttributes(type).lineHeight
+      }
       fontWeight={Number(
-        attributes?.fontWeight || defaultAttributes[type].fontWeight
+        attributes?.fontWeight || getDefaultAttributes(type).fontWeight
       )}
       containerBackgroundColor={
-        attributes?.backgroundColor || defaultAttributes.GLOBAL.backgroundColor
+        attributes?.backgroundColor ||
+        getDefaultAttributes('GLOBAL').backgroundColor
       }
     >
       <div dangerouslySetInnerHTML={{ __html: value }} />
@@ -222,32 +348,34 @@ const HeadingBlock = ({
 interface MjmlDividerBlockProps extends z.infer<typeof DividerBlockSchema> {
   id: number
 }
-const DividerBlock = ({ id, type, attributes }: MjmlDividerBlockProps) => {
+const DividerBlock = ({ id, attributes }: MjmlDividerBlockProps) => {
   return (
     <MjmlDivider
       cssClass={`data-${id}`}
       paddingTop={
-        attributes?.paddingTop || defaultAttributes['DIVIDER'].paddingTop
+        attributes?.paddingTop || getDefaultAttributes('DIVIDER').paddingTop
       }
       paddingRight={
-        attributes?.paddingRight || defaultAttributes['DIVIDER'].paddingRight
+        attributes?.paddingRight || getDefaultAttributes('DIVIDER').paddingRight
       }
       paddingBottom={
-        attributes?.paddingBottom || defaultAttributes['DIVIDER'].paddingBottom
+        attributes?.paddingBottom ||
+        getDefaultAttributes('DIVIDER').paddingBottom
       }
       paddingLeft={
-        attributes?.paddingLeft || defaultAttributes['DIVIDER'].paddingLeft
+        attributes?.paddingLeft || getDefaultAttributes('DIVIDER').paddingLeft
       }
       borderWidth={
         attributes?.borderTopWidth ||
-        defaultAttributes['DIVIDER'].borderTopWidth
+        getDefaultAttributes('DIVIDER').borderTopWidth
       }
       borderColor={
         attributes?.borderTopColor ||
-        defaultAttributes['DIVIDER'].borderTopColor
+        getDefaultAttributes('DIVIDER').borderTopColor
       }
       containerBackgroundColor={
-        attributes?.backgroundColor || defaultAttributes.GLOBAL.backgroundColor
+        attributes?.backgroundColor ||
+        getDefaultAttributes('GLOBAL').backgroundColor
       }
     />
   )
@@ -269,48 +397,23 @@ const ImageBlock = ({ id, attributes }: MjmlImageBlockProps) => {
     <MjmlImage
       cssClass={`data-${id}`}
       paddingTop={
-        attributes?.paddingTop || defaultAttributes['IMAGE'].paddingTop
+        attributes?.paddingTop || getDefaultAttributes('IMAGE').paddingTop
       }
       paddingRight={
-        attributes?.paddingRight || defaultAttributes['IMAGE'].paddingRight
+        attributes?.paddingRight || getDefaultAttributes('IMAGE').paddingRight
       }
       paddingBottom={
-        attributes?.paddingBottom || defaultAttributes['IMAGE'].paddingBottom
+        attributes?.paddingBottom || getDefaultAttributes('IMAGE').paddingBottom
       }
       paddingLeft={
-        attributes?.paddingLeft || defaultAttributes['IMAGE'].paddingLeft
+        attributes?.paddingLeft || getDefaultAttributes('IMAGE').paddingLeft
       }
-      src={attributes.src || defaultAttributes['IMAGE'].src}
-      alt={attributes.alt || defaultAttributes['IMAGE'].alt}
+      src={attributes.src || getDefaultAttributes('IMAGE').src}
+      alt={attributes.alt || getDefaultAttributes('IMAGE').alt}
       containerBackgroundColor={
-        attributes?.backgroundColor || defaultAttributes.GLOBAL.backgroundColor
+        attributes?.backgroundColor ||
+        getDefaultAttributes('GLOBAL').backgroundColor
       }
     />
   )
-}
-
-const components = {
-  [BlockType.Text]: TextBlock,
-  [BlockType.H1]: HeadingBlock,
-  [BlockType.H2]: HeadingBlock,
-  [BlockType.H3]: HeadingBlock,
-  [BlockType.Divider]: DividerBlock,
-  [BlockType.Code]: CodeBlock,
-  [BlockType.Image]: ImageBlock,
-  //
-  // [BlockType.Quote]: SpacerBlock,
-}
-
-// export const MjmlDynamicComponentProps = z.discriminatedUnion('type', [
-//   TextBlockSchema.extend({ id: z.number() }),
-//   CodeBlockSchema.extend({ id: z.number() }),
-//   HeadingBlockSchema.extend({ id: z.number() }),
-//   DividerBlockSchema.extend({ id: z.number() }),
-//   ImageBlockSchema.extend({ id: z.number() }),
-// ])
-
-// type MjmlDynamicComponentProps = z.infer<typeof MjmlDynamicComponentProps>
-const DynamicMjmlComponent = ({ id, type, attributes, value = '' }) => {
-  const Component = components[type] as React.ComponentType
-  return <Component id={id} type={type} attributes={attributes} value={value} />
 }

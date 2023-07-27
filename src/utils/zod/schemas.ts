@@ -25,6 +25,35 @@ export const TextBlockSchema = z.object({
   }),
 })
 
+export const ButtonBlockSchema = z.object({
+  value: z.string(),
+  type: z.literal(BlockType.TEXT),
+  attributes: z.object({
+    paddingTop: spaceSchema,
+    paddingRight: spaceSchema,
+    paddingBottom: spaceSchema,
+    paddingLeft: spaceSchema,
+    innerPaddingTop: spaceSchema,
+    innerPaddingRight: spaceSchema,
+    innerPaddingBottom: spaceSchema,
+    innerPaddingLeft: spaceSchema,
+    href: z.string().url(),
+    fontSize: spaceSchema,
+    fontWeight: fontWeightSchema,
+    lineHeight: spaceSchema,
+    color: hexColorSchema,
+    backgroundColor: hexColorSchema,
+    containerBackgroundColor: hexColorSchema,
+    fontFamily: fontFamilySchema,
+    width: spaceSchema,
+    align: z.union([
+      z.literal('left'),
+      z.literal('center'),
+      z.literal('right'),
+    ]),
+  }),
+})
+
 export const HeadingBlockSchema = z.object({
   value: z.string(),
   type: z.union([
@@ -81,7 +110,7 @@ export const DividerBlockSchema = z.object({
   }),
 })
 
-export const quoteBlockSchema = z.object({
+export const QuoteBlockSchema = z.object({
   type: z.literal(BlockType.QUOTE),
   attributes: z.any(),
 })
@@ -91,7 +120,6 @@ export const defaultBlockSchema = z.object({
   templateId: z.coerce.number(),
   position: z.string(),
 })
-// TODO: Define schemas
 
 export const UserWhereSchema = z.object({
   id: z.coerce.string().optional(),

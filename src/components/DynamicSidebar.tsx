@@ -13,15 +13,12 @@ import {
 import { type DefaultFormValues } from '@/pages/templates/[id]'
 import { useUpdateBlock } from '@/utils/query/blocks'
 import { BlockType } from '@prisma/client'
-import {
-  CodeSidebar,
-  DividerSidebar,
-  GlobalSidebar,
-  HeadingSidebar,
-  ImageSidebar,
-  QuoteSidebar,
-  TextSidebar,
-} from './sidebars'
+import CodeSidebar from './sidebars/CodeSidebar'
+import DividerSidebar from './sidebars/DividerSidebar'
+import GlobalSidebar from './sidebars/GlobalSidebar'
+import HeadingSidebar from './sidebars/HeadingSidebar'
+import ImageSidebar from './sidebars/ImageSidebar'
+import TextSidebar from './sidebars/TextSidebar'
 import { Button } from './ui/Button'
 
 export default function DynamicSidebar() {
@@ -101,29 +98,33 @@ export default function DynamicSidebar() {
 
   const selectedBlockType = selectedBlockIndex
     ? getValues(`blocks.${selectedBlockIndex}.type`)
-    : 'GLOBAL'
+    : null
 
-  return match(selectedBlockType)
-    .with(BlockType.TEXT, () => (
-      <TextSidebar closeButton={<SidebarCloseButton />} />
-    ))
-    .with(P.union(BlockType.H1, BlockType.H2, BlockType.H3), () => (
-      <HeadingSidebar closeButton={<SidebarCloseButton />} />
-    ))
-    .with(BlockType.DIVIDER, () => (
-      <DividerSidebar closeButton={<SidebarCloseButton />} />
-    ))
-    .with(BlockType.QUOTE, () => (
-      <QuoteSidebar closeButton={<SidebarCloseButton />} />
-    ))
-    .with(BlockType.IMAGE, () => (
-      <ImageSidebar closeButton={<SidebarCloseButton />} />
-    ))
-    .with(BlockType.CODE, () => (
-      <CodeSidebar closeButton={<SidebarCloseButton />} />
-    ))
-    .with('GLOBAL', () => <GlobalSidebar />)
-    .otherwise(() => null)
+  return (
+    match(selectedBlockType)
+      .with(BlockType.TEXT, () => (
+        <TextSidebar closeButton={<SidebarCloseButton />} />
+      ))
+      .with(P.union(BlockType.H1, BlockType.H2, BlockType.H3), () => (
+        <HeadingSidebar closeButton={<SidebarCloseButton />} />
+      ))
+      .with(BlockType.DIVIDER, () => (
+        <DividerSidebar closeButton={<SidebarCloseButton />} />
+      ))
+      // .with(BlockType.QUOTE, () => (
+      //   <QuoteSidebar closeButton={<SidebarCloseButton />} />
+      // ))
+      .with(BlockType.IMAGE, () => (
+        <ImageSidebar closeButton={<SidebarCloseButton />} />
+      ))
+      .with(BlockType.CODE, () => (
+        <CodeSidebar closeButton={<SidebarCloseButton />} />
+      ))
+      .with(BlockType.BUTTON, () => (
+        <TextSidebar closeButton={<SidebarCloseButton />} />
+      ))
+      .otherwise(() => <GlobalSidebar />)
+  )
 }
 
 const SidebarCloseButton = () => {
