@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
-import clsx from 'clsx'
 import dayjs from 'dayjs'
 import {
   Code2,
@@ -197,6 +196,7 @@ const TemplateTitle = () => {
     query: { id },
   } = useRouter()
   const { data: template } = useGetTemplateById(Number(id))
+
   const { mutateAsync: handleUpdateTemplate, isLoading } = useUpdateTemplate(
     Number(id)
   )
@@ -222,8 +222,8 @@ const TemplateTitle = () => {
       <div>
         <p className="font-medium">{template?.title || 'Untitled Template'}</p>
         <div className="text-xs text-neutral-500">
-          <span>Last Modified: </span>
-          <span>{dayjs(template?.updatedAt).format('MMM D, h:mma')}</span>
+          <span>Last Updated: </span>
+          <span>{dayjs(template?.fullUpdatedAt).format('MMM D, h:mma')}</span>
         </div>
       </div>
       <div className="ml-4">

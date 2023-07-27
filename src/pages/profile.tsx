@@ -44,9 +44,9 @@ export default function Profile() {
                         </span>
                       </div>
                       <div className="text-xs text-neutral-500">
-                        <span>Last Modified: </span>
+                        <span>Last Updated: </span>
                         <span>
-                          {dayjs(template?.updatedAt).format('MMM D')}
+                          {dayjs(template?.fullUpdatedAt).format('MMM D')}
                         </span>
                       </div>
                     </div>
