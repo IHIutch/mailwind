@@ -1,6 +1,20 @@
 import * as React from 'react'
 import { readFileSync } from 'fs'
 import { minify } from 'html-minifier'
+import path from 'path'
+import pretty from 'pretty'
+import Highlight, { defaultProps } from 'prism-react-renderer'
+import theme from 'prism-react-renderer/themes/nightOwl'
+import { P, match } from 'ts-pattern'
+import {
+  type MjmlButtonBlockProps,
+  type MjmlCodeBlockProps,
+  type MjmlDividerBlockProps,
+  type MjmlHeadingBlockProps,
+  type MjmlImageBlockProps,
+  type MjmlTextBlockProps,
+} from 'types/mjml.types'
+
 import {
   Mjml,
   MjmlBody,
@@ -14,29 +28,14 @@ import {
   MjmlStyle,
   MjmlText,
   MjmlTitle,
-  render,
-} from 'mjml-react'
-import path from 'path'
-import pretty from 'pretty'
-import Highlight, { defaultProps } from 'prism-react-renderer'
-import theme from 'prism-react-renderer/themes/nightOwl'
-import { P, match } from 'ts-pattern'
-import { type z } from 'zod'
-
+} from '@faire/mjml-react'
+import { render } from '@faire/mjml-react/utils/render'
 import { BlockType } from '@prisma/client'
 import { getDefaultAttributes } from '../defaults'
 import { getErrorMessage } from '../functions'
-import {
-  type ImageBlockSchema,
-  type HeadingBlockSchema,
-  type TextBlockSchema,
-  type CodeBlockSchema,
-  type DividerBlockSchema,
-} from '../zod/schemas'
 
 export default function getMjMl(json: any) {
   const stylePath = path.join(process.cwd(), 'public/styles/preflight.css')
-
   const codeCss = readFileSync(stylePath, 'utf-8')
 
   const { html, errors } = render(
@@ -111,7 +110,7 @@ export default function getMjMl(json: any) {
     }
   )
 
-  if (errors.length) {
+  if (errors && errors?.length > 0) {
     throw Error(getErrorMessage(errors[0]))
   }
 
@@ -125,9 +124,6 @@ export default function getMjMl(json: any) {
   )
 }
 
-interface MjmlTextBlockProps extends z.infer<typeof TextBlockSchema> {
-  id: number
-}
 const TextBlock = ({ id, attributes, value }: MjmlTextBlockProps) => {
   return (
     <MjmlText
@@ -160,16 +156,12 @@ const TextBlock = ({ id, attributes, value }: MjmlTextBlockProps) => {
         attributes?.backgroundColor ||
         getDefaultAttributes('GLOBAL').backgroundColor
       }
-    >
-      <div dangerouslySetInnerHTML={{ __html: value }} />
-    </MjmlText>
+      dangerouslySetInnerHTML={{ __html: value }}
+    />
   )
 }
 
-interface MjmlTextBlockProps extends z.infer<typeof TextBlockSchema> {
-  id: number
-}
-const ButtonBlock = ({ id, attributes, value }: MjmlTextBlockProps) => {
+const ButtonBlock = ({ id, attributes, value }: MjmlButtonBlockProps) => {
   return (
     <MjmlButton
       cssClass={`data-${id}`}
@@ -190,22 +182,6 @@ const ButtonBlock = ({ id, attributes, value }: MjmlTextBlockProps) => {
         attributes?.paddingLeft ||
         getDefaultAttributes(BlockType.BUTTON).paddingLeft
       }
-      // innerPaddingTop={
-      //   attributes?.innerPaddingTop ||
-      //   getDefaultAttributes(BlockType.BUTTON).innerPaddingTop
-      // }
-      // innerPaddingRight={
-      //   attributes?.innerPaddingRight ||
-      //   getDefaultAttributes(BlockType.BUTTON).innerPaddingRight
-      // }
-      // innerPaddingBottom={
-      //   attributes?.innerPaddingBottom ||
-      //   getDefaultAttributes(BlockType.BUTTON).innerPaddingBottom
-      // }
-      // innerPaddingLeft={
-      //   attributes?.innerPaddingLeft ||
-      //   getDefaultAttributes(BlockType.BUTTON).innerPaddingLeft
-      // }
       innerPadding={[
         attributes?.innerPaddingTop ||
           getDefaultAttributes(BlockType.BUTTON).innerPaddingTop,
@@ -239,15 +215,11 @@ const ButtonBlock = ({ id, attributes, value }: MjmlTextBlockProps) => {
         attributes?.borderRadius ||
         getDefaultAttributes(BlockType.BUTTON).borderRadius
       }
-    >
-      {value}
-    </MjmlButton>
+      dangerouslySetInnerHTML={{ __html: value }}
+    />
   )
 }
 
-interface MjmlCodeBlockProps extends z.infer<typeof CodeBlockSchema> {
-  id: number
-}
 const CodeBlock = ({ id, attributes, value }: MjmlCodeBlockProps) => {
   return (
     <MjmlText
@@ -301,9 +273,6 @@ const CodeBlock = ({ id, attributes, value }: MjmlCodeBlockProps) => {
   )
 }
 
-interface MjmlHeadingBlockProps extends z.infer<typeof HeadingBlockSchema> {
-  id: number
-}
 const HeadingBlock = ({
   id,
   type,
@@ -339,15 +308,11 @@ const HeadingBlock = ({
         attributes?.backgroundColor ||
         getDefaultAttributes('GLOBAL').backgroundColor
       }
-    >
-      <div dangerouslySetInnerHTML={{ __html: value }} />
-    </MjmlText>
+      dangerouslySetInnerHTML={{ __html: value }}
+    />
   )
 }
 
-interface MjmlDividerBlockProps extends z.infer<typeof DividerBlockSchema> {
-  id: number
-}
 const DividerBlock = ({ id, attributes }: MjmlDividerBlockProps) => {
   return (
     <MjmlDivider
@@ -381,17 +346,6 @@ const DividerBlock = ({ id, attributes }: MjmlDividerBlockProps) => {
   )
 }
 
-// const SpacerBlock = () => {
-//   return <MjmlSpacer />
-// }
-
-// const ButtonBlock = () => {
-//   return <MjmlButton />
-// }
-
-interface MjmlImageBlockProps extends z.infer<typeof ImageBlockSchema> {
-  id: number
-}
 const ImageBlock = ({ id, attributes }: MjmlImageBlockProps) => {
   return (
     <MjmlImage

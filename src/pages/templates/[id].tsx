@@ -128,6 +128,7 @@ export default function TemplateId() {
     } = await axios
       .post(`/api/download`, { json: sortedBlocks })
       .catch((res) => {
+        console.log({ res })
         throw new Error(res.data.error)
       })
 
