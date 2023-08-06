@@ -2,7 +2,6 @@ import React from 'react'
 import { useController, type UseControllerProps } from 'react-hook-form'
 
 import { type DefaultFormValues } from '@/pages/templates/[id]'
-import { cn } from '@/utils/functions'
 import {
   Select,
   SelectContent,
@@ -11,7 +10,7 @@ import {
   SelectValue,
 } from '../ui/Select'
 
-const options = [
+const paddingOptions = [
   { label: '0px', value: '0' },
   { label: '1px', value: '1px' },
   { label: '2px', value: '2px' },
@@ -49,27 +48,27 @@ export default function PaddingSelect({
     field: { onChange, name: inputName, value, ref },
     fieldState: { error },
   } = useController({
-    ...inputProps,
+    name: inputProps.name as 'blocks.0.attributes.paddingTop',
+    control: inputProps.control,
     rules: {
       required: 'This field is required',
     },
   })
 
   return (
-    <div className={cn(className)}>
+    <div className={className}>
       <Select
         defaultValue={value}
-        ref={ref}
         name={inputName}
         onValueChange={onChange}
         aria-describedby={error ? `${id}-error-message` : ''}
         aria-invalid={error ? 'true' : 'false'}
       >
-        <SelectTrigger>
+        <SelectTrigger ref={ref}>
           <SelectValue placeholder="Padding" />
         </SelectTrigger>
         <SelectContent>
-          {options.map(({ label, value }, idx) => (
+          {paddingOptions.map(({ label, value }, idx) => (
             <SelectItem key={idx} value={value}>
               {label}
             </SelectItem>

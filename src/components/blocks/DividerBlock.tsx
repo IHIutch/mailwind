@@ -1,13 +1,9 @@
-import { type z } from 'zod'
-
-import { type DividerBlockSchema } from '@/utils/zod/schemas'
-
-type DividerBlockAttributes = z.infer<typeof DividerBlockSchema>
+import { type DividerBlockProps } from 'types/block.types'
 
 export default function DividerBlock({
   attributes,
 }: {
-  attributes: DividerBlockAttributes['attributes']
+  attributes: DividerBlockProps['attributes']
 }) {
   return (
     <div
@@ -16,13 +12,13 @@ export default function DividerBlock({
         paddingBottom: attributes.paddingBottom,
         paddingLeft: attributes.paddingLeft,
         paddingRight: attributes.paddingRight,
-        backgroundColor: attributes.backgroundColor,
+        backgroundColor: attributes.containerBackgroundColor,
       }}
     >
       <hr
         style={{
-          borderTopWidth: attributes.borderTopWidth,
-          borderTopColor: attributes.borderTopColor,
+          borderTopWidth: attributes.borderWidth,
+          borderTopColor: attributes.borderColor,
         }}
       />
     </div>

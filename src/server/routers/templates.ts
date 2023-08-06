@@ -56,10 +56,9 @@ export const templateRouter = router({
     )
     .mutation(async ({ input }) => {
       const { payload } = input
-      const data = prismaCreateTemplate({
+      return prismaCreateTemplate({
         data: payload,
       })
-      return data
     }),
   update: publicProcedure
     .input(

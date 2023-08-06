@@ -36,13 +36,13 @@ export default function ImageSidebar({
         <div className="space-y-4 px-4">
           <div>
             <Label
-              htmlFor="urlField"
+              htmlFor="srcField"
               className="mb-1 block text-sm font-semibold text-gray-700"
             >
-              Image URL
+              Image Source
             </Label>
             <TextInput
-              id="urlField"
+              id="srcField"
               type="url"
               inputProps={{
                 name: `blocks.${selectedBlockIndex}.attributes.src` as 'blocks.0.attributes.src',

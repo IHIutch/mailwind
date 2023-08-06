@@ -2,7 +2,6 @@ import React from 'react'
 import { useController, type UseControllerProps } from 'react-hook-form'
 
 import { type DefaultFormValues } from '@/pages/templates/[id]'
-import { cn } from '@/utils/functions'
 import {
   Select,
   SelectContent,
@@ -45,24 +44,24 @@ export default function CodeThemeSelect({
     field: { onChange, name: inputName, value, ref },
     fieldState: { error },
   } = useController({
-    ...inputProps,
+    name: inputProps.name as 'blocks.0.attributes.theme',
+    control: inputProps.control,
     rules: {
       required: 'This field is required',
     },
   })
 
   return (
-    <div className={cn(className)}>
+    <div className={className}>
       <Select
-        defaultValue={value || 'dracula'}
-        ref={ref}
+        defaultValue={value}
         name={inputName}
         onValueChange={onChange}
         aria-describedby={error ? `${id}-error-message` : ''}
         aria-invalid={error ? 'true' : 'false'}
       >
-        <SelectTrigger>
-          <SelectValue placeholder="Language" />
+        <SelectTrigger ref={ref}>
+          <SelectValue placeholder="Select a value..." />
         </SelectTrigger>
         <SelectContent>
           {options.map(({ label, value }, idx) => (

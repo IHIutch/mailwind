@@ -10,7 +10,6 @@ import { Input } from '@/components/ui/Input'
 import { Label } from '@/components/ui/Label'
 import { getErrorMessage } from '@/utils/functions'
 import { useAuthUser } from '@/utils/query/user'
-import { loadStripe } from '@stripe/stripe-js'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
 
 type AccountFormValues = {

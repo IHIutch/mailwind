@@ -33,7 +33,8 @@ export default function BorderWidthSelect({
     field: { onChange, name: inputName, value, ref },
     fieldState: { error },
   } = useController({
-    ...inputProps,
+    name: inputProps.name as 'blocks.0.attributes.borderWidth',
+    control: inputProps.control,
     rules: {
       required: 'This field is required',
     },
@@ -43,14 +44,13 @@ export default function BorderWidthSelect({
     <div className={cn(className)}>
       <Select
         defaultValue={value}
-        ref={ref}
         name={inputName}
         onValueChange={onChange}
         aria-describedby={error ? `${id}-error-message` : ''}
         aria-invalid={error ? 'true' : 'false'}
       >
-        <SelectTrigger>
-          <SelectValue placeholder="Font Size" />
+        <SelectTrigger ref={ref}>
+          <SelectValue placeholder="Select a value..." />
         </SelectTrigger>
         <SelectContent>
           {options.map(({ label, value }, idx) => (

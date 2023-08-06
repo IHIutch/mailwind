@@ -1,18 +1,15 @@
 import ContentEditable from 'react-contenteditable'
 import { useController, type UseControllerProps } from 'react-hook-form'
-import { type z } from 'zod'
+import { type ButtonBlockProps } from 'types/block.types'
 
 import { type DefaultFormValues } from '@/pages/templates/[id]'
-import { type ButtonBlockSchema } from '@/utils/zod/schemas'
-
-type ButtonBlockAttributes = z.infer<typeof ButtonBlockSchema>['attributes']
 
 export default function ButtonBlock({
   attributes,
   inputProps,
   className,
 }: {
-  attributes: ButtonBlockAttributes
+  attributes: ButtonBlockProps['attributes']
   inputProps: UseControllerProps<DefaultFormValues>
   className?: string
   errorClassName?: string
@@ -20,7 +17,10 @@ export default function ButtonBlock({
   const {
     field: { onChange, onBlur, name: inputName, value, ref },
     fieldState: { error },
-  } = useController({ ...inputProps })
+  } = useController({
+    name: inputProps.name as 'blocks.0.value',
+    control: inputProps.control,
+  })
 
   return (
     <div
@@ -34,15 +34,14 @@ export default function ButtonBlock({
       className="text-center"
     >
       <div
-        className="inline-block"
         style={{
           ...attributes,
           paddingTop: attributes.innerPaddingTop,
           paddingRight: attributes.innerPaddingRight,
           paddingBottom: attributes.innerPaddingBottom,
           paddingLeft: attributes.innerPaddingLeft,
-          display: 'inline-block',
         }}
+        className="inline-block"
       >
         <ContentEditable
           className="min-w-[4px] bg-transparent"

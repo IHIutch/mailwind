@@ -74,12 +74,10 @@ export const prismaCreateTemplate = async ({
       data,
       include: TemplateInclude,
     })
-    return template
-      ? {
-          ...template,
-          fullUpdatedAt: getFullUpdatedAt(template, template?.blocks),
-        }
-      : null
+    return {
+      ...template,
+      fullUpdatedAt: getFullUpdatedAt(template, template?.blocks),
+    }
   } catch (error) {
     throw Error(getErrorMessage(error))
   }

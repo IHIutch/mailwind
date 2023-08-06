@@ -9,8 +9,10 @@ const fontWeightSchema = z.string().regex(/^[1-9]00$/)
 const fontFamilySchema = z.string()
 
 export const TextBlockSchema = z.object({
+  id: z.number(),
   value: z.string(),
   type: z.literal(BlockType.TEXT),
+  position: z.string(),
   attributes: z.object({
     paddingTop: spaceSchema,
     paddingRight: spaceSchema,
@@ -20,14 +22,16 @@ export const TextBlockSchema = z.object({
     fontWeight: fontWeightSchema,
     lineHeight: spaceSchema,
     color: hexColorSchema,
-    backgroundColor: hexColorSchema,
+    containerBackgroundColor: hexColorSchema,
     fontFamily: fontFamilySchema,
   }),
 })
 
 export const ButtonBlockSchema = z.object({
+  id: z.number(),
   value: z.string(),
   type: z.literal(BlockType.TEXT),
+  position: z.string(),
   attributes: z.object({
     paddingTop: spaceSchema,
     paddingRight: spaceSchema,
@@ -46,6 +50,7 @@ export const ButtonBlockSchema = z.object({
     containerBackgroundColor: hexColorSchema,
     fontFamily: fontFamilySchema,
     width: spaceSchema,
+    borderRadius: spaceSchema,
     align: z.union([
       z.literal('left'),
       z.literal('center'),
@@ -55,12 +60,14 @@ export const ButtonBlockSchema = z.object({
 })
 
 export const HeadingBlockSchema = z.object({
+  id: z.number(),
   value: z.string(),
   type: z.union([
     z.literal(BlockType.H1),
     z.literal(BlockType.H2),
     z.literal(BlockType.H3),
   ]),
+  position: z.string(),
   attributes: z.object({
     paddingTop: spaceSchema,
     paddingRight: spaceSchema,
@@ -70,13 +77,15 @@ export const HeadingBlockSchema = z.object({
     fontWeight: fontWeightSchema,
     lineHeight: spaceSchema,
     color: hexColorSchema,
-    backgroundColor: hexColorSchema,
+    containerBackgroundColor: hexColorSchema,
     fontFamily: fontFamilySchema,
   }),
 })
 
 export const ImageBlockSchema = z.object({
+  id: z.number(),
   type: z.literal(BlockType.IMAGE),
+  position: z.string(),
   attributes: z.object({
     paddingTop: spaceSchema,
     paddingRight: spaceSchema,
@@ -86,27 +95,65 @@ export const ImageBlockSchema = z.object({
     alt: z.string(),
     height: sizeSchema,
     width: sizeSchema,
-    backgroundColor: hexColorSchema,
+    containerBackgroundColor: hexColorSchema,
   }),
 })
 
 export const CodeBlockSchema = z.object({
+  id: z.number(),
   value: z.string(),
   type: z.literal(BlockType.CODE),
-  attributes: z.any(),
+  position: z.string(),
+  attributes: z.object({
+    language: z.union([
+      z.literal('jsx'),
+      z.literal('tsx'),
+      z.literal('swift'),
+      z.literal('kotlin'),
+      z.literal('objectivec'),
+      z.literal('js-extras'),
+      z.literal('reason'),
+      z.literal('rust'),
+      z.literal('graphql'),
+      z.literal('yaml'),
+      z.literal('go'),
+      z.literal('cpp'),
+      z.literal('markdown'),
+      z.literal('html'),
+    ]),
+    theme: z.union([
+      z.literal('dracula'),
+      z.literal('duotoneDark'),
+      z.literal('duotoneLight'),
+      z.literal('github'),
+      z.literal('jettwaveDark'),
+      z.literal('jettwaveLight'),
+      z.literal('nightOwl'),
+      z.literal('nightOwlLight'),
+      z.literal('oceanicNext'),
+      z.literal('okaidia'),
+      z.literal('palenight'),
+      z.literal('shadesOfPurple'),
+      z.literal('synthwave84'),
+      z.literal('ultramin'),
+      z.literal('vsDark'),
+      z.literal('vsLight'),
+    ]),
+  }),
 })
 
 export const DividerBlockSchema = z.object({
+  id: z.number(),
   type: z.literal(BlockType.DIVIDER),
+  position: z.string(),
   attributes: z.object({
     paddingTop: spaceSchema,
     paddingRight: spaceSchema,
     paddingBottom: spaceSchema,
     paddingLeft: spaceSchema,
     borderWidth: spaceSchema,
-    borderTopWidth: spaceSchema,
-    borderTopColor: hexColorSchema,
-    backgroundColor: hexColorSchema,
+    borderColor: hexColorSchema,
+    containerBackgroundColor: hexColorSchema,
   }),
 })
 
@@ -114,6 +161,15 @@ export const DividerBlockSchema = z.object({
 //   type: z.literal(BlockType.QUOTE),
 //   attributes: z.any(),
 // })
+
+export const UnionBlockSchema = z.discriminatedUnion('type', [
+  TextBlockSchema,
+  ButtonBlockSchema,
+  HeadingBlockSchema,
+  ImageBlockSchema,
+  CodeBlockSchema,
+  DividerBlockSchema,
+])
 
 export const UserWhereSchema = z.object({
   id: z.coerce.string().optional(),

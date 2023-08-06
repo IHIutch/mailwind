@@ -2,6 +2,7 @@ import { type ReactNode } from 'react'
 import { LogOut, User } from 'lucide-react'
 import Link from 'next/link'
 
+import { cn } from '@/utils/functions'
 import { useAuthUser } from '@/utils/query/user'
 import {
   DropdownMenu,
@@ -10,11 +11,22 @@ import {
   DropdownMenuTrigger,
 } from './ui/DropdownMenu'
 
-export default function GlobalNavbar({ children }: { children?: ReactNode }) {
+export default function GlobalNavbar({
+  className,
+  children,
+}: {
+  className: string
+  children?: ReactNode
+}) {
   const { data: user } = useAuthUser()
 
   return (
-    <div className="fixed inset-x-0 top-0 z-10 h-16 border-b border-zinc-200 bg-white px-8">
+    <div
+      className={cn(
+        'fixed inset-x-0 top-0 z-10 h-16 border-b border-zinc-200 bg-white px-8',
+        className
+      )}
+    >
       <div className="flex h-full items-center">
         <div>
           <Link href="/profile" className="text-xl font-bold">

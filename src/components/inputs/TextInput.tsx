@@ -20,7 +20,8 @@ export default function TextInput({
     field: { onChange, name: inputName, value, ref },
     fieldState: { error },
   } = useController({
-    ...inputProps,
+    name: inputProps.name,
+    control: inputProps.control,
   })
 
   return (
@@ -30,7 +31,7 @@ export default function TextInput({
         type={type}
         className={className}
         onChange={(e) => onChange(e.target.value)}
-        defaultValue={value}
+        defaultValue={String(value)}
         name={inputName}
         ref={ref}
         aria-describedby={error ? `${id}-error-message` : ''}

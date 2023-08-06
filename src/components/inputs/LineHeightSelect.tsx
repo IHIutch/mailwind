@@ -2,7 +2,6 @@ import React from 'react'
 import { useController, type UseControllerProps } from 'react-hook-form'
 
 import { type DefaultFormValues } from '@/pages/templates/[id]'
-import { cn } from '@/utils/functions'
 import {
   Select,
   SelectContent,
@@ -11,7 +10,7 @@ import {
   SelectValue,
 } from '../ui/Select'
 
-const options = [
+const lineHeightOptions = [
   { label: '1x', value: '1' },
   { label: '1.25x', value: '1.25' },
   { label: '1.375x', value: '1.375' },
@@ -43,27 +42,27 @@ export default function LineHeightSelect({
     field: { onChange, name: inputName, value, ref },
     fieldState: { error },
   } = useController({
-    ...inputProps,
+    name: inputProps.name as 'blocks.0.attributes.lineHeight',
+    control: inputProps.control,
     rules: {
       required: 'This field is required',
     },
   })
 
   return (
-    <div className={cn(className)}>
+    <div className={className}>
       <Select
         defaultValue={value}
-        ref={ref}
         name={inputName}
         onValueChange={onChange}
         aria-describedby={error ? `${id}-error-message` : ''}
         aria-invalid={error ? 'true' : 'false'}
       >
-        <SelectTrigger>
-          <SelectValue placeholder="Font Size" />
+        <SelectTrigger ref={ref}>
+          <SelectValue placeholder="Select a value..." />
         </SelectTrigger>
         <SelectContent>
-          {options.map(({ label, value }, idx) => (
+          {lineHeightOptions.map(({ label, value }, idx) => (
             <SelectItem key={idx} value={value}>
               {label}
             </SelectItem>

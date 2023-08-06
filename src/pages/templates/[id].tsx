@@ -30,6 +30,7 @@ import {
 } from 'react-hook-form'
 import axios from 'redaxios'
 import { match } from 'ts-pattern'
+import { type UnionBlockProps } from 'types/block.types'
 
 import DynamicBlock from '@/components/DynamicBlock'
 import DynamicSidebar from '@/components/DynamicSidebar'
@@ -58,9 +59,8 @@ import {
   useSelectedBlockDispatch,
   useSelectedBlockState,
 } from '@/context/selectedBlock'
-import { getDefaultAttributes } from '@/utils/defaults'
+import { defaultAttributes } from '@/utils/defaults'
 import { cn, getNewLexoPosition } from '@/utils/functions'
-import { type SingleBlockPayloadType } from '@/utils/prisma/blocks'
 import {
   useCreateBlock,
   useDeleteBlock,
@@ -72,7 +72,7 @@ import { BlockType } from '@prisma/client'
 
 export type DefaultFormValues = {
   didMove: boolean
-  blocks: SingleBlockPayloadType[]
+  blocks: UnionBlockProps[]
   global: {
     // containerAlign: 'left' | 'center' | 'right'
     containerAlign: string
@@ -365,12 +365,12 @@ const EditView = () => {
     handleCreateBlock({
       payload: {
         templateId: Number(id),
-        value: '',
+        value: type === BlockType.BUTTON ? 'Button' : '',
         position,
         type,
         attributes: {
-          ...getDefaultAttributes('GLOBAL'),
-          ...getDefaultAttributes(type),
+          ...defaultAttributes.GLOBAL,
+          ...defaultAttributes[type],
         },
       },
     })

@@ -8,6 +8,7 @@ import ColorInput from '../inputs/ColorInput'
 import FontSizeSelect from '../inputs/FontSizeSelect'
 import LineHeightSelect from '../inputs/LineHeightSelect'
 import PaddingSelect from '../inputs/PaddingSelect'
+import TextInput from '../inputs/TextInput'
 import {
   Accordion,
   AccordionContent,
@@ -36,6 +37,23 @@ export default function ButtonSidebar({
         <div className="space-y-4 px-4">
           <div>
             <Label
+              htmlFor="hrefField"
+              className="mb-1 block text-sm font-semibold text-gray-700"
+            >
+              Link
+            </Label>
+            <TextInput
+              id="hrefField"
+              type="url"
+              inputProps={{
+                name: `blocks.${selectedBlockIndex}.attributes.href`,
+                control,
+              }}
+              errorClassName="mt-1 text-xs text-red-500"
+            />
+          </div>
+          <div>
+            <Label
               htmlFor="fontSizeField"
               className="mb-1 block text-sm font-semibold text-gray-700"
             >
@@ -44,7 +62,7 @@ export default function ButtonSidebar({
             <FontSizeSelect
               id="fontSizeField"
               inputProps={{
-                name: `blocks.${selectedBlockIndex}.attributes.fontSize` as 'blocks.0.attributes.fontSize',
+                name: `blocks.${selectedBlockIndex}.attributes.fontSize`,
                 control,
               }}
               errorClassName="mt-1 text-xs text-red-500"
@@ -60,7 +78,7 @@ export default function ButtonSidebar({
             <LineHeightSelect
               id="lineHeightField"
               inputProps={{
-                name: `blocks.${selectedBlockIndex}.attributes.lineHeight` as 'blocks.0.attributes.lineHeight',
+                name: `blocks.${selectedBlockIndex}.attributes.lineHeight`,
                 control,
               }}
               errorClassName="mt-1 text-xs text-red-500"
@@ -77,7 +95,7 @@ export default function ButtonSidebar({
               <PaddingSelect
                 id="innerPaddingTopField"
                 inputProps={{
-                  name: `blocks.${selectedBlockIndex}.attributes.innerPaddingTop` as 'blocks.0.attributes.innerPaddingTop',
+                  name: `blocks.${selectedBlockIndex}.attributes.innerPaddingTop`,
                   control,
                 }}
                 errorClassName="mt-1 text-xs text-red-500"
@@ -93,7 +111,7 @@ export default function ButtonSidebar({
               <PaddingSelect
                 id="innerPaddingRightField"
                 inputProps={{
-                  name: `blocks.${selectedBlockIndex}.attributes.innerPaddingRight` as 'blocks.0.attributes.innerPaddingRight',
+                  name: `blocks.${selectedBlockIndex}.attributes.innerPaddingRight`,
                   control,
                 }}
                 errorClassName="mt-1 text-xs text-red-500"
@@ -109,7 +127,7 @@ export default function ButtonSidebar({
               <PaddingSelect
                 id="innerPaddingBottomField"
                 inputProps={{
-                  name: `blocks.${selectedBlockIndex}.attributes.innerPaddingBottom` as 'blocks.0.attributes.innerPaddingBottom',
+                  name: `blocks.${selectedBlockIndex}.attributes.innerPaddingBottom`,
                   control,
                 }}
                 errorClassName="mt-1 text-xs text-red-500"
@@ -125,7 +143,7 @@ export default function ButtonSidebar({
               <PaddingSelect
                 id="innerPaddingLeftField"
                 inputProps={{
-                  name: `blocks.${selectedBlockIndex}.attributes.innerPaddingLeft` as 'blocks.0.attributes.innerPaddingLeft',
+                  name: `blocks.${selectedBlockIndex}.attributes.innerPaddingLeft`,
                   control,
                 }}
                 errorClassName="mt-1 text-xs text-red-500"
@@ -142,7 +160,7 @@ export default function ButtonSidebar({
             <ColorInput
               id="textColorField"
               inputProps={{
-                name: `blocks.${selectedBlockIndex}.attributes.color` as 'blocks.0.attributes.color',
+                name: `blocks.${selectedBlockIndex}.attributes.color`,
                 control,
               }}
             />
@@ -157,7 +175,7 @@ export default function ButtonSidebar({
             <ColorInput
               id="backgroundColorField"
               inputProps={{
-                name: `blocks.${selectedBlockIndex}.attributes.backgroundColor` as 'blocks.0.attributes.backgroundColor',
+                name: `blocks.${selectedBlockIndex}.attributes.backgroundColor`,
                 control,
               }}
             />
@@ -181,7 +199,7 @@ export default function ButtonSidebar({
                     <PaddingSelect
                       id="paddingTopField"
                       inputProps={{
-                        name: `blocks.${selectedBlockIndex}.attributes.paddingTop` as 'blocks.0.attributes.paddingTop',
+                        name: `blocks.${selectedBlockIndex}.attributes.paddingTop`,
                         control,
                       }}
                       errorClassName="mt-1 text-xs text-red-500"
@@ -197,7 +215,7 @@ export default function ButtonSidebar({
                     <PaddingSelect
                       id="paddingRightField"
                       inputProps={{
-                        name: `blocks.${selectedBlockIndex}.attributes.paddingRight` as 'blocks.0.attributes.paddingRight',
+                        name: `blocks.${selectedBlockIndex}.attributes.paddingRight`,
                         control,
                       }}
                       errorClassName="mt-1 text-xs text-red-500"
@@ -213,7 +231,7 @@ export default function ButtonSidebar({
                     <PaddingSelect
                       id="paddingBottomField"
                       inputProps={{
-                        name: `blocks.${selectedBlockIndex}.attributes.paddingBottom` as 'blocks.0.attributes.paddingBottom',
+                        name: `blocks.${selectedBlockIndex}.attributes.paddingBottom`,
                         control,
                       }}
                       errorClassName="mt-1 text-xs text-red-500"
@@ -229,7 +247,7 @@ export default function ButtonSidebar({
                     <PaddingSelect
                       id="paddingLeftField"
                       inputProps={{
-                        name: `blocks.${selectedBlockIndex}.attributes.paddingLeft` as 'blocks.0.attributes.paddingLeft',
+                        name: `blocks.${selectedBlockIndex}.attributes.paddingLeft`,
                         control,
                       }}
                       errorClassName="mt-1 text-xs text-red-500"
@@ -246,7 +264,7 @@ export default function ButtonSidebar({
                   <ColorInput
                     id="containerBackgroundColorField"
                     inputProps={{
-                      name: `blocks.${selectedBlockIndex}.attributes.containerBackgroundColor` as 'blocks.0.attributes.containerBackgroundColor',
+                      name: `blocks.${selectedBlockIndex}.attributes.containerBackgroundColor`,
                       control,
                     }}
                   />

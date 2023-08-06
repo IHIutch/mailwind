@@ -2,7 +2,6 @@ import React from 'react'
 import { useController, type UseControllerProps } from 'react-hook-form'
 
 import { type DefaultFormValues } from '@/pages/templates/[id]'
-import { cn } from '@/utils/functions'
 import {
   Select,
   SelectContent,
@@ -11,7 +10,7 @@ import {
   SelectValue,
 } from '../ui/Select'
 
-const options = [
+const fontSizeOptions = [
   { label: 'X Small', value: '12px' },
   { label: 'Small', value: '14px' },
   { label: 'Base', value: '16px' },
@@ -42,27 +41,27 @@ export default function FontSizeSelect({
     field: { onChange, name: inputName, value, ref },
     fieldState: { error },
   } = useController({
-    ...inputProps,
+    name: inputProps.name as 'blocks.0.attributes.fontSize',
+    control: inputProps.control,
     rules: {
       required: 'This field is required',
     },
   })
 
   return (
-    <div className={cn(className)}>
+    <div className={className}>
       <Select
         defaultValue={value}
-        ref={ref}
         name={inputName}
         onValueChange={onChange}
         aria-describedby={error ? `${id}-error-message` : ''}
         aria-invalid={error ? 'true' : 'false'}
       >
-        <SelectTrigger>
-          <SelectValue placeholder="Font Size" />
+        <SelectTrigger ref={ref}>
+          <SelectValue placeholder="Select a value..." />
         </SelectTrigger>
         <SelectContent>
-          {options.map(({ label, value }, idx) => (
+          {fontSizeOptions.map(({ label, value }, idx) => (
             <SelectItem key={idx} value={value}>
               {label}
             </SelectItem>

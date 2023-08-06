@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Highlight, type Language, themes } from 'prism-react-renderer'
+import { Highlight, themes } from 'prism-react-renderer'
 import { useController, type UseControllerProps } from 'react-hook-form'
 import Editor from 'react-simple-code-editor'
-import { type CodeBlockAttributeProps } from 'types/block.types'
+import { type CodeBlockProps } from 'types/block.types'
 
 import { type DefaultFormValues } from '@/pages/templates/[id]'
 
@@ -12,7 +12,7 @@ export default function CodeBlock({
   className,
   errorClassName,
 }: {
-  attributes: CodeBlockAttributeProps
+  attributes: CodeBlockProps['attributes']
   inputProps: UseControllerProps<DefaultFormValues>
   className?: string
   errorClassName?: string
@@ -20,7 +20,10 @@ export default function CodeBlock({
   const {
     field: { onChange, onBlur, name: inputName, value, ref },
     fieldState: { error },
-  } = useController({ ...inputProps })
+  } = useController({
+    name: inputProps.name as 'blocks.0.value',
+    control: inputProps.control,
+  })
 
   const [code, setCode] = useState((value || '').toString())
 
@@ -70,8 +73,8 @@ const PrismaHighlight = ({
   theme,
 }: {
   code: string
-  language: Language
-  theme: CodeBlockAttributeProps['theme']
+  language: CodeBlockProps['attributes']['language']
+  theme: CodeBlockProps['attributes']['theme']
 }) => {
   return (
     <Highlight

@@ -12,7 +12,6 @@ import CodeBlock from './blocks/CodeBlock'
 import DividerBlock from './blocks/DividerBlock'
 import HeadingBlock from './blocks/HeadingBlock'
 import ImageBlock from './blocks/ImageBlock'
-import QuoteBlock from './blocks/QuoteBlock'
 import TextBlock from './blocks/TextBlock'
 
 export default function DynamicBlock({
@@ -60,8 +59,11 @@ export default function DynamicBlock({
   )
 
   useEffect(() => {
-    if (!didMove && formState.dirtyFields.blocks?.[index]?.value) {
-      // console.log(index, formState.dirtyFields, value)
+    if (
+      !didMove &&
+      // @ts-expect-error
+      formState.dirtyFields?.blocks?.[index]?.value
+    ) {
       autoSaveDebounce({
         where: {
           id: getValues(`blocks.${index}.id`),
@@ -89,7 +91,7 @@ export default function DynamicBlock({
         <TextBlock
           attributes={attributes}
           inputProps={{
-            name: `blocks.${index}.value` as 'blocks.0.value',
+            name: `blocks.${index}.value`,
             control,
           }}
         />
@@ -98,7 +100,7 @@ export default function DynamicBlock({
         <ButtonBlock
           attributes={attributes}
           inputProps={{
-            name: `blocks.${index}.value` as 'blocks.0.value',
+            name: `blocks.${index}.value`,
             control,
           }}
         />
@@ -108,7 +110,7 @@ export default function DynamicBlock({
           type={type}
           attributes={attributes}
           inputProps={{
-            name: `blocks.${index}.value` as 'blocks.0.value',
+            name: `blocks.${index}.value`,
             control,
           }}
         />
@@ -118,7 +120,7 @@ export default function DynamicBlock({
       //   <QuoteBlock
       //     attributes={attributes}
       //     inputProps={{
-      //       name: `blocks.${index}.value` as 'blocks.0.value',
+      //       name: `blocks.${index}.value`,
       //       control,
       //     }}
       //   />
@@ -128,7 +130,7 @@ export default function DynamicBlock({
         <CodeBlock
           attributes={attributes}
           inputProps={{
-            name: `blocks.${index}.value` as 'blocks.0.value',
+            name: `blocks.${index}.value`,
             control,
           }}
         />

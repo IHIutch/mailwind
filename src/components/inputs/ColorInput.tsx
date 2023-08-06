@@ -21,7 +21,8 @@ export default function ColorInput({
     field: { onChange, name: inputName, value, ref },
     fieldState: { error },
   } = useController({
-    ...inputProps,
+    name: inputProps.name as 'blocks.0.attributes.color',
+    control: inputProps.control,
     rules: {
       required: 'This field is required',
     },

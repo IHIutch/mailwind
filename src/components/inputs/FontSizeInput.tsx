@@ -18,7 +18,8 @@ export default function FontSizeInput({
     field: { onChange, onBlur, name: inputName, value, ref },
     fieldState: { error },
   } = useController({
-    ...inputProps,
+    name: inputProps.name as 'blocks.0.attributes.fontSize',
+    control: inputProps.control,
     rules: {
       required: 'This field is required',
       validate: {
@@ -68,7 +69,7 @@ export default function FontSizeInput({
   }
 
   return (
-    <div>
+    <>
       <Input
         id={id}
         type="text"
@@ -91,6 +92,6 @@ export default function FontSizeInput({
           {error?.message}
         </p>
       ) : null}
-    </div>
+    </>
   )
 }

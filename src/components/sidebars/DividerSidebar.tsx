@@ -1,9 +1,9 @@
 import React, { type ReactNode } from 'react'
-import clsx from 'clsx'
 import { useFormContext } from 'react-hook-form'
 
 import { useSelectedBlockState } from '@/context/selectedBlock'
 import { type DefaultFormValues } from '@/pages/templates/[id]'
+import { cn } from '@/utils/functions'
 import BorderWidthSelect from '../inputs/BorderWidthSelect'
 import ColorInput from '../inputs/ColorInput'
 import PaddingSelect from '../inputs/PaddingSelect'
@@ -43,7 +43,7 @@ export default function DividerSidebar({
             <BorderWidthSelect
               id="borderWidthField"
               inputProps={{
-                name: `blocks.${selectedBlockIndex}.attributes.borderTopWidth` as 'blocks.0.attributes.borderTopWidth',
+                name: `blocks.${selectedBlockIndex}.attributes.borderWidth` as 'blocks.0.attributes.borderWidth',
                 control,
               }}
             />
@@ -58,7 +58,7 @@ export default function DividerSidebar({
             <ColorInput
               id="borderTopColorField"
               inputProps={{
-                name: `blocks.${selectedBlockIndex}.attributes.borderTopColor` as 'blocks.0.attributes.borderTopColor',
+                name: `blocks.${selectedBlockIndex}.attributes.borderColor` as 'blocks.0.attributes.borderColor',
                 control,
               }}
             />

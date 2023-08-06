@@ -1,28 +1,29 @@
 import { useController, type UseControllerProps } from 'react-hook-form'
-import { type z } from 'zod'
+import { match } from 'ts-pattern'
+import { type HeadingBlockProps } from 'types/block.types'
 
 import { type DefaultFormValues } from '@/pages/templates/[id]'
 import { cn } from '@/utils/functions'
-import { type HeadingBlockSchema } from '@/utils/zod/schemas'
 import { BlockType } from '@prisma/client'
 import Editor from '../Editor'
-
-type HeadingBlockAttributes = z.infer<typeof HeadingBlockSchema>
 
 export default function HeadingBlock({
   type,
   attributes,
   inputProps,
 }: {
-  type: BlockType
-  attributes: HeadingBlockAttributes['attributes']
+  type: Exclude<BlockType, 'CODE' | 'TEXT' | 'DIVIDER' | 'IMAGE' | 'BUTTON'>
+  attributes: HeadingBlockProps['attributes']
   inputProps: UseControllerProps<DefaultFormValues>
   errorClassName?: string
 }) {
   const {
     field: { onChange, onBlur, name: inputName, value, ref },
     fieldState: { error },
-  } = useController({ ...inputProps })
+  } = useController({
+    name: inputProps.name as 'blocks.0.value',
+    control: inputProps.control,
+  })
 
   return (
     <div
@@ -35,18 +36,23 @@ export default function HeadingBlock({
         fontWeight: attributes.fontWeight,
         lineHeight: attributes.lineHeight,
         color: attributes.color,
-        backgroundColor: attributes.backgroundColor,
+        backgroundColor: attributes.containerBackgroundColor,
       }}
       className={cn(
-        type === BlockType.H1
-          ? 'text-4xl font-extrabold [&_strong]:font-black'
-          : '',
-        type === BlockType.H2
-          ? 'text-2xl font-bold [&_strong]:font-extrabold'
-          : '',
-        type === BlockType.H3
-          ? 'text-xl font-semibold [&_strong]:font-bold'
-          : ''
+        match(type)
+          .with(
+            BlockType.H1,
+            () => 'text-4xl font-extrabold [&_strong]:font-black'
+          )
+          .with(
+            BlockType.H2,
+            () => 'text-2xl font-bold [&_strong]:font-extrabold'
+          )
+          .with(
+            BlockType.H3,
+            () => 'text-xl font-semibold [&_strong]:font-bold'
+          )
+          .exhaustive()
       )}
     >
       <Editor

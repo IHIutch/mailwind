@@ -1,14 +1,10 @@
 import { Image as ImageIcon } from 'lucide-react'
-import { type z } from 'zod'
-
-import { type ImageBlockSchema } from '@/utils/zod/schemas'
-
-type ImageBlockAttributes = z.infer<typeof ImageBlockSchema>
+import { type ImageBlockProps } from 'types/block.types'
 
 export default function ImageBlock({
   attributes,
 }: {
-  attributes: ImageBlockAttributes['attributes']
+  attributes: ImageBlockProps['attributes']
 }) {
   return (
     <div
@@ -17,7 +13,7 @@ export default function ImageBlock({
         paddingRight: attributes.paddingRight,
         paddingBottom: attributes.paddingBottom,
         paddingLeft: attributes.paddingLeft,
-        backgroundColor: attributes.backgroundColor,
+        backgroundColor: attributes.containerBackgroundColor,
       }}
     >
       {attributes?.src ? (
