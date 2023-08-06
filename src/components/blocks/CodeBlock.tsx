@@ -1,21 +1,10 @@
 import { useEffect, useState } from 'react'
-import Highlight, { defaultProps, type Language } from 'prism-react-renderer'
-import theme from 'prism-react-renderer/themes/nightOwl'
+import { Highlight, type Language, themes } from 'prism-react-renderer'
 import { useController, type UseControllerProps } from 'react-hook-form'
 import Editor from 'react-simple-code-editor'
-import { z } from 'zod'
+import { type CodeBlockAttributeProps } from 'types/block.types'
 
 import { type DefaultFormValues } from '@/pages/templates/[id]'
-
-// const codeAttributes = z
-//   .object({
-//     value: z.string(),
-//     attributes: z.object({
-//       language: z.string(),
-//       theme: z.string(),
-//     }),
-//   })
-//   .optional()
 
 export default function CodeBlock({
   attributes,
@@ -23,7 +12,7 @@ export default function CodeBlock({
   className,
   errorClassName,
 }: {
-  attributes: any
+  attributes: CodeBlockAttributeProps
   inputProps: UseControllerProps<DefaultFormValues>
   className?: string
   errorClassName?: string
@@ -51,7 +40,10 @@ export default function CodeBlock({
   // )
 
   return (
-    <div className="overflow-hidden rounded-md p-2" style={theme.plain}>
+    <div
+      className="overflow-hidden p-2"
+      style={themes[attributes.theme || 'dracula'].plain}
+    >
       <Editor
         ref={ref}
         name={inputName}
@@ -60,7 +52,13 @@ export default function CodeBlock({
         className="font-mono"
         textareaClassName="focus:outline-none"
         onValueChange={(code) => setCode(code)}
-        highlight={(code) => <PrismaHighlight code={code} language="jsx" />}
+        highlight={(code) => (
+          <PrismaHighlight
+            code={code}
+            theme={attributes.theme}
+            language={attributes.language || 'jsx'}
+          />
+        )}
       />
     </div>
   )
@@ -69,12 +67,18 @@ export default function CodeBlock({
 const PrismaHighlight = ({
   code,
   language,
+  theme,
 }: {
   code: string
   language: Language
+  theme: CodeBlockAttributeProps['theme']
 }) => {
   return (
-    <Highlight {...defaultProps} theme={theme} code={code} language={language}>
+    <Highlight
+      theme={themes[theme || 'dracula']}
+      code={code}
+      language={language}
+    >
       {({ className, style, tokens, getLineProps, getTokenProps }) => (
         <>
           {tokens.map((line, i) => (

@@ -7,6 +7,7 @@ import {
   type IMjmlTextProps,
 } from '@faire/mjml-react'
 import { type BlockType } from '@prisma/client'
+import { type CodeBlockAttributeProps } from './block.types'
 
 export type MjmlTextBlockProps = {
   id: number
@@ -22,10 +23,9 @@ export type MjmlButtonBlockProps = {
 export type MjmlCodeBlockProps = {
   id: number
   value: string
-  attributes: IMjmlTextProps & {
-    language: Language
-  }
+  attributes: IMjmlTextProps & CodeBlockAttributeProps
 }
+
 export type MjmlHeadingBlockProps = {
   id: number
   value: string

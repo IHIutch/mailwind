@@ -110,16 +110,10 @@ export const DividerBlockSchema = z.object({
   }),
 })
 
-export const QuoteBlockSchema = z.object({
-  type: z.literal(BlockType.QUOTE),
-  attributes: z.any(),
-})
-
-export const defaultBlockSchema = z.object({
-  id: z.coerce.number(),
-  templateId: z.coerce.number(),
-  position: z.string(),
-})
+// export const QuoteBlockSchema = z.object({
+//   type: z.literal(BlockType.QUOTE),
+//   attributes: z.any(),
+// })
 
 export const UserWhereSchema = z.object({
   id: z.coerce.string().optional(),

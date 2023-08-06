@@ -50,13 +50,14 @@ export default function Login() {
       <div className="mx-auto w-96 rounded-lg border bg-white p-8 shadow">
         {isSubmitSuccess ? (
           <div className="text-center">
-            <h1 className="mb-2 text-3xl font-bold">Email Sent</h1>
-            <p className="mb-8 text-sm text-gray-600">
-              A link has been sent to{' '}
-              <span className="font-semibold">{getValues('email')}</span>.
-              <br />
-              It expires in 24 hours and can only be used once.
-            </p>
+            <h1 className="mb-4 text-3xl font-bold">Email Sent</h1>
+            <div className="mb-8 flex flex-col gap-4 text-sm text-gray-600">
+              <p>
+                A link to log in has been sent to{' '}
+                <span className="font-semibold">{getValues('email')}</span>.
+              </p>
+              <p>It can only be used once and expires in 24 hours.</p>
+            </div>
             <p>
               {/* This forces a page refresh, resetting the form */}
               {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}

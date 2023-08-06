@@ -3,8 +3,7 @@ import { readFileSync } from 'fs'
 import { minify } from 'html-minifier'
 import path from 'path'
 import pretty from 'pretty'
-import Highlight, { defaultProps } from 'prism-react-renderer'
-import theme from 'prism-react-renderer/themes/nightOwl'
+import { Highlight, themes } from 'prism-react-renderer'
 import { P, match } from 'ts-pattern'
 import {
   type MjmlButtonBlockProps,
@@ -247,14 +246,13 @@ const CodeBlock = ({ id, attributes, value }: MjmlCodeBlockProps) => {
       <pre
         style={{
           padding: '8px',
-          ...theme.plain,
+          ...themes[attributes.theme || 'dracula'].plain,
         }}
       >
         <Highlight
-          {...defaultProps}
-          theme={theme}
+          theme={themes[attributes.theme || 'dracula']}
           code={value}
-          language={'jsx'}
+          language={attributes.language || 'jsx'}
         >
           {({ className, style, tokens, getLineProps, getTokenProps }) => (
             <>

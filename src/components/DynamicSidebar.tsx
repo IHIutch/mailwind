@@ -13,6 +13,7 @@ import {
 import { type DefaultFormValues } from '@/pages/templates/[id]'
 import { useUpdateBlock } from '@/utils/query/blocks'
 import { BlockType } from '@prisma/client'
+import ButtonSidebar from './sidebars/ButtonSidebar'
 import CodeSidebar from './sidebars/CodeSidebar'
 import DividerSidebar from './sidebars/DividerSidebar'
 import GlobalSidebar from './sidebars/GlobalSidebar'
@@ -96,9 +97,10 @@ export default function DynamicSidebar() {
     formState.errors,
   ])
 
-  const selectedBlockType = selectedBlockIndex
-    ? getValues(`blocks.${selectedBlockIndex}.type`)
-    : null
+  const selectedBlockType =
+    selectedBlockIndex !== null
+      ? getValues(`blocks.${selectedBlockIndex}.type`)
+      : null
 
   return (
     match(selectedBlockType)
@@ -121,7 +123,7 @@ export default function DynamicSidebar() {
         <CodeSidebar closeButton={<SidebarCloseButton />} />
       ))
       .with(BlockType.BUTTON, () => (
-        <TextSidebar closeButton={<SidebarCloseButton />} />
+        <ButtonSidebar closeButton={<SidebarCloseButton />} />
       ))
       .otherwise(() => <GlobalSidebar />)
   )

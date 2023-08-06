@@ -13,8 +13,6 @@ export default function ImageBlock({
   return (
     <div
       style={{
-        height: attributes.height,
-        width: attributes.width,
         paddingTop: attributes.paddingTop,
         paddingRight: attributes.paddingRight,
         paddingBottom: attributes.paddingBottom,
@@ -26,6 +24,10 @@ export default function ImageBlock({
         // eslint-disable-next-line @next/next/no-img-element
         <img
           className="h-full w-full object-cover"
+          style={{
+            height: attributes.height,
+            width: attributes.width,
+          }}
           src={attributes.src}
           alt={attributes.alt}
         />

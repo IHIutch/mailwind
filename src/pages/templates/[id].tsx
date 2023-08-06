@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import dayjs from 'dayjs'
+import { toJpeg } from 'html-to-image'
 import {
   Code2,
   Copy,
@@ -9,7 +10,6 @@ import {
   Plus,
   PlusCircle,
   PlusSquare,
-  Quote,
   Settings,
   Trash2,
   Type,
@@ -145,6 +145,20 @@ export default function TemplateId() {
     document.body.removeChild(link)
   }
 
+  // const handleGenerateImage = () => {
+  //   toJpeg(document.getElementById('canvas'), {
+  //     quality: 0.1,
+  //     // canvasWidth: 800,
+  //     height: 600,
+  //   }).then(function (dataUrl) {
+  //     console.log({ dataUrl })
+  //     const link = document.createElement('a')
+  //     link.download = 'my-image-name.jpeg'
+  //     link.href = dataUrl
+  //     link.click()
+  //   })
+  // }
+
   return (
     <>
       <GlobalNavbar>
@@ -159,8 +173,13 @@ export default function TemplateId() {
                 setPreviewSize={setPreviewSize}
                 handleDownload={handleDownload}
               />
+
               <div className="relative h-full pt-12">
-                <div className="h-full overflow-y-auto">
+                <div
+                  className="h-full overflow-y-auto"
+                  id="canvas"
+                  style={{ backgroundColor: global.backgroundColor }}
+                >
                   <div
                     className={cn('relative px-4 py-12', [
                       global.containerAlign === 'left' ? 'mr-auto' : '',

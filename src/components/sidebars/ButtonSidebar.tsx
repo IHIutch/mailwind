@@ -6,7 +6,6 @@ import { type DefaultFormValues } from '@/pages/templates/[id]'
 import { cn } from '@/utils/functions'
 import ColorInput from '../inputs/ColorInput'
 import FontSizeSelect from '../inputs/FontSizeSelect'
-import FontWeightSelect from '../inputs/FontWeightSelect'
 import LineHeightSelect from '../inputs/LineHeightSelect'
 import PaddingSelect from '../inputs/PaddingSelect'
 import {
@@ -17,7 +16,7 @@ import {
 } from '../ui/Accordion'
 import { Label } from '../ui/Label'
 
-export default function HeadingSidebar({
+export default function ButtonSidebar({
   className,
   closeButton,
 }: {
@@ -31,13 +30,13 @@ export default function HeadingSidebar({
     <div className={cn('relative', className)}>
       {closeButton}
       <div className="border-b p-3">
-        <h2 className="text-xl font-semibold">Heading Block</h2>
+        <h2 className="text-xl font-semibold">Text Block</h2>
       </div>
       <div className="relative py-4">
         <div className="space-y-4 px-4">
           <div>
             <Label
-              htmlFor="fontSizeSelect"
+              htmlFor="fontSizeField"
               className="mb-1 block text-sm font-semibold text-gray-700"
             >
               Font Size
@@ -51,15 +50,15 @@ export default function HeadingSidebar({
               errorClassName="mt-1 text-xs text-red-500"
             />
           </div>
-          <div className="mb-4">
+          <div>
             <Label
-              htmlFor="lineHeightSelect"
+              htmlFor="lineHeightField"
               className="mb-1 block text-sm font-semibold text-gray-700"
             >
               Line Height
             </Label>
             <LineHeightSelect
-              id="lineHeightSelect"
+              id="lineHeightField"
               inputProps={{
                 name: `blocks.${selectedBlockIndex}.attributes.lineHeight` as 'blocks.0.attributes.lineHeight',
                 control,
@@ -67,21 +66,71 @@ export default function HeadingSidebar({
               errorClassName="mt-1 text-xs text-red-500"
             />
           </div>
-          <div>
-            <Label
-              htmlFor="fontWeightField"
-              className="mb-1 block text-sm font-semibold text-gray-700"
-            >
-              Font Weight
-            </Label>
-            <FontWeightSelect
-              id="fontWeightField"
-              inputProps={{
-                name: `blocks.${selectedBlockIndex}.attributes.fontWeight` as 'blocks.0.attributes.fontWeight',
-                control,
-              }}
-              errorClassName="mt-1 text-xs text-red-500"
-            />
+          <div className="mb-4 grid grid-flow-row grid-cols-2 gap-4">
+            <div>
+              <Label
+                htmlFor="innerPaddingTopField"
+                className="mb-1 block text-sm font-semibold text-gray-700"
+              >
+                Padding Top
+              </Label>
+              <PaddingSelect
+                id="innerPaddingTopField"
+                inputProps={{
+                  name: `blocks.${selectedBlockIndex}.attributes.innerPaddingTop` as 'blocks.0.attributes.innerPaddingTop',
+                  control,
+                }}
+                errorClassName="mt-1 text-xs text-red-500"
+              />
+            </div>
+            <div>
+              <Label
+                htmlFor="innerPaddingRightField"
+                className="mb-1 block text-sm font-semibold text-gray-700"
+              >
+                Padding Right
+              </Label>
+              <PaddingSelect
+                id="innerPaddingRightField"
+                inputProps={{
+                  name: `blocks.${selectedBlockIndex}.attributes.innerPaddingRight` as 'blocks.0.attributes.innerPaddingRight',
+                  control,
+                }}
+                errorClassName="mt-1 text-xs text-red-500"
+              />
+            </div>
+            <div>
+              <Label
+                htmlFor="innerPaddingBottomField"
+                className="mb-1 block text-sm font-semibold text-gray-700"
+              >
+                Padding Bottom
+              </Label>
+              <PaddingSelect
+                id="innerPaddingBottomField"
+                inputProps={{
+                  name: `blocks.${selectedBlockIndex}.attributes.innerPaddingBottom` as 'blocks.0.attributes.innerPaddingBottom',
+                  control,
+                }}
+                errorClassName="mt-1 text-xs text-red-500"
+              />
+            </div>
+            <div>
+              <Label
+                htmlFor="innerPaddingLeftField"
+                className="mb-1 block text-sm font-semibold text-gray-700"
+              >
+                Padding Left
+              </Label>
+              <PaddingSelect
+                id="innerPaddingLeftField"
+                inputProps={{
+                  name: `blocks.${selectedBlockIndex}.attributes.innerPaddingLeft` as 'blocks.0.attributes.innerPaddingLeft',
+                  control,
+                }}
+                errorClassName="mt-1 text-xs text-red-500"
+              />
+            </div>
           </div>
           <div>
             <Label
@@ -94,6 +143,21 @@ export default function HeadingSidebar({
               id="textColorField"
               inputProps={{
                 name: `blocks.${selectedBlockIndex}.attributes.color` as 'blocks.0.attributes.color',
+                control,
+              }}
+            />
+          </div>
+          <div>
+            <Label
+              htmlFor="backgroundColorField"
+              className="mb-1 block text-sm font-semibold text-gray-700"
+            >
+              Button Color
+            </Label>
+            <ColorInput
+              id="backgroundColorField"
+              inputProps={{
+                name: `blocks.${selectedBlockIndex}.attributes.backgroundColor` as 'blocks.0.attributes.backgroundColor',
                 control,
               }}
             />
@@ -174,15 +238,15 @@ export default function HeadingSidebar({
                 </div>
                 <div>
                   <Label
-                    htmlFor="backgroundColorField"
+                    htmlFor="containerBackgroundColorField"
                     className="mb-1 block text-sm font-semibold text-gray-700"
                   >
                     Background Color
                   </Label>
                   <ColorInput
-                    id="backgroundColorField"
+                    id="containerBackgroundColorField"
                     inputProps={{
-                      name: `blocks.${selectedBlockIndex}.attributes.backgroundColor` as 'blocks.0.attributes.backgroundColor',
+                      name: `blocks.${selectedBlockIndex}.attributes.containerBackgroundColor` as 'blocks.0.attributes.containerBackgroundColor',
                       control,
                     }}
                   />

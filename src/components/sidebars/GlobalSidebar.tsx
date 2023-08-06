@@ -13,7 +13,7 @@ export default function GlobalSidebar({ className }: { className?: string }) {
 
   return (
     <div className={cn('relative', className)}>
-      <div className="mb-4 border-b px-3 pb-3">
+      <div className="mb-4 border-b p-3">
         <h2 className="text-xl font-semibold">Global Attributes</h2>
       </div>
       <div className="mb-4 px-3">

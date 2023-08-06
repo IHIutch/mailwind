@@ -1,7 +1,8 @@
 import { useCallback, useState } from 'react'
-import clsx from 'clsx'
 import { X } from 'lucide-react'
 import { useDropzone } from 'react-dropzone'
+
+import { cn } from '@/utils/functions'
 
 export default function ImageDropzone({ onChange, value = '' }) {
   const [preview, setPreview] = useState(value)
@@ -36,16 +37,17 @@ export default function ImageDropzone({ onChange, value = '' }) {
       {preview ? (
         <div className="relative h-full w-full">
           <button
-            className="absolute top-2 right-2 h-8 w-8 rounded"
+            className="absolute right-2 top-2 h-8 w-8 rounded"
             onClick={handleClearImage}
           >
             <X className="h-4 w-4" />
           </button>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className="h-full w-full object-cover" src={preview} alt="" />
         </div>
       ) : (
         <div
-          className={clsx(
+          className={cn(
             'flex h-full w-full cursor-pointer items-center justify-center border text-center font-semibold transition-colors',
             isDragActive
               ? 'border-indigo-200 bg-indigo-100'

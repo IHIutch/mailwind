@@ -15,9 +15,9 @@ export default function QuoteSidebar({
   const { data: selectedBlockIndex } = useSelectedBlockState()
   const { control } = useFormContext<DefaultFormValues>()
   return (
-    <div className={clsx('relative', className)}>
+    <div className={cn('relative', className)}>
       {closeButton}
-      <div className="mb-4 border-b px-3 pb-3">
+      <div className="mb-4 border-b p-3">
         <h2 className="text-xl font-semibold">Quote Block</h2>
       </div>
     </div>

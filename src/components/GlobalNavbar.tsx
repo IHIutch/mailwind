@@ -10,21 +10,12 @@ import {
   DropdownMenuTrigger,
 } from './ui/DropdownMenu'
 
-export default function GlobalNavbar({
-  children,
-  className,
-}: {
-  children?: ReactNode
-  className?: string
-}) {
+export default function GlobalNavbar({ children }: { children?: ReactNode }) {
   const { data: user } = useAuthUser()
 
   return (
-    <div
-      className={`${className}
-      fixed inset-x-0 top-0 z-10 h-16 border-b border-zinc-200 bg-white px-8`}
-    >
-      <div className="container-xl mx-auto flex h-full items-center px-4">
+    <div className="fixed inset-x-0 top-0 z-10 h-16 border-b border-zinc-200 bg-white px-8">
+      <div className="flex h-full items-center">
         <div>
           <Link href="/profile" className="text-xl font-bold">
             Mailwind
