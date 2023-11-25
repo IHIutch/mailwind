@@ -62,11 +62,12 @@ export const ButtonBlockSchema = z.object({
 export const HeadingBlockSchema = z.object({
   id: z.number(),
   value: z.string(),
-  type: z.union([
-    z.literal(BlockType.H1),
-    z.literal(BlockType.H2),
-    z.literal(BlockType.H3),
-  ]),
+  type: z.literal(BlockType.H1),
+  // type: z.union([
+  //   z.literal(BlockType.H1),
+  //   z.literal(BlockType.H2),
+  //   z.literal(BlockType.H3),
+  // ]),
   position: z.string(),
   attributes: z.object({
     paddingTop: spaceSchema,
