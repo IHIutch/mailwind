@@ -30,7 +30,7 @@ export const TextBlockSchema = z.object({
 export const ButtonBlockSchema = z.object({
   id: z.number(),
   value: z.string(),
-  type: z.literal(BlockType.TEXT),
+  type: z.literal(BlockType.BUTTON),
   position: z.string(),
   attributes: z.object({
     paddingTop: spaceSchema,
