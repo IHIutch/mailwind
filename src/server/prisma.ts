@@ -2,20 +2,17 @@
  * Instantiates a single instance PrismaClient and save it on the global object.
  * @link https://www.prisma.io/docs/support/help-articles/nextjs-prisma-client-dev-practices
  */
-import { env } from '@/server/env'
+
 import { PrismaClient } from '@prisma/client'
 
-const prismaGlobal = global as typeof global & {
-  prisma?: PrismaClient
+const prismaClientSingleton = () => {
+  return new PrismaClient()
 }
 
-export const prisma: PrismaClient =
-  prismaGlobal.prisma ||
-  new PrismaClient({
-    log:
-      env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-  })
+declare const globalThis: {
+  prismaGlobal: ReturnType<typeof prismaClientSingleton>
+} & typeof global
 
-if (env.NODE_ENV !== 'production') {
-  prismaGlobal.prisma = prisma
-}
+export const prisma = globalThis.prismaGlobal ?? prismaClientSingleton()
+
+if (process.env.NODE_ENV !== 'production') globalThis.prismaGlobal = prisma
