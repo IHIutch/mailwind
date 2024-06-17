@@ -1,10 +1,17 @@
 import { trpc } from '../trpc'
 
-export const useGetTemplatesByMembershipId = (membershipId: number) => {
+export const useGetTemplatesByMembershipId = (
+  membershipId: number | undefined
+) => {
   const { isLoading, isError, isSuccess, data, error } =
-    trpc.template.byMembershipId.useQuery({
-      where: { membershipId },
-    })
+    trpc.template.byMembershipId.useQuery(
+      {
+        where: { membershipId },
+      },
+      {
+        enabled: !!membershipId,
+      }
+    )
   return {
     data,
     error,

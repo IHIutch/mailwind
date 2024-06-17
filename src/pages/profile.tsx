@@ -10,7 +10,7 @@ import { useAuthUser } from '@/utils/query/user'
 export default function Profile() {
   const { data: user } = useAuthUser()
   const { data: templates } = useGetTemplatesByMembershipId(
-    Number(user?.memberships?.[0]?.id)
+    user?.memberships?.[0]?.id
   )
 
   return (
